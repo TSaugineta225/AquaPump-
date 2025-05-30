@@ -1,0 +1,1152 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>Form</class>
+ <widget class="QWidget" name="Form">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>892</width>
+    <height>601</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <property name="styleSheet">
+   <string notr="true">/* --------- QLineEdit --------- */
+QLineEdit {
+    background-color: #fdfdfd;
+    border: 1px solid #cfcfcf;
+    border-radius: 4px;
+    padding: 6px 8px;
+    font-size: 14px;
+    font-family: &quot;Segoe UI&quot;, Roboto, sans-serif;
+    color: #2b2b2b;
+}
+
+QLineEdit:focus {
+    border: 1px solid #2684ff;
+    background-color: #ffffff;
+    outline: none;
+}
+
+QLineEdit:hover {
+    border: 1px solid #2684ff;
+}
+
+
+/* --------- QComboBox --------- */
+QComboBox {
+    background-color: #fdfdfd;
+    border: 1px solid #cfcfcf;
+    border-radius: 4px;
+    padding: 6px 8px;
+    font-size: 14px;
+    font-family: &quot;Segoe UI&quot;, Roboto, sans-serif;
+    color: #2b2b2b;
+}
+
+QComboBox:hover {
+    border: 1px solid #2684ff;
+}
+
+QComboBox:focus {
+    border: 1px solid #2684ff;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 28px;
+    border-left: 1px solid #d0d0d0;
+    background-color: transparent;
+}
+
+QComboBox::down-arrow {
+    image: url(:/img/arrow-down-1.png);
+    width: 10px;
+    height: 10px;
+    margin-right: 5px;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #ffffff;
+    border: 1px solid #cfcfcf;
+    border-radius: 4px;
+    selection-background-color: #2684ff;
+    selection-color: #ffffff;
+    font-family: &quot;Segoe UI&quot;, Roboto, sans-serif;
+}
+</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_3">
+     <item>
+      <widget class="QFrame" name="frame">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+       <property name="styleSheet">
+        <string notr="true">QPushButton {
+background-color: transparent;
+font-family: Roboto;
+font-size:10pt;
+border: none;
+border-radius:3px
+
+}
+
+QPushButton:hover {
+background-color:	#D9D9D6
+}</string>
+       </property>
+       <property name="frameShape">
+        <enum>QFrame::Shape::StyledPanel</enum>
+       </property>
+       <property name="frameShadow">
+        <enum>QFrame::Shadow::Raised</enum>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout">
+        <property name="leftMargin">
+         <number>0</number>
+        </property>
+        <property name="topMargin">
+         <number>0</number>
+        </property>
+        <item>
+         <widget class="QPushButton" name="arquivo">
+          <property name="minimumSize">
+           <size>
+            <width>55</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>55</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>Arquivo</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="config">
+          <property name="minimumSize">
+           <size>
+            <width>60</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>87</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Editar</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="relatorio">
+          <property name="minimumSize">
+           <size>
+            <width>60</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>60</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="styleSheet">
+           <string notr="true"/>
+          </property>
+          <property name="text">
+           <string>Relatório </string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="ajuda">
+          <property name="minimumSize">
+           <size>
+            <width>45</width>
+            <height>28</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>45</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Ajuda</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+     </item>
+     <item>
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+    </layout>
+   </item>
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_4">
+     <property name="sizeConstraint">
+      <enum>QLayout::SizeConstraint::SetMaximumSize</enum>
+     </property>
+     <item>
+      <widget class="QSplitter" name="splitter">
+       <property name="orientation">
+        <enum>Qt::Orientation::Horizontal</enum>
+       </property>
+       <widget class="QFrame" name="frame_3">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>0</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="maximumSize">
+         <size>
+          <width>0</width>
+          <height>16777215</height>
+         </size>
+        </property>
+        <property name="styleSheet">
+         <string notr="true">QFrame {
+    background-color: #F9F9F9;
+    border: 1px solid #DDDDDD;
+    border-radius: 6px;
+    padding: 2px;
+	padding-top: 0px;
+}
+
+
+QPushButton {
+background-color: transparent;
+font-family: Roboto;
+font-size:10pt;
+border: none;
+border-radius:3px
+
+}
+
+QPushButton:hover {
+background-color:		#D9D9D6
+}
+
+QLabel {
+font-family: Roboto;
+font-size:10pt;
+
+}
+QDoubleSpinBox {
+    background-color: #FFFFFF;
+    border: 2px solid #CCCCCC;
+    border-radius: 6px;
+    padding: 2px 6px;
+    font-size: 14px;
+    color: #333333;
+}
+
+
+/* --------- QScrollArea --------- */
+QScrollArea {
+    background-color: transparent;
+    border: none;
+}
+
+/* Viewport transparente também */
+QScrollArea &gt; QWidget &gt; QWidget {
+    background-color: transparent;
+}
+
+/* --------- Scrollbars --------- */
+QScrollBar:vertical, QScrollBar:horizontal {
+    background: rgba(0, 0, 0, 0);  /* Transparente */
+    width: 10px;
+    height: 10px;
+    margin: 2px;
+}
+
+QScrollBar::handle:vertical, QScrollBar::handle:horizontal {
+    background-color: #c0c0c0;
+    border-radius: 5px;
+    min-height: 20px;
+}
+
+QScrollBar::handle:vertical:hover, QScrollBar::handle:horizontal:hover {
+    background-color: #a0a0a0;
+}
+
+/* --------- Botões de rolagem --------- */
+QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical,
+QScrollBar::sub-line:horizontal, QScrollBar::add-line:horizontal {
+    background: none;
+    border: none;
+    width: 12px;
+    height: 12px;
+}
+
+QScrollBar::sub-line:vertical {
+    subcontrol-position: top;
+}
+
+QScrollBar::add-line:vertical {
+    subcontrol-position: bottom;
+}
+
+QScrollBar::sub-line:horizontal {
+    subcontrol-position: left;
+}
+
+QScrollBar::add-line:horizontal {
+    subcontrol-position: right;
+}
+
+QScrollBar::up-arrow {
+    image: url(:/img/arrow-up.png);
+    width: 8px;
+    height: 8px;
+}
+
+
+ QScrollBar::down-arrow {
+    image: url(:/img/arrow-down-1.png);
+    width: 8px;
+    height: 8px;
+}
+
+
+/* --------- Canto entre as barras --------- */
+QScrollBar::corner {
+    background: transparent;
+}
+
+</string>
+        </property>
+        <property name="frameShape">
+         <enum>QFrame::Shape::StyledPanel</enum>
+        </property>
+        <property name="frameShadow">
+         <enum>QFrame::Shadow::Raised</enum>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_2">
+         <property name="spacing">
+          <number>15</number>
+         </property>
+         <property name="leftMargin">
+          <number>0</number>
+         </property>
+         <property name="topMargin">
+          <number>3</number>
+         </property>
+         <property name="rightMargin">
+          <number>0</number>
+         </property>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <item>
+            <widget class="QPushButton" name="abrir_layout_2">
+             <property name="toolTip">
+              <string>Fechar Barra Lateral</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">QPushButton {
+background-color: transparent;
+font-family: Roboto;
+font-size:10pt;
+border: none;
+border-radius:2px
+
+}
+
+</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="img/img.qrc">
+               <normaloff>:/img/sidebar-left.png</normaloff>:/img/sidebar-left.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>26</width>
+               <height>26</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <spacer name="horizontalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="dimensionar_2">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="img/img.qrc">
+               <normaloff>:/img/scale-3d.png</normaloff>:/img/scale-3d.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="mapa_2">
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="img/img.qrc">
+               <normaloff>:/img/mind-map.png</normaloff>:/img/mind-map.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>24</width>
+               <height>24</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <widget class="QScrollArea" name="scrollArea">
+           <property name="verticalScrollBarPolicy">
+            <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
+           </property>
+           <property name="widgetResizable">
+            <bool>true</bool>
+           </property>
+           <widget class="QWidget" name="scrollAreaWidgetContents">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>182</width>
+              <height>343</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_4">
+             <item>
+              <widget class="QPushButton" name="pushButton_5">
+               <property name="styleSheet">
+                <string notr="true">QPushButton {
+	background-color: rgb(240, 240, 240);
+padding: 5px
+}
+QPushButton:hover {
+background-color:		#D9D9D6
+}
+</string>
+               </property>
+               <property name="text">
+                <string>Projecto</string>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QFrame" name="projecto">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QFrame {
+    background-color: #F9F9F9;
+    border: 1px solid rgb(249, 249, 249);
+    border-radius: 6px;
+    padding: 7px;
+	padding-top: 0px;
+}
+QPushButton {
+text-align: left;
+padding: 8px 5px;
+}</string>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::Shape::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Shadow::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_3">
+                <property name="spacing">
+                 <number>11</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QPushButton" name="novo_arquivo">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>36</height>
+                   </size>
+                  </property>
+                  <property name="toolTip">
+                   <string>Novo</string>
+                  </property>
+                  <property name="text">
+                   <string>Novo Arquivo</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="img/img.qrc">
+                    <normaloff>:/img/novo-arquivo.png</normaloff>:/img/novo-arquivo.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>16</width>
+                    <height>16</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="projectos_recentes">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>36</height>
+                   </size>
+                  </property>
+                  <property name="toolTip">
+                   <string>Projectos Recentes</string>
+                  </property>
+                  <property name="text">
+                   <string>Projectos Recentes</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="img/img.qrc">
+                    <normaloff>:/img/recente.png</normaloff>:/img/recente.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>16</width>
+                    <height>16</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="salvar_projecto">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>36</height>
+                   </size>
+                  </property>
+                  <property name="toolTip">
+                   <string>Salvar Projecto</string>
+                  </property>
+                  <property name="text">
+                   <string>Salvar Projecto</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="img/img.qrc">
+                    <normaloff>:/img/pasta.png</normaloff>:/img/pasta.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>16</width>
+                    <height>16</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="abrir_arquivo">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>36</height>
+                   </size>
+                  </property>
+                  <property name="toolTip">
+                   <string>Abrir Projecto</string>
+                  </property>
+                  <property name="text">
+                   <string>Abrir Arquivo</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="img/img.qrc">
+                    <normaloff>:/img/pasta (1).png</normaloff>:/img/pasta (1).png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>16</width>
+                    <height>16</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="parametros">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>25</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QPushButton {
+	background-color: rgb(240, 240, 240);
+padding: 5px
+}
+QPushButton:hover {
+background-color:		#D9D9D6
+}
+</string>
+               </property>
+               <property name="text">
+                <string>Exportar</string>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QFrame" name="exportar">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">QFrame {
+    background-color: #F9F9F9;
+    border: 1px solid rgb(249, 249, 249);
+    border-radius: 6px;
+    padding: 7px;
+	padding-top:0px;
+}
+
+QPushButton {
+text-align: left;
+padding: 8px 5px;
+}</string>
+               </property>
+               <property name="frameShape">
+                <enum>QFrame::Shape::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Shadow::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_6">
+                <property name="spacing">
+                 <number>11</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <widget class="QPushButton" name="exportar_pdf">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>36</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Exportar em PDF</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="img/img.qrc">
+                    <normaloff>:/img/pdf.png</normaloff>:/img/pdf.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>16</width>
+                    <height>16</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <widget class="QPushButton" name="exportar_csv">
+                  <property name="minimumSize">
+                   <size>
+                    <width>0</width>
+                    <height>36</height>
+                   </size>
+                  </property>
+                  <property name="text">
+                   <string>Exportar em CSV</string>
+                  </property>
+                  <property name="icon">
+                   <iconset resource="img/img.qrc">
+                    <normaloff>:/img/arquivo-csv.png</normaloff>:/img/arquivo-csv.png</iconset>
+                  </property>
+                  <property name="iconSize">
+                   <size>
+                    <width>16</width>
+                    <height>16</height>
+                   </size>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_3">
+               <property name="styleSheet">
+                <string notr="true">	QPushButton {
+background-color: rgb(240, 240, 240);
+padding: 5px
+}
+
+QPushButton:hover {
+background-color:		#D9D9D6
+}</string>
+               </property>
+               <property name="text">
+                <string>Relatório </string>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Orientation::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>225</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="configuracoes">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+text-align: left;
+padding: 8px 2px;
+}</string>
+           </property>
+           <property name="text">
+            <string>Configurações </string>
+           </property>
+           <property name="icon">
+            <iconset resource="img/img.qrc">
+             <normaloff>:/img/settings.png</normaloff>:/img/settings.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="sair_2">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>100</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">QPushButton {
+text-align: left;
+padding: 8px 2px;
+}</string>
+           </property>
+           <property name="text">
+            <string>Sair</string>
+           </property>
+           <property name="icon">
+            <iconset resource="img/img.qrc">
+             <normaloff>:/img/log-out.png</normaloff>:/img/log-out.png</iconset>
+           </property>
+           <property name="iconSize">
+            <size>
+             <width>20</width>
+             <height>20</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+       <widget class="QStackedWidget" name="stackedWidget">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <widget class="QWidget" name="page">
+         <layout class="QVBoxLayout" name="verticalLayout_5">
+          <property name="spacing">
+           <number>0</number>
+          </property>
+          <property name="leftMargin">
+           <number>0</number>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="rightMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <layout class="QHBoxLayout" name="horizontalLayout_2">
+            <property name="spacing">
+             <number>11</number>
+            </property>
+            <item>
+             <widget class="QPushButton" name="fechar_layout_2">
+              <property name="toolTip">
+               <string>Fechar Barra Lateral</string>
+              </property>
+              <property name="styleSheet">
+               <string notr="true">QPushButton {
+background-color: transparent;
+font-family: Roboto;
+font-size:10pt;
+border: none;
+border-radius:2px
+
+}
+
+</string>
+              </property>
+              <property name="text">
+               <string/>
+              </property>
+              <property name="icon">
+               <iconset resource="img/img.qrc">
+                <normaloff>:/img/sidebar-left.png</normaloff>:/img/sidebar-left.png</iconset>
+              </property>
+              <property name="iconSize">
+               <size>
+                <width>26</width>
+                <height>26</height>
+               </size>
+              </property>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBox">
+              <property name="minimumSize">
+               <size>
+                <width>0</width>
+                <height>30</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true"/>
+              </property>
+              <item>
+               <property name="text">
+                <string>Aço Corrugado(chapa ondulada)</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Aço Galvanizado</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Aço Rebitado novo</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Aço Rebitado em uso</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Aço soldado novo</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Aço Soldado em uso</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Aço Soldado com revestimento especial</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Chumbo</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Cimento Amianto</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Cobre</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Concreto com acabamento comum</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Ferro Fundido novo</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Ferro Fundido de 15 a 20 anos de uso</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Ferro Fundido Usado</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Latão</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Ferro Fundido Revestido de Cimento</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Manilha Cerâmica vidrada</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Plástico</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Tijolos em executados</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Vidro</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QComboBox" name="comboBox_3">
+              <property name="styleSheet">
+               <string notr="true"/>
+              </property>
+              <item>
+               <property name="text">
+                <string>PVC</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Polietileno</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Aço galvanizado (novo)</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Ferro fundido (novo)</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Ferro fundido (velho ou corroído)</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Concreto liso</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Concreto rugoso</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Madeira lisa</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Madeira áspera</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Amianto-cimento</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Tubo de chumbo</string>
+               </property>
+              </item>
+              <item>
+               <property name="text">
+                <string>Tubo de vidro</string>
+               </property>
+              </item>
+             </widget>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit_2"/>
+            </item>
+            <item>
+             <widget class="QLineEdit" name="lineEdit_3"/>
+            </item>
+           </layout>
+          </item>
+          <item>
+           <widget class="QWidget" name="widget" native="true">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+        <widget class="QWidget" name="page_2"/>
+       </widget>
+      </widget>
+     </item>
+    </layout>
+   </item>
+  </layout>
+ </widget>
+ <resources>
+  <include location="img/img.qrc"/>
+  <include location="img/img.qrc"/>
+ </resources>
+ <connections/>
+</ui>

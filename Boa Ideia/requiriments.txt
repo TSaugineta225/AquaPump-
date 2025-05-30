@@ -1,0 +1,31 @@
+Interface
+-------	Ui_main
+-------	Ui_config
+------- Ui_perdas
+
+Back-end
+	Relatório
+	Perdas
+	     | potência 
+	main | rendimento
+	     | Pegada Hídrica 
+	Associação 
+	js_principal
+
+meu_projeto/
+├── main.py
+├── config/
+│   └── settings.py
+├── core/
+│   └── calculos.py
+├── gui/
+│   ├── janela_principal.py
+│   └── componentes.py
+├── utils/
+│   └── helpers.py
+├── assets/
+│   └── logo.png
+
+	
+
+

@@ -1,0 +1,394 @@
+class Mapa:
+    def __init__(self):
+        self.html_code =  """<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mapa</title>
+    
+    <!-- Leaflet e plugins -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
+    
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        #map { height: 100vh; width: 100vw; }
+        .menu-popup {
+            position: fixed;
+            background: white;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            min-width: 220px;
+            display: none;
+        }
+        .menu-popup h3 { margin-bottom: 10px; color: #333; }
+        .menu-popup label { display: block; margin: 8px 0 4px; color: #666; }
+        .menu-popup input { width: 100%; }
+        .menu-popup button {
+            margin-top: 10px; padding: 8px;
+            width: 100%; background: #007bff;
+            color: white; border: none; border-radius: 4px;
+            cursor: pointer;
+        }
+        .menu-popup button:hover { background: #0056b3; }
+        .close-btn {
+            position: absolute; top: 5px; right: 5px;
+            background: none; border: none;
+            cursor: pointer; font-size: 16px; color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    
+    <!-- Menu de edição -->
+    <div id="popup-menu" class="menu-popup">
+        <button class="close-btn">&times;</button>
+        <h3>Editar Tubulação</h3>
+        
+        <label for="line-name">Nome da Tubulação:</label>
+        <input type="text" id="line-name" placeholder="Digite um nome">
+
+        <label for="line-color">    Cor:</label>
+        <input type="color" id="line-color" value="#0000ff">
+        
+        <label for="line-width">Espessura (1-10):</label>
+        <input type="number" id="line-width" value="3" min="1" max="10">
+        
+        <button id="apply-style">Aplicar Estilo</button>
+        <button id="delete-line" style="background: #dc3545;">Excluir Linha</button>
+
+    </div>
+
+    <script>
+        const layer_1 = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+    })
+
+        const layer_2 = L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_terrain_background/{z}/{x}/{y}{r}.{ext}', {
+        subdomains: 'abcd',
+        minZoom: 0,
+        maxZoom: 20,
+        ext: 'png',
+        attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+         })
+
+        const CartoDB_Voyager = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+        subdomains: 'abcd',
+        maxZoom: 20
+    });
+    
+        const Esri_WorldStreetMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ, USGS, Intermap, iPC, NRCAN, Esri Japan, METI, Esri China (Hong Kong), Esri (Thailand), TomTom, 2012'
+    });
+
+        const Esri_NatGeoWorldMap = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/NatGeo_World_Map/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; National Geographic, Esri, DeLorme, NAVTEQ, UNEP-WCMC, USGS, NASA, ESA, METI, NRCAN, GEBCO, NOAA, iPC',
+        maxZoom: 19
+    });
+
+        const satelite_Map = L.tileLayer('https://api.maptiler.com/maps/satellite/tiles.json?key=vbrmONyYdDWLs36H5ekP', {
+        attribution: 'https://api.maptiler.com/maps/satellite/{z}/{x}/{y}.jpg?key=vbrmONyYdDWLs36H5ekP'
+    });
+    
+        const GeoportailFrance_orthos = L.tileLayer('https://data.geopf.fr/wmts?REQUEST=GetTile&SERVICE=WMTS&VERSION=1.0.0&STYLE={style}&TILEMATRIXSET=PM&FORMAT={format}&LAYER=ORTHOIMAGERY.ORTHOPHOTOS&TILEMATRIX={z}&TILEROW={y}&TILECOL={x}', {
+        attribution: '<a target="_blank" href="https://www.geoportail.gouv.fr/">Geoportail France</a>',
+        bounds: [[-75, -180], [81, 180]],
+        minZoom: 2,
+        maxZoom: 19,
+        format: 'image/jpeg',
+        style: 'normal'
+    });
+    
+        const SwissFederalGeoportal_SWISSIMAGE = L.tileLayer('https://wmts.geo.admin.ch/1.0.0/ch.swisstopo.swissimage/default/current/3857/{z}/{x}/{y}.jpeg', {
+        attribution: '&copy; <a href="https://www.swisstopo.admin.ch/">swisstopo</a>',
+        minZoom: 2,
+        maxZoom: 19,
+        bounds: [[45.398181, 5.140242], [48.230651, 11.47757]]
+    });
+        const SafeCast = L.tileLayer('https://s3.amazonaws.com/te512.safecast.org/{z}/{x}/{y}.png', {
+        maxZoom: 16,
+        attribution: 'Map data: &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | Map style: &copy; <a href="https://blog.safecast.org/about/">SafeCast</a> (<a href="https://creativecommons.org/licenses/by-sa/3.0/">CC-BY-SA</a>)'
+    });
+        const Stadia_StamenTonerLines = L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_toner_lines/{z}/{x}/{y}{r}.{ext}', {
+        minZoom: 0,
+        maxZoom: 20,
+        attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        ext: 'png'
+    });
+        const Stadia_StamenTerrainLabels = L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_terrain_labels/{z}/{x}/{y}{r}.{ext}', {
+        minZoom: 0,
+        maxZoom: 18,
+        attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        ext: 'png'
+    });
+        const Stadia_StamenTerrainLines = L.tileLayer('https://tiles.stadiamaps.com/tiles/stamen_terrain_lines/{z}/{x}/{y}{r}.{ext}', {
+        minZoom: 0,
+        maxZoom: 18,
+        attribution: '&copy; <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> &copy; <a href="https://www.stamen.com/" target="_blank">Stamen Design</a> &copy; <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> &copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        ext: 'png'
+
+        });
+
+        var map = L.map('map', {
+        center: [-25.9667, 32.5833],
+        zoom: 6,
+        layers: [layer_1]
+    })
+
+
+        const variaveis = {
+        'layer_1': layer_1,
+        'layer_2': layer_2,
+        'CartoDB_Voyager': CartoDB_Voyager,
+        'Esri_WorldStreetMap': Esri_WorldStreetMap,
+        'Esri_NatGeoWorldMap': Esri_NatGeoWorldMap,
+        'satelite_Map': satelite_Map,
+        'GeoportailFrance_orthos': GeoportailFrance_orthos,
+        
+
+    };
+    
+        const overlayers = {
+        'SwissFederalGeoportal_SWISSIMAGE': SwissFederalGeoportal_SWISSIMAGE,
+        'SafeCast': SafeCast,
+        'Stadia_StamenTonerLines': Stadia_StamenTonerLines,
+        'Stadia_StamenTerrainLabels': Stadia_StamenTerrainLabels,
+        'Stadia_StamenTerrainLines': Stadia_StamenTerrainLines
+        
+            
+        }
+    
+        let LayersControl = L.control.layers( variaveis, overlayers, {
+        collapsed:true,
+        position: 'topright'
+
+            }).addTo(map);
+
+
+        map.locate({setView: true, maxZoom: 18})
+
+        let scale_control = L.control.scale({
+        metric: true,
+        imperial: false,
+        maxWidth: 200,
+        position: 'bottomleft'
+        }).addTo(map); 
+
+        let drawnItems = new L.FeatureGroup().addTo(map);
+        let drawControl = new L.Control.Draw({
+            edit: { featureGroup: drawnItems },
+            draw: { polyline: { shapeOptions: { color: '#0000ff', weight: 3 } }, polygon: false, rectangle: false, circle: false, marker: false }
+        }).addTo(map);
+
+        let layer_selecionada = null;
+        
+
+        // Função para obter a elevação
+        async function getElevation(lat, lon) {
+            const url = `https://api.open-elevation.com/api/v1/lookup?locations=${lat},${lon}`;
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                return data.results[0].elevation;
+            } catch (error) {
+                captar_mensagem();
+                return 0;
+            }
+        }
+ 
+        map.on('click', function(e) {
+            let lat = e.latlng.lat;
+            let lon = e.latlng.lng;
+
+            if (firstPoint === null) {
+                getElevation(lat, lon, true); 
+                
+            } else {
+                getElevation(lat, lon, false); 
+                
+            }
+        });
+        let primeiro_ponto = null;
+        
+        map.on('click', function(e) {
+            if (!primeiro_ponto) {
+                primeiro_ponto = e.latlng; 
+                }
+                });            
+
+        async function calcularAltura(layer) {
+            const latlngs = layer.getLatLngs();
+            if (latlngs.length < 2) return 0;
+
+            const start = latlngs[0];
+            const end = latlngs[latlngs.length - 1];
+
+            const startElev = await getElevation(start.lat, start.lng);
+            const endElev = await getElevation(end.lat, end.lng);
+            
+            return Math.abs(endElev - startElev);
+        }
+
+        function formatar_distancia(metros) {
+            return metros >= 1000 ? `${(metros/1000).toFixed(2)} km` : `${metros.toFixed(2)} metros`;
+        }
+
+        function calcular_distancia(layer) {
+            let latlngs = layer.getLatLngs();
+            let distancia_total = 0;
+            for (let i = 1; i < latlngs.length; i++) {
+                distancia_total += latlngs[i - 1].distanceTo(latlngs[i]); 
+            }
+            return distancia_total;
+        }
+
+        function calcular_diametro(flow, tempo) {
+            try {
+                let diametro = 0;
+                if (tempo == 24) {
+                    return diametro = 1.3 * Math.sqrt(flow);
+
+                }
+                else if (tempo < 24) {
+                    return diametro = 1.3 * Math.sqrt(flow) * Math.sqrt(tempo/24);}
+
+                else if (tempo == 0) {
+                    return null
+                }
+                else {
+                    return null
+                }}
+            catch (error) {
+                console.error(error)
+            }
+        }
+
+        function potencia(flow, altura) {
+            if (!altura || isNaN(altura)) return null;
+            return (flow * altura * 1000) / 75;
+        }
+        
+        function calcular_eficiencia (flow, altura, potencia) {
+            try {
+                let eficiencia = (flow * altura * 1000) / potencia;
+                return eficiencia;
+            }
+            catch (error) {
+                console.error(error)
+            }
+        }
+        
+        let valor_1_guardado = null;
+        let valor_2_guardado = null;
+        
+        function receber_dados(valor_1, valor_2) {
+            valor_1_guardado = valor_1;
+            valor_2_guardado = valor_2;
+            
+            drawnItems.eachLayer(async layer => {
+                    await actualizar_popup(layer);
+                });
+                };
+
+        
+        async function actualizar_popup(layer) {
+            const altura = await calcularAltura(layer);
+            const flow = Number(valor_1_guardado);
+            const tempo = Number(valor_2_guardado);
+            const nome = layer.customProperties?.name || "Sem nome";
+            const distancia = formatar_distancia(calcular_distancia(layer));
+            const diametro = calcular_diametro(flow, tempo);
+            const potencia_total = potencia(flow, altura);
+
+            layer.bindPopup(`
+                <strong>${nome}</strong><br>
+                Distância: ${distancia}<br>
+                Diâmetro: ${diametro?.toFixed(2) || 'N/A'}<br>
+                Altura: ${altura?.toFixed(2)}m<br>
+                Potência: ${potencia_total?.toFixed(2)} CV
+            `).openPopup();
+        }
+        
+        function obter_dados_bomba(layer) {
+        
+            const flow = Number(valor_1_guardado);
+            const tempo = Number(valor_2_guardado);
+            const potencia = potencia(flow, altura)
+            let latitude = primeiro_ponto.lat;
+            let longitude = primeiro_ponto.lng;
+            window.dados_bomba.valores_recebidos(potencia, latitude, longitude)
+        }
+
+        map.on(L.Draw.Event.CREATED, async e => {
+            const layer = e.layer;
+            layer.customProperties = { name: "Sem nome" };
+            drawnItems.addLayer(layer);
+            
+            await actualizar_popup(layer);
+            
+            layer.on('click', event => {
+                layer_selecionada = layer;
+                document.getElementById('line-name').value = layer.customProperties.name;
+                document.getElementById('line-color').value = layer.options.color;
+                document.getElementById('line-width').value = layer.options.weight;
+                mostrar_menu_popup(event.originalEvent);
+            });
+        });
+
+        map.on(L.Draw.Event.EDITED, async e => {
+            e.layers.eachLayer(async layer => await actualizar_popup(layer));
+        });
+
+        function mostrar_menu_popup (event) {(`
+                Diâmetro: ${diametro?.toFixed(2) || 'N/A'}<br>
+                Altura: ${altura?.toFixed(2)}m<br>
+                Potência: ${potencia_total?.toFixed(2)} CV
+            `).openPopup();
+            const menu = document.getElementById('popup-menu');
+            menu.style.display = 'block';
+            menu.style.left = `${Math.min(event.clientX, window.innerWidth - menu.offsetWidth - 10)}px`;
+            menu.style.top = `${Math.min(event.clientY, window.innerHeight - menu.offsetHeight - 10)}px`;
+        }
+
+        document.querySelectorAll('.close-btn, #delete-line').forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (btn.id === 'delete-line' && layer_selecionada) {
+                    if (confirm('Deseja excluir esta linha?')) {
+                        drawnItems.removeLayer(layer_selecionada);
+                    }
+                }
+                document.getElementById('popup-menu').style.display = 'none';
+            });
+        });
+
+        document.getElementById('apply-style').addEventListener('click', () => {
+            if (layer_selecionada) {
+                const color = document.getElementById('line-color').value;
+                const weight = Math.min(10, Math.max(1, parseInt(document.getElementById('line-width').value)));
+                const name = document.getElementById('line-name').value;
+
+                layer_selecionada.setStyle({ color, weight });
+                layer_selecionada.customProperties.name = name;  
+                actualizar_popup(layer_selecionada);
+            }
+        });
+
+        map.on('dlbclick', () => document.getElementById('popup-menu').style.display = 'none');
+        console.log({'Diferenca de Altura': diferenca_altura})
+        
+
+
+    </script>
+</body>
+</html>
+"""
+        
