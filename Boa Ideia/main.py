@@ -1,20 +1,34 @@
 import sys
-from PySide6.QtWidgets import QApplication, QWidget, QMenu, QToolButton
-from PySide6.QtGui import QAction, QIcon
+from PySide6.QtWidgets import QApplication, QWidget, QMenu, QToolButton, QMessageBox
+from PySide6.QtGui import QAction, QIcon,QDoubleValidator, QSurfaceFormat
 from PySide6.QtCore import QPoint, QEvent, Qt, QSize
 from qframelesswindow import FramelessWindow, StandardTitleBar
-from PySide6.QtCore import QPropertyAnimation, QEasingCurve
+from PySide6.QtCore import QPropertyAnimation, QEasingCurve, QUrl, Qt, QTimer
+from PySide6.QtWebEngineCore import QWebEnginePage
+from PySide6.QtWebChannel import QWebChannel
 from gui.Ui_main import Ui_Form
 from gui.Loses_main import Dialog_main
+from gui.config_main import Config_main
+from scripts.animações import Animações
+#from scripts.mapa import Mapa
+from scripts.JavaScript import Mapa
+from scripts.web_channel import Dados
+import os
+from scripts.net_var import VerificadorConexaoInternet
 import gui.img_rc
+
+os.environ["QT_QUICK_BACKEND"] = "software"
+os.environ["QT_OPENGL"] = "software"
 
 class MainWindow(FramelessWindow, Ui_Form):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
-        #app.setStyleSheet(qdarkstyle.load_stylesheet(qt_api='pyside6'))
-        # Menus
-        #self.arquivo.setPopupMode(QToolButton.ToolButtonPopupMode.InstantPopup)
+
+        self.animações = Animações()
+        self.web_channel = Dados()
+        self.verificar = VerificadorConexaoInternet()
+
         self.menu = QMenu(self)
         acao_novo = QAction("Novo", self)
         acao_novo.setShortcut("Ctrl+N")
@@ -49,6 +63,10 @@ class MainWindow(FramelessWindow, Ui_Form):
         self.editar = QMenu(self)
         accao_config = QAction("Configurações", self)
         accao_config.setShortcut("Ctrl+E")
+        accao_config.setShortcutContext(Qt.ApplicationShortcut)
+        self.addAction(accao_config)
+        accao_config.triggered.connect(self.janela_config)
+
 
         acao_parametros = QAction("Parâmetros do Projecto", self)
         acao_parametros.setShortcut("Ctrl+P")
@@ -86,72 +104,69 @@ class MainWindow(FramelessWindow, Ui_Form):
         self.relatorio.clicked.connect(lambda:self.rel.popup(self.relatorio.mapToGlobal(self.relatorio.rect().bottomLeft())))
         self.ajuda.clicked.connect(lambda:self.help.popup(self.ajuda.mapToGlobal(self.ajuda.rect().bottomLeft())))
         self.sair_2.clicked.connect(lambda: app.quit())
+        
+        self.abrir_layout_2.clicked.connect(lambda: self.animações.largura(self.frame_3, self.fechar_layout_2))
+        self.fechar_layout_2.clicked.connect(lambda: self.animações.largura(self.frame_3, self.fechar_layout_2)) 
 
-        self.abrir_layout_2.clicked.connect(self.layout_lateral)
-        self.fechar_layout_2.clicked.connect(self.layout_lateral) 
-
-        self.pushButton_5.clicked.connect(self.projecto_aba)
-        self.parametros.clicked.connect(self.exportar_aba)
+        self.pushButton_5.clicked.connect(lambda: self.animações.altura(self.projecto))
+        self.parametros.clicked.connect(lambda: self.animações.altura(self.exportar, altura=100))
+        self.configuracoes.clicked.connect(self.janela_config)
 
         self.pushButton_3.clicked.connect(self.janela_perdas) 
         self.comboBox.setHidden(True)
 
-    def layout_lateral(self):
-        width = self.frame_3.width()
+        validator = QDoubleValidator(0.0, 1000.0, 2)
+        validator.setNotation(QDoubleValidator.StandardNotation)
+        self.lineEdit_2.setValidator(validator)
+        self.lineEdit_3.setValidator(validator)
 
-        if width == 0:
-            newWidth = 280
-            self.fechar_layout_2.setHidden(True)
-        else:
-            newWidth = 0
-            self.fechar_layout_2.setHidden(False)
-        
-        self.animacao = QPropertyAnimation(self.frame_3, b"maximumWidth")
-        self.animacao.setDuration(300) 
-        self.animacao.setStartValue(width)
-        self.animacao.setEndValue(newWidth)
-        self.animacao.setEasingCurve(QEasingCurve.OutCubic)
-        self.animacao.start()
+        # HTML, MAPA
+        self.mapinha = Mapa()
+        mapa = self.mapinha.html_code
+        self.view.setHtml(mapa)
 
-    def exportar_aba(self):
-        height = self.exportar.height()
-        
-        if height == 0:
-            newHeight = 100
+        # Web Channel
+        self.lineEdit_2.textChanged.connect(self.enviar_js)
+        self.lineEdit_3.textChanged.connect(self.enviar_js)
 
-        else:
-            newHeight = 0
-        
-        self.animacao_2 = QPropertyAnimation(self.exportar, b"maximumHeight")
-        self.animacao_2.setDuration(300) 
-        self.animacao_2.setStartValue(height)
-        self.animacao_2.setEndValue(newHeight)
-        self.animacao_2.setEasingCurve(QEasingCurve.OutCubic)
-        self.animacao_2.start()
+        #self._canal = QWebChannel()
+        #self._canal.registerObject()
 
-    def projecto_aba(self):
-        height = self.projecto.height()
+        ## Conexão a internet
+        self.timer = QTimer()
+        self.timer.timeout.connect(self.verificar.verificar)
+        self.timer.start(10000)
+        self.verificar.conexao_finalizada.connect(self.net_var)
+        self.estado_anterior = None 
+        self.verificar.verificar()
 
-        if height == 0:
-            newHeight = 140
-        else:
-            newHeight = 0
-        
-        self.animacao_1 = QPropertyAnimation(self.projecto, b"maximumHeight")
-        self.animacao_1.setDuration(300) 
-        self.animacao_1.setStartValue(height)
-        self.animacao_1.setEndValue(newHeight)
-        self.animacao_1.setEasingCurve(QEasingCurve.OutCubic)
-        self.animacao_1.start()
+    def net_var(self, conectado):
+        if conectado != self.estado_anterior:
+            if conectado:
+                QMessageBox.information(self, "Informação", "Internet Reestabelecida")
+            else:
+                QMessageBox.critical(self, "Aviso", "Ligue-se a uma rede Wi-fi para prosseguir")
+            self.estado_anterior = conectado
+
+    def enviar_js(self):
+        self.web_channel.enviar_dados(self.lineEdit_2, self.lineEdit_3, self.view)
 
     def janela_perdas(self):
         janela = Dialog_main()
         janela.exec()
 
+    def janela_config(self):
+        janela = Config_main()
+        janela.exec()
+    
+    
 
-if __name__ == "__main__": 
-    QApplication.setAttribute(Qt.AA_UseSoftwareOpenGL)
+if __name__ == "__main__":
     app = QApplication(sys.argv)
+
+    with open(r"estilos\estilos.qss", "r") as f:
+        app.setStyleSheet(f.read())
+
     window = MainWindow()
     window.show()
     app.exec()

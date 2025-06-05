@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>427</width>
-    <height>399</height>
+    <width>550</width>
+    <height>427</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,24 +16,30 @@
   <property name="styleSheet">
    <string notr="true">/* --------- QPushButton --------- */
 QPushButton {
-    background-color: rgb(234, 234, 234);
-    font-family: Roboto;
-    font-size: 10pt;
-    border: none;
+    background-color: #f5f5f5;
+    color: #000000;
+    border: 1px solid #c2c2c2;
     border-radius: 3px;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-family: Roboto;
 }
 
 QPushButton:hover {
-    background-color: #D9D9D6;
+    background-color: #e0e0e0;
+    border: 1px solid #e0e0e0;
 }
 
 QPushButton:pressed {
-    background-color: #C0C0C0;
+    background-color: #d0d0d0;
+    border: 1px solid #888888;
 }
 
 QPushButton:checked {
     border-top-left-radius: 0px;
     border-bottom-left-radius: 0px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
     border-left: 3px solid rgb(0, 85, 255);
     background-color: rgb(220, 220, 220);
 }
@@ -294,7 +300,7 @@ QScrollBar::left-arrow:horizontal, QScrollBar::right-arrow:horizontal {
      <item>
       <widget class="QStackedWidget" name="stackedWidget">
        <property name="currentIndex">
-        <number>0</number>
+        <number>1</number>
        </property>
        <widget class="QWidget" name="page">
         <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -942,8 +948,7 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
                </size>
               </property>
               <property name="styleSheet">
-               <string notr="true">
-</string>
+               <string notr="true"/>
               </property>
               <item>
                <property name="text">
@@ -1050,8 +1055,7 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
             <item>
              <widget class="QComboBox" name="comboBox_4">
               <property name="styleSheet">
-               <string notr="true">
-</string>
+               <string notr="true"/>
               </property>
               <item>
                <property name="text">
@@ -1609,22 +1613,7 @@ QScrollBar::add-page:horizontal, QScrollBar::sub-page:horizontal {
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="styleSheet">
-      <string notr="true">QDialog QPushButton {
-    background-color: #0078d7; 
-    color: #ffffff;
-    border: none;
-    border-radius: 5px;
-    padding: 6px 12px;
-    font-size: 14px;
-    font-family: &quot;Segoe UI&quot;;
-}
-QDialog QPushButton:hover {
-    background-color: #005a9e;
-}
-QDialog QPushButton:pressed {
-    background-color: #004578;
-}
-</string>
+      <string notr="true"/>
      </property>
      <property name="orientation">
       <enum>Qt::Orientation::Horizontal</enum>

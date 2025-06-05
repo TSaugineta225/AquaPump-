@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="img">
+    <file>procurar.png</file>
     <file>arrow-right_1.png</file>
     <file>arrow-up.png</file>
     <file>novo-arquivo.png</file>

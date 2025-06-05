@@ -19,67 +19,150 @@ from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QHBoxLayout,
     QLayout, QLineEdit, QPushButton, QScrollArea,
     QSizePolicy, QSpacerItem, QSplitter, QStackedWidget,
     QVBoxLayout, QWidget)
+from PySide6.QtWebEngineWidgets import QWebEngineView
 import gui.img_rc
+
 
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
+            self.view = QWebEngineView()
         Form.resize(892, 601)
-        Form.setStyleSheet(u"/* --------- QLineEdit --------- */\n"
+        Form.setStyleSheet(u"QWidget {\n"
+"    background-color: #f9f9f9;\n"
+"    font-family: Roboto, sans-serif;\n"
+"    font-size: 14px;\n"
+"    color: #333333;\n"
+"}\n"
+"\n"
+"/* --------- QLineEdit --------- */\n"
 "QLineEdit {\n"
 "    background-color: #ffffff;\n"
-"    border: 2px solid #b3b3b3;\n"
-"    border-radius: 5px;\n"
-"    padding: 5px;\n"
+"    border-bottom: 3px solid #cfcfcf;\n"
+"    border-top-left-radius: 3px;\n"
+"    border-bottom-left-radius: 0px;\n"
+"    border-top-right-radius: 3px;\n"
+"    border-bottom-right-radius: 0px;\n"
+"    padding: 6px 8px;\n"
 "    font-size: 14px;\n"
-"    font-family: Roboto;\n"
-"    color: #333333;\n"
+"    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
+"    color: #2b2b2b;\n"
 "}\n"
 "\n"
 "QLineEdit:focus {\n"
-"    border: 2px solid #0078d7;\n"
-"    background-color: #f0f8ff;\n"
+"    border-bottom: 3px solid #95acff;\n"
+"    background-color: #ffffff;\n"
+"    outline: none;\n"
 "}\n"
 "\n"
 "QLineEdit:hover {\n"
-"    border: 2px solid #0078d7;\n"
+"    border-bottom: 3px solid #95acff;\n"
+"	background-color: rgb(252, 252, 252);\n"
 "}\n"
+"\n"
+"\n"
 "/* --------- QComboBox --------- */\n"
 "QComboBox {\n"
-"    background-color: #ffffff;\n"
-"    border: 2px solid #b3b3b3;\n"
-"    border-radius: 5px;\n"
-"    padding: 5px;\n"
-"    font-size: 14px;\n"
-"    font-family: Roboto;\n"
-"    color: #333333;\n"
+"    background-color: #fdfdfd;\n"
+"    border: 2px solid #cfcfcf;\n"
+"    border-radius: 4px;\n"
+"    padding: 6px 8px;\n"
+"    font-"
+                        "size: 14px;\n"
+"    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
+"    color: #2b2b2b;\n"
 "}\n"
 "\n"
 "QComboBox:hover {\n"
-"    border: 2px solid #0078d7;\n"
+"    border: 2px solid #95acff;\n"
+"}\n"
+"\n"
+"QComboBox:focus {\n"
+"    border: 2px solid #95acff;\n"
 "}\n"
 "\n"
 "QComboBox::drop-down {\n"
 "    subcontrol-origin: padding;\n"
 "    subcontrol-position: top right;\n"
-"    width: 25px;\n"
-"    border-left: 1px solid #b3b3b3;\n"
+"    width: 28px;\n"
+"    border-left: 1px solid #d0d0d0;\n"
+"    background-color: transparent;\n"
 "}\n"
 "\n"
 "QComboBox::down-arrow {\n"
 "    image: url(:/img/arrow-down-1.png);\n"
-"    width: 10p"
-                        "x;\n"
+"    width: 10px;\n"
 "    height: 10px;\n"
+"    margin-right: 5px;\n"
 "}\n"
 "\n"
 "QComboBox QAbstractItemView {\n"
 "    background-color: #ffffff;\n"
-"    border: 1px solid #b3b3b3;\n"
-"    border-radius: 5px;\n"
-"    selection-background-color: #0078d7;\n"
+"    border: 1px solid #cfcfcf;\n"
+"    border-radius: 4px;\n"
+"    selection-background-color: #2684ff;\n"
 "    selection-color: #ffffff;\n"
+"    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
+"}\n"
+"\n"
+"\n"
+"QScrollBar:vertical {\n"
+"    background: rgb(231, 231, 231);\n"
+"    width: 12px;\n"
+"    margin:10px 0 10px 0;\n"
+"}\n"
+"\n"
+"QScrol"
+                        "lBar::sub-page:vertical,\n"
+"QScrollBar::add-page:vertical {\n"
+"    background: transparent;\n"
+"}\n"
+"\n"
+"QScrollBar::handle:vertical {\n"
+"    background-color: #c0c0c0;\n"
+"    min-height: 30px;\n"
+"    margin: 2px;\n"
+"    border-radius: 4px;\n"
+"}\n"
+"\n"
+"QScrollBar::handle:vertical:hover {\n"
+"    background-color: #909090;\n"
+"}\n"
+"\n"
+"QScrollBar::sub-line:vertical {\n"
+"    background: #e1e1e1;\n"
+"    height: 12px;\n"
+"    border-radius: 6px 6px 0 0;\n"
+"    subcontrol-position: top;\n"
+"    subcontrol-origin: margin;\n"
+"}\n"
+"\n"
+"QScrollBar::add-line:vertical {\n"
+"    background: #e1e1e1;\n"
+"    height: 12px;\n"
+"    border-radius: 0 0 6px 6px; \n"
+"    subcontrol-position: bottom;\n"
+"    subcontrol-origin: margin;\n"
+"}\n"
+"\n"
+"QScrollBar::add-line:vertical:hover {\n"
+"    background: #c0c0c0;\n"
+"}\n"
+"\n"
+"QScrollBar::up-arrow:vertical {\n"
+"    image:url(:/img/arrow-up_1.png);\n"
+"    width: 8px; \n"
+"    height: 9px;\n"
+"    margin: 2px; \n"
+"}\n"
+"\n"
+"QScrollBar::down-arrow:vertical"
+                        " {\n"
+"    image:url(:/img/arrow-down.png);\n"
+"    width: 8px; \n"
+"    height: 9px; \n"
+"    margin: 2px; \n"
 "}\n"
 "\n"
 "")
@@ -333,24 +416,44 @@ class Ui_Form(object):
 
         self.scrollArea = QScrollArea(self.frame_3)
         self.scrollArea.setObjectName(u"scrollArea")
+        self.scrollArea.setStyleSheet(u"/* --------- QPushButton --------- */\n"
+"QPushButton {\n"
+"    color: #000000;\n"
+"    border: none;\n"
+"    border-radius: 3px;\n"
+"    padding: 6px 12px;\n"
+"    font-size: 14px;\n"
+"    font-family: Roboto;\n"
+"	background-color: rgb(240, 240, 240);\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #e0e0e0;\n"
+"    border: 1px solid #e0e0e0;\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"    background-color: #d0d0d0;\n"
+"    border: 1px solid #888888;\n"
+"}\n"
+"\n"
+"QPushButton:checked {\n"
+"    background-color: rgb(220, 220, 220);\n"
+"}\n"
+"")
         self.scrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 182, 353))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 193, 343))
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.pushButton_5 = QPushButton(self.scrollAreaWidgetContents)
         self.pushButton_5.setObjectName(u"pushButton_5")
-        self.pushButton_5.setStyleSheet(u"QPushButton {\n"
-"	background-color: rgb(240, 240, 240);\n"
-"padding: 5px\n"
-"}\n"
-"QPushButton:hover {\n"
-"background-color:		#D9D9D6\n"
-"}\n"
-"")
+        self.pushButton_5.setStyleSheet(u"")
         self.pushButton_5.setCheckable(True)
+        self.pushButton_5.setAutoDefault(True)
+        self.pushButton_5.setFlat(True)
 
         self.verticalLayout_4.addWidget(self.pushButton_5)
 
@@ -358,8 +461,8 @@ class Ui_Form(object):
         self.projecto.setObjectName(u"projecto")
         self.projecto.setMaximumSize(QSize(16777215, 0))
         self.projecto.setStyleSheet(u"QFrame {\n"
-"    background-color: #F9F9F9;\n"
-"    border: 1px solid rgb(249, 249, 249);\n"
+"    background-color: transparent;\n"
+"    border: none;\n"
 "    border-radius: 6px;\n"
 "    padding: 7px;\n"
 "	padding-top: 0px;\n"
@@ -367,7 +470,38 @@ class Ui_Form(object):
 "QPushButton {\n"
 "text-align: left;\n"
 "padding: 8px 5px;\n"
-"}")
+"}\n"
+"\n"
+"QFrame {\n"
+"    background-color: transparent;\n"
+"    border: 1px solid rgb(249, 249, 249);\n"
+"    border-radius: 6px;\n"
+"    padding: 7px;\n"
+"	padding-top:0px;\n"
+"}\n"
+"\n"
+"/* --------- QPushButton --------- */\n"
+"QPushButton {\n"
+"    background-color: transparent;\n"
+"    color: #000000;\n"
+"    border: none;\n"
+"    border-radius: 3px;\n"
+"    padding: 6px 12px;\n"
+"    font-size: 12px;\n"
+"    font-family: Roboto;\n"
+"	text-align: left;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #e0e0e0;\n"
+"    border: 1px solid #e0e0e0;\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"    background-color: #d0d0d0;\n"
+"    border: 1px solid #888888;\n"
+"}\n"
+"")
         self.projecto.setFrameShape(QFrame.Shape.StyledPanel)
         self.projecto.setFrameShadow(QFrame.Shadow.Raised)
         self.verticalLayout_3 = QVBoxLayout(self.projecto)
@@ -424,15 +558,8 @@ class Ui_Form(object):
         sizePolicy2.setVerticalStretch(0)
         sizePolicy2.setHeightForWidth(self.parametros.sizePolicy().hasHeightForWidth())
         self.parametros.setSizePolicy(sizePolicy2)
-        self.parametros.setMinimumSize(QSize(0, 25))
-        self.parametros.setStyleSheet(u"QPushButton {\n"
-"	background-color: rgb(240, 240, 240);\n"
-"padding: 5px\n"
-"}\n"
-"QPushButton:hover {\n"
-"background-color:		#D9D9D6\n"
-"}\n"
-"")
+        self.parametros.setMinimumSize(QSize(0, 0))
+        self.parametros.setStyleSheet(u"")
         self.parametros.setCheckable(True)
 
         self.verticalLayout_4.addWidget(self.parametros)
@@ -441,7 +568,7 @@ class Ui_Form(object):
         self.exportar.setObjectName(u"exportar")
         self.exportar.setMaximumSize(QSize(16777215, 0))
         self.exportar.setStyleSheet(u"QFrame {\n"
-"    background-color: #F9F9F9;\n"
+"    background-color: transparent;\n"
 "    border: 1px solid rgb(249, 249, 249);\n"
 "    border-radius: 6px;\n"
 "    padding: 7px;\n"
@@ -451,7 +578,29 @@ class Ui_Form(object):
 "QPushButton {\n"
 "text-align: left;\n"
 "padding: 8px 5px;\n"
-"}")
+"}\n"
+"/* --------- QPushButton --------- */\n"
+"QPushButton {\n"
+"    background-color: transparent;\n"
+"    color: #000000;\n"
+"    border: none;\n"
+"    border-radius: 3px;\n"
+"    padding: 6px 12px;\n"
+"    font-size: 12px;\n"
+"    font-family: Roboto;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #e0e0e0;\n"
+"    border: 1px solid #e0e0e0;\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"    background-color: #d0d0d0;\n"
+"    border: 1px solid #888888;\n"
+"}\n"
+"\n"
+"")
         self.exportar.setFrameShape(QFrame.Shape.StyledPanel)
         self.exportar.setFrameShadow(QFrame.Shadow.Raised)
         self.verticalLayout_6 = QVBoxLayout(self.exportar)
@@ -483,14 +632,7 @@ class Ui_Form(object):
 
         self.pushButton_3 = QPushButton(self.scrollAreaWidgetContents)
         self.pushButton_3.setObjectName(u"pushButton_3")
-        self.pushButton_3.setStyleSheet(u"	QPushButton {\n"
-"background-color: rgb(240, 240, 240);\n"
-"padding: 5px\n"
-"}\n"
-"\n"
-"QPushButton:hover {\n"
-"background-color:		#D9D9D6\n"
-"}")
+        self.pushButton_3.setStyleSheet(u"")
         self.pushButton_3.setCheckable(True)
 
         self.verticalLayout_4.addWidget(self.pushButton_3)
@@ -511,7 +653,29 @@ class Ui_Form(object):
         self.configuracoes.setStyleSheet(u"QPushButton {\n"
 "text-align: left;\n"
 "padding: 8px 2px;\n"
-"}")
+"}\n"
+"\n"
+"QPushButton {\n"
+"    background-color: transparent;\n"
+"    color: #000000;\n"
+"    border: none;\n"
+"    border-radius: 3px;\n"
+"    padding: 6px 12px;\n"
+"    font-size: 14px;\n"
+"    font-family: Roboto;\n"
+"	text-align: left;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #e0e0e0;\n"
+"    border: 1px solid #e0e0e0;\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"    background-color: #d0d0d0;\n"
+"    border: 1px solid #888888;\n"
+"}\n"
+"")
         icon9 = QIcon()
         icon9.addFile(u":/img/settings.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.configuracoes.setIcon(icon9)
@@ -527,7 +691,29 @@ class Ui_Form(object):
         self.sair_2.setStyleSheet(u"QPushButton {\n"
 "text-align: left;\n"
 "padding: 8px 2px;\n"
-"}")
+"}\n"
+"\n"
+"QPushButton {\n"
+"    background-color: transparent;\n"
+"    color: #000000;\n"
+"    border: none;\n"
+"    border-radius: 3px;\n"
+"    padding: 6px 12px;\n"
+"    font-size: 14px;\n"
+"    font-family: Roboto;\n"
+"	text-align: left;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #e0e0e0;\n"
+"    border: 1px solid #e0e0e0;\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"    background-color: #d0d0d0;\n"
+"    border: 1px solid #888888;\n"
+"}\n"
+"")
         icon10 = QIcon()
         icon10.addFile(u":/img/log-out.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.sair_2.setIcon(icon10)
@@ -613,6 +799,8 @@ class Ui_Form(object):
 
         self.lineEdit_2 = QLineEdit(self.page)
         self.lineEdit_2.setObjectName(u"lineEdit_2")
+        self.lineEdit_2.setInputMethodHints(Qt.InputMethodHint.ImhDigitsOnly)
+        self.lineEdit_2.setFrame(True)
 
         self.horizontalLayout_2.addWidget(self.lineEdit_2)
 
@@ -623,16 +811,8 @@ class Ui_Form(object):
 
 
         self.verticalLayout_5.addLayout(self.horizontalLayout_2)
-
-        self.widget = QWidget(self.page)
-        self.widget.setObjectName(u"widget")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
-        self.widget.setSizePolicy(sizePolicy3)
-
-        self.verticalLayout_5.addWidget(self.widget)
+    
+        self.verticalLayout_5.addWidget(self.view)
 
         self.stackedWidget.addWidget(self.page)
         self.page_2 = QWidget()
@@ -647,6 +827,9 @@ class Ui_Form(object):
 
 
         self.retranslateUi(Form)
+
+        self.pushButton_5.setDefault(True)
+
 
         QMetaObject.connectSlotsByName(Form)
     # setupUi

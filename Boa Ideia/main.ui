@@ -14,11 +14,21 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">/* --------- QLineEdit --------- */
+   <string notr="true">QWidget {
+    background-color: #f9f9f9;
+    font-family: Roboto, sans-serif;
+    font-size: 14px;
+    color: #333333;
+}
+
+/* --------- QLineEdit --------- */
 QLineEdit {
-    background-color: #fdfdfd;
-    border: 1px solid #cfcfcf;
-    border-radius: 4px;
+    background-color: #ffffff;
+    border-bottom: 3px solid #cfcfcf;
+    border-top-left-radius: 3px;
+    border-bottom-left-radius: 0px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 0px;
     padding: 6px 8px;
     font-size: 14px;
     font-family: &quot;Segoe UI&quot;, Roboto, sans-serif;
@@ -26,20 +36,21 @@ QLineEdit {
 }
 
 QLineEdit:focus {
-    border: 1px solid #2684ff;
+    border-bottom: 3px solid #95acff;
     background-color: #ffffff;
     outline: none;
 }
 
 QLineEdit:hover {
-    border: 1px solid #2684ff;
+    border-bottom: 3px solid #95acff;
+	background-color: rgb(252, 252, 252);
 }
 
 
 /* --------- QComboBox --------- */
 QComboBox {
     background-color: #fdfdfd;
-    border: 1px solid #cfcfcf;
+    border: 2px solid #cfcfcf;
     border-radius: 4px;
     padding: 6px 8px;
     font-size: 14px;
@@ -48,11 +59,11 @@ QComboBox {
 }
 
 QComboBox:hover {
-    border: 1px solid #2684ff;
+    border: 2px solid #95acff;
 }
 
 QComboBox:focus {
-    border: 1px solid #2684ff;
+    border: 2px solid #95acff;
 }
 
 QComboBox::drop-down {
@@ -78,6 +89,64 @@ QComboBox QAbstractItemView {
     selection-color: #ffffff;
     font-family: &quot;Segoe UI&quot;, Roboto, sans-serif;
 }
+
+
+QScrollBar:vertical {
+    background: rgb(231, 231, 231);
+    width: 12px;
+    margin:10px 0 10px 0;
+}
+
+QScrollBar::sub-page:vertical,
+QScrollBar::add-page:vertical {
+    background: transparent;
+}
+
+QScrollBar::handle:vertical {
+    background-color: #c0c0c0;
+    min-height: 30px;
+    margin: 2px;
+    border-radius: 4px;
+}
+
+QScrollBar::handle:vertical:hover {
+    background-color: #909090;
+}
+
+QScrollBar::sub-line:vertical {
+    background: #e1e1e1;
+    height: 12px;
+    border-radius: 6px 6px 0 0;
+    subcontrol-position: top;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::add-line:vertical {
+    background: #e1e1e1;
+    height: 12px;
+    border-radius: 0 0 6px 6px; 
+    subcontrol-position: bottom;
+    subcontrol-origin: margin;
+}
+
+QScrollBar::add-line:vertical:hover {
+    background: #c0c0c0;
+}
+
+QScrollBar::up-arrow:vertical {
+    image:url(:/img/arrow-up_1.png);
+    width: 8px; 
+    height: 9px;
+    margin: 2px; 
+}
+
+QScrollBar::down-arrow:vertical {
+    image:url(:/img/arrow-down.png);
+    width: 8px; 
+    height: 9px; 
+    margin: 2px; 
+}
+
 </string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -464,6 +533,33 @@ border-radius:2px
          </item>
          <item>
           <widget class="QScrollArea" name="scrollArea">
+           <property name="styleSheet">
+            <string notr="true">/* --------- QPushButton --------- */
+QPushButton {
+    color: #000000;
+    border: none;
+    border-radius: 3px;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-family: Roboto;
+	background-color: rgb(240, 240, 240);
+}
+
+QPushButton:hover {
+    background-color: #e0e0e0;
+    border: 1px solid #e0e0e0;
+}
+
+QPushButton:pressed {
+    background-color: #d0d0d0;
+    border: 1px solid #888888;
+}
+
+QPushButton:checked {
+    background-color: rgb(220, 220, 220);
+}
+</string>
+           </property>
            <property name="verticalScrollBarPolicy">
             <enum>Qt::ScrollBarPolicy::ScrollBarAsNeeded</enum>
            </property>
@@ -475,7 +571,7 @@ border-radius:2px
              <rect>
               <x>0</x>
               <y>0</y>
-              <width>182</width>
+              <width>193</width>
               <height>343</height>
              </rect>
             </property>
@@ -483,19 +579,21 @@ border-radius:2px
              <item>
               <widget class="QPushButton" name="pushButton_5">
                <property name="styleSheet">
-                <string notr="true">QPushButton {
-	background-color: rgb(240, 240, 240);
-padding: 5px
-}
-QPushButton:hover {
-background-color:		#D9D9D6
-}
-</string>
+                <string notr="true"/>
                </property>
                <property name="text">
                 <string>Projecto</string>
                </property>
                <property name="checkable">
+                <bool>true</bool>
+               </property>
+               <property name="autoDefault">
+                <bool>true</bool>
+               </property>
+               <property name="default">
+                <bool>true</bool>
+               </property>
+               <property name="flat">
                 <bool>true</bool>
                </property>
               </widget>
@@ -510,8 +608,8 @@ background-color:		#D9D9D6
                </property>
                <property name="styleSheet">
                 <string notr="true">QFrame {
-    background-color: #F9F9F9;
-    border: 1px solid rgb(249, 249, 249);
+    background-color: transparent;
+    border: none;
     border-radius: 6px;
     padding: 7px;
 	padding-top: 0px;
@@ -519,7 +617,38 @@ background-color:		#D9D9D6
 QPushButton {
 text-align: left;
 padding: 8px 5px;
-}</string>
+}
+
+QFrame {
+    background-color: transparent;
+    border: 1px solid rgb(249, 249, 249);
+    border-radius: 6px;
+    padding: 7px;
+	padding-top:0px;
+}
+
+/* --------- QPushButton --------- */
+QPushButton {
+    background-color: transparent;
+    color: #000000;
+    border: none;
+    border-radius: 3px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-family: Roboto;
+	text-align: left;
+}
+
+QPushButton:hover {
+    background-color: #e0e0e0;
+    border: 1px solid #e0e0e0;
+}
+
+QPushButton:pressed {
+    background-color: #d0d0d0;
+    border: 1px solid #888888;
+}
+</string>
                </property>
                <property name="frameShape">
                 <enum>QFrame::Shape::StyledPanel</enum>
@@ -655,18 +784,11 @@ padding: 8px 5px;
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>25</height>
+                 <height>0</height>
                 </size>
                </property>
                <property name="styleSheet">
-                <string notr="true">QPushButton {
-	background-color: rgb(240, 240, 240);
-padding: 5px
-}
-QPushButton:hover {
-background-color:		#D9D9D6
-}
-</string>
+                <string notr="true"/>
                </property>
                <property name="text">
                 <string>Exportar</string>
@@ -686,7 +808,7 @@ background-color:		#D9D9D6
                </property>
                <property name="styleSheet">
                 <string notr="true">QFrame {
-    background-color: #F9F9F9;
+    background-color: transparent;
     border: 1px solid rgb(249, 249, 249);
     border-radius: 6px;
     padding: 7px;
@@ -696,7 +818,29 @@ background-color:		#D9D9D6
 QPushButton {
 text-align: left;
 padding: 8px 5px;
-}</string>
+}
+/* --------- QPushButton --------- */
+QPushButton {
+    background-color: transparent;
+    color: #000000;
+    border: none;
+    border-radius: 3px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-family: Roboto;
+}
+
+QPushButton:hover {
+    background-color: #e0e0e0;
+    border: 1px solid #e0e0e0;
+}
+
+QPushButton:pressed {
+    background-color: #d0d0d0;
+    border: 1px solid #888888;
+}
+
+</string>
                </property>
                <property name="frameShape">
                 <enum>QFrame::Shape::StyledPanel</enum>
@@ -769,14 +913,7 @@ padding: 8px 5px;
              <item>
               <widget class="QPushButton" name="pushButton_3">
                <property name="styleSheet">
-                <string notr="true">	QPushButton {
-background-color: rgb(240, 240, 240);
-padding: 5px
-}
-
-QPushButton:hover {
-background-color:		#D9D9D6
-}</string>
+                <string notr="true"/>
                </property>
                <property name="text">
                 <string>Relatório </string>
@@ -821,7 +958,29 @@ background-color:		#D9D9D6
             <string notr="true">QPushButton {
 text-align: left;
 padding: 8px 2px;
-}</string>
+}
+
+QPushButton {
+    background-color: transparent;
+    color: #000000;
+    border: none;
+    border-radius: 3px;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-family: Roboto;
+	text-align: left;
+}
+
+QPushButton:hover {
+    background-color: #e0e0e0;
+    border: 1px solid #e0e0e0;
+}
+
+QPushButton:pressed {
+    background-color: #d0d0d0;
+    border: 1px solid #888888;
+}
+</string>
            </property>
            <property name="text">
             <string>Configurações </string>
@@ -856,7 +1015,29 @@ padding: 8px 2px;
             <string notr="true">QPushButton {
 text-align: left;
 padding: 8px 2px;
-}</string>
+}
+
+QPushButton {
+    background-color: transparent;
+    color: #000000;
+    border: none;
+    border-radius: 3px;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-family: Roboto;
+	text-align: left;
+}
+
+QPushButton:hover {
+    background-color: #e0e0e0;
+    border: 1px solid #e0e0e0;
+}
+
+QPushButton:pressed {
+    background-color: #d0d0d0;
+    border: 1px solid #888888;
+}
+</string>
            </property>
            <property name="text">
             <string>Sair</string>
@@ -1117,7 +1298,14 @@ border-radius:2px
              </widget>
             </item>
             <item>
-             <widget class="QLineEdit" name="lineEdit_2"/>
+             <widget class="QLineEdit" name="lineEdit_2">
+              <property name="inputMethodHints">
+               <set>Qt::InputMethodHint::ImhDigitsOnly</set>
+              </property>
+              <property name="frame">
+               <bool>true</bool>
+              </property>
+             </widget>
             </item>
             <item>
              <widget class="QLineEdit" name="lineEdit_3"/>
