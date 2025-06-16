@@ -3,7 +3,8 @@ from PySide6.QtCore import QObject, Slot, Signal, QUrl
 
 class Dados():
     def __init__(self):
-        pass
+        self.valor_1 = 0
+        self.valor_2 = 0
 
     def enviar_dados(self, vazão, tempo, pagina):
         self.valor_1 = float(vazão.text())
@@ -15,6 +16,22 @@ class Outros_dados():
     @Slot(str)
     def mensagem_recebida(self, msg):
         QMessageBox.Error(None, "Erro", msg)
+
+class Relatório (QObject):
+    def __init__(self):
+        super().__init__()
+        self.vazão = 0
+        self.tempo = 0
+        self.potencia = 0
+        self.diâmetro = 0
+        self.latitude = 0
+        self.longitude = 0
+        
+    @Slot(float, float, float)
+    def valores_recebidos(self, flow, tempo, diâmetro):
+        self.vazão = float(flow)
+        self.tempo = float(tempo)
+        self.diâmetro = float(diâmetro)
 
 
 

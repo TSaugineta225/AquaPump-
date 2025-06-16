@@ -1,20 +1,21 @@
 import sys
-from PySide6.QtWidgets import QApplication, QWidget, QMenu, QToolButton, QMessageBox
+from PySide6.QtWidgets import QApplication, QWidget, QMenu, QToolButton, QMessageBox, QFileDialog
 from PySide6.QtGui import QAction, QIcon,QDoubleValidator, QSurfaceFormat
 from PySide6.QtCore import QPoint, QEvent, Qt, QSize
 from qframelesswindow import FramelessWindow, StandardTitleBar
 from PySide6.QtCore import QPropertyAnimation, QEasingCurve, QUrl, Qt, QTimer
-from PySide6.QtWebEngineCore import QWebEnginePage
+from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineProfile
 from PySide6.QtWebChannel import QWebChannel
 from gui.Ui_main import Ui_Form
 from gui.Loses_main import Dialog_main
 from gui.config_main import Config_main
 from scripts.animações import Animações
-#from scripts.mapa import Mapa
 from scripts.JavaScript import Mapa
-from scripts.web_channel import Dados
-import os
-from scripts.net_var import VerificadorConexaoInternet
+from scripts.web_channel import Dados, Relatório
+from scripts.pdf_gen import PDF
+from scripts.graficos import Graficos
+from scripts.arquivos import Arquivos
+import os, json
 import gui.img_rc
 
 os.environ["QT_QUICK_BACKEND"] = "software"
@@ -25,10 +26,23 @@ class MainWindow(FramelessWindow, Ui_Form):
         super().__init__(parent)
         self.setupUi(self)
 
-        self.animações = Animações()
-        self.web_channel = Dados()
-        self.verificar = VerificadorConexaoInternet()
 
+        self.animações = Animações()
+        self.dados_bomba = Relatório()
+        self.dados = Dados()
+        self.relatorio_pdf = PDF()
+        self.arquivos = Arquivos()
+       
+       # WebChannel e Permissões
+        self._canal = QWebChannel()
+        self.page = QWebEnginePage(self)
+        self.view.setPage(self.page)
+        self.page.setWebChannel(self._canal)
+        self._canal.registerObject("dados_bomba", self.dados_bomba)
+        self.lineEdit_2.textChanged.connect(self.enviar_js)
+        self.lineEdit_3.textChanged.connect(self.enviar_js)
+        self.page.featurePermissionRequested.connect(self.permissao)
+        
         self.menu = QMenu(self)
         acao_novo = QAction("Novo", self)
         acao_novo.setShortcut("Ctrl+N")
@@ -107,49 +121,60 @@ class MainWindow(FramelessWindow, Ui_Form):
         
         self.abrir_layout_2.clicked.connect(lambda: self.animações.largura(self.frame_3, self.fechar_layout_2))
         self.fechar_layout_2.clicked.connect(lambda: self.animações.largura(self.frame_3, self.fechar_layout_2)) 
+        self.dimensionar_2.clicked.connect(lambda: self.animações.largura(self.janelas, largura_alvo=450))
 
         self.pushButton_5.clicked.connect(lambda: self.animações.altura(self.projecto))
         self.parametros.clicked.connect(lambda: self.animações.altura(self.exportar, altura=100))
         self.configuracoes.clicked.connect(self.janela_config)
+        self.exportar_pdf.clicked.connect(self.gerar_pdf)
+        #self.mapa_2.clicked.connect(self.carregar_arquivo)
 
         self.pushButton_3.clicked.connect(self.janela_perdas) 
         self.comboBox.setHidden(True)
 
-        validator = QDoubleValidator(0.0, 1000.0, 2)
+        validator = QDoubleValidator(0.0, 1000.0, 3)
         validator.setNotation(QDoubleValidator.StandardNotation)
         self.lineEdit_2.setValidator(validator)
         self.lineEdit_3.setValidator(validator)
 
         # HTML, MAPA
         self.mapinha = Mapa()
-        mapa = self.mapinha.html_code
-        self.view.setHtml(mapa)
-
-        # Web Channel
-        self.lineEdit_2.textChanged.connect(self.enviar_js)
-        self.lineEdit_3.textChanged.connect(self.enviar_js)
-
-        #self._canal = QWebChannel()
-        #self._canal.registerObject()
-
-        ## Conexão a internet
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.verificar.verificar)
-        self.timer.start(10000)
-        self.verificar.conexao_finalizada.connect(self.net_var)
-        self.estado_anterior = None 
-        self.verificar.verificar()
-
-    def net_var(self, conectado):
-        if conectado != self.estado_anterior:
-            if conectado:
-                QMessageBox.information(self, "Informação", "Internet Reestabelecida")
-            else:
-                QMessageBox.critical(self, "Aviso", "Ligue-se a uma rede Wi-fi para prosseguir")
-            self.estado_anterior = conectado
+        mapa = self.mapinha.html_code 
+        self.page.setHtml(mapa)    
 
     def enviar_js(self):
-        self.web_channel.enviar_dados(self.lineEdit_2, self.lineEdit_3, self.view)
+        self.dados.enviar_dados(self.lineEdit_2, self.lineEdit_3, self.view)
+
+    def gerar_pdf(self):
+        try:
+            self.relatorio_pdf.adicionar_titulos()
+            self.relatorio_pdf.adicionar_conteudo(self.dados_bomba.vazão, self.dados_bomba.tempo, self.dados_bomba.diâmetro)
+            self.relatorio_pdf.gravar_pdf()
+        except Exception as e:
+            QMessageBox.critical(self, 'ERRO', f'Erro ao gerar pdf devido a {e}')
+    
+    def permissao(self, url, feature):
+        if feature == QWebEnginePage.Feature.Geolocation:
+            resposta = QMessageBox.question(
+                self,
+                "Permissão de Localização",
+                "Este site deseja acessar sua localização. Permitir?",
+                QMessageBox.Yes | QMessageBox.No
+            )
+
+            if resposta == QMessageBox.Yes:
+                self.page.setFeaturePermission(url, feature, QWebEnginePage.PermissionGrantedByUser)
+            else:
+                self.page.setFeaturePermission(url, feature, QWebEnginePage.PermissionDeniedByUser)
+
+    def plotar_gráfico(self):
+        self.gráfico = Graficos(self.dados_bomba.vazão)
+        self.grafico.calculo_K()
+        self.grafico.curva_car()
+        self.grafico.configuracoes_grafico()
+        self.grafico.plotar()
+
+        self.chart_view.setChart(self.grafico.chart())
 
     def janela_perdas(self):
         janela = Dialog_main()

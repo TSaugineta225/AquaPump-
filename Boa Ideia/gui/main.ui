@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>892</width>
+    <width>893</width>
     <height>601</height>
    </rect>
   </property>
@@ -24,11 +24,8 @@
 /* --------- QLineEdit --------- */
 QLineEdit {
     background-color: #ffffff;
-    border-bottom: 3px solid #cfcfcf;
-    border-top-left-radius: 3px;
-    border-bottom-left-radius: 0px;
-    border-top-right-radius: 3px;
-    border-bottom-right-radius: 0px;
+    border: 2px solid #cfcfcf;
+    border-radius: 4px;
     padding: 6px 8px;
     font-size: 14px;
     font-family: &quot;Segoe UI&quot;, Roboto, sans-serif;
@@ -36,13 +33,13 @@ QLineEdit {
 }
 
 QLineEdit:focus {
-    border-bottom: 3px solid #95acff;
+    border: 2px solid #95acff;
     background-color: #ffffff;
     outline: none;
 }
 
 QLineEdit:hover {
-    border-bottom: 3px solid #95acff;
+    border: 2px solid #95acff;
 	background-color: rgb(252, 252, 252);
 }
 
@@ -147,6 +144,39 @@ QScrollBar::down-arrow:vertical {
     margin: 2px; 
 }
 
+    QTabWidget::pane {
+        background: #F5F5F5;
+        border-radius: 1px;
+
+}
+QTabBar::tab {
+        background: #E0E0E0;
+         font-family: &quot;Segoe UI&quot;, Roboto, sans-serif;
+        padding:2px 5px;
+        border-radius: 2px;
+	font-size: 14px;
+        margin-right: 2px; 
+        min-width: 20px; }
+
+    QTabBar::tab:selected {
+        color: black;
+        font-weight: bold;
+        border-bottom:2px solid rgb(0, 85, 255);
+    }
+
+    QTabBar::tab:!selected {
+        background: #E0E0E0;
+
+        color: #757575;
+    }
+
+    QTabBar::tab:hover {
+	color: rgb(0, 0, 0);
+
+    }
+
+
+
 </string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
@@ -166,7 +196,8 @@ background-color: transparent;
 font-family: Roboto;
 font-size:10pt;
 border: none;
-border-radius:3px
+border-radius:3px;
+padding:0px
 
 }
 
@@ -471,8 +502,8 @@ border-radius:2px
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="img/img.qrc">
-               <normaloff>:/img/sidebar-left.png</normaloff>:/img/sidebar-left.png</iconset>
+              <iconset resource="../img/img.qrc">
+               <normaloff>:/img/left_panel_close_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</normaloff>:/img/left_panel_close_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</iconset>
              </property>
              <property name="iconSize">
               <size>
@@ -501,7 +532,7 @@ border-radius:2px
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="img/img.qrc">
+              <iconset resource="../img/img.qrc">
                <normaloff>:/img/scale-3d.png</normaloff>:/img/scale-3d.png</iconset>
              </property>
              <property name="iconSize">
@@ -518,7 +549,7 @@ border-radius:2px
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="img/img.qrc">
+              <iconset resource="../img/img.qrc">
                <normaloff>:/img/mind-map.png</normaloff>:/img/mind-map.png</iconset>
              </property>
              <property name="iconSize">
@@ -572,7 +603,7 @@ QPushButton:checked {
               <x>0</x>
               <y>0</y>
               <width>193</width>
-              <height>343</height>
+              <height>352</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -681,7 +712,7 @@ QPushButton:pressed {
                    <string>Novo Arquivo</string>
                   </property>
                   <property name="icon">
-                   <iconset resource="img/img.qrc">
+                   <iconset resource="../img/img.qrc">
                     <normaloff>:/img/novo-arquivo.png</normaloff>:/img/novo-arquivo.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -707,7 +738,7 @@ QPushButton:pressed {
                    <string>Projectos Recentes</string>
                   </property>
                   <property name="icon">
-                   <iconset resource="img/img.qrc">
+                   <iconset resource="../img/img.qrc">
                     <normaloff>:/img/recente.png</normaloff>:/img/recente.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -733,7 +764,7 @@ QPushButton:pressed {
                    <string>Salvar Projecto</string>
                   </property>
                   <property name="icon">
-                   <iconset resource="img/img.qrc">
+                   <iconset resource="../img/img.qrc">
                     <normaloff>:/img/pasta.png</normaloff>:/img/pasta.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -759,7 +790,7 @@ QPushButton:pressed {
                    <string>Abrir Arquivo</string>
                   </property>
                   <property name="icon">
-                   <iconset resource="img/img.qrc">
+                   <iconset resource="../img/img.qrc">
                     <normaloff>:/img/pasta (1).png</normaloff>:/img/pasta (1).png</iconset>
                   </property>
                   <property name="iconSize">
@@ -873,7 +904,7 @@ QPushButton:pressed {
                    <string>Exportar em PDF</string>
                   </property>
                   <property name="icon">
-                   <iconset resource="img/img.qrc">
+                   <iconset resource="../img/img.qrc">
                     <normaloff>:/img/pdf.png</normaloff>:/img/pdf.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -896,7 +927,7 @@ QPushButton:pressed {
                    <string>Exportar em CSV</string>
                   </property>
                   <property name="icon">
-                   <iconset resource="img/img.qrc">
+                   <iconset resource="../img/img.qrc">
                     <normaloff>:/img/arquivo-csv.png</normaloff>:/img/arquivo-csv.png</iconset>
                   </property>
                   <property name="iconSize">
@@ -986,8 +1017,8 @@ QPushButton:pressed {
             <string>Configurações </string>
            </property>
            <property name="icon">
-            <iconset resource="img/img.qrc">
-             <normaloff>:/img/settings.png</normaloff>:/img/settings.png</iconset>
+            <iconset resource="../img/img.qrc">
+             <normaloff>:/img/settings_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</normaloff>:/img/settings_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</iconset>
            </property>
            <property name="iconSize">
             <size>
@@ -1043,7 +1074,7 @@ QPushButton:pressed {
             <string>Sair</string>
            </property>
            <property name="icon">
-            <iconset resource="img/img.qrc">
+            <iconset resource="../img/img.qrc">
              <normaloff>:/img/log-out.png</normaloff>:/img/log-out.png</iconset>
            </property>
            <property name="iconSize">
@@ -1106,7 +1137,7 @@ border-radius:2px
                <string/>
               </property>
               <property name="icon">
-               <iconset resource="img/img.qrc">
+               <iconset resource="../img/img.qrc">
                 <normaloff>:/img/sidebar-left.png</normaloff>:/img/sidebar-left.png</iconset>
               </property>
               <property name="iconSize">
@@ -1320,6 +1351,214 @@ border-radius:2px
               <verstretch>0</verstretch>
              </sizepolicy>
             </property>
+            <layout class="QVBoxLayout" name="verticalLayout_7">
+             <property name="leftMargin">
+              <number>4</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <layout class="QHBoxLayout" name="horizontalLayout_5">
+               <item>
+                <widget class="QFrame" name="frame_2">
+                 <property name="styleSheet">
+                  <string notr="true">background-color: rgb(85, 170, 127);</string>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::Shape::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Shadow::Raised</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QFrame" name="janelas">
+                 <property name="maximumSize">
+                  <size>
+                   <width>0</width>
+                   <height>16777215</height>
+                  </size>
+                 </property>
+                 <property name="frameShape">
+                  <enum>QFrame::Shape::StyledPanel</enum>
+                 </property>
+                 <property name="frameShadow">
+                  <enum>QFrame::Shadow::Raised</enum>
+                 </property>
+                 <layout class="QVBoxLayout" name="verticalLayout_8">
+                  <property name="leftMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="topMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>0</number>
+                  </property>
+                  <property name="bottomMargin">
+                   <number>0</number>
+                  </property>
+                  <item>
+                   <widget class="QStackedWidget" name="janelaas_direita">
+                    <widget class="QWidget" name="page_3">
+                     <layout class="QVBoxLayout" name="verticalLayout_9">
+                      <item>
+                       <layout class="QHBoxLayout" name="horizontalLayout_6">
+                        <item>
+                         <widget class="QPushButton" name="curva">
+                          <property name="minimumSize">
+                           <size>
+                            <width>0</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="styleSheet">
+                           <string notr="true">QPushButton {
+	background-color: rgb(240, 240, 240);
+padding:5px;
+border-bottom: 2px solid #cfcfcf;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 0px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 0px;
+
+}
+QPushButton:hover {
+    background-color: #e0e0e0;
+    border: 1px solid #e0e0e0;
+}
+QPushButton:checked {
+border-bottom: 2px solid  rgb(85, 85, 255);
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 0px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 0px;
+
+}
+</string>
+                          </property>
+                          <property name="text">
+                           <string>Curvas de Bomba</string>
+                          </property>
+                          <property name="checkable">
+                           <bool>true</bool>
+                          </property>
+                          <property name="checked">
+                           <bool>true</bool>
+                          </property>
+                          <property name="autoExclusive">
+                           <bool>true</bool>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="associacao">
+                          <property name="minimumSize">
+                           <size>
+                            <width>80</width>
+                            <height>25</height>
+                           </size>
+                          </property>
+                          <property name="styleSheet">
+                           <string notr="true">QPushButton {
+	background-color: rgb(240, 240, 240);
+padding:5px;
+border-bottom: 2px solid #cfcfcf;
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 0px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 0px;
+
+}
+QPushButton:hover {
+    background-color: #e0e0e0;
+    border: 1px solid #e0e0e0;
+}
+QPushButton:checked {
+border-bottom: 2px solid  rgb(85, 85, 255);
+    border-top-left-radius: 5px;
+    border-bottom-left-radius: 0px;
+    border-top-right-radius: 5px;
+    border-bottom-right-radius: 0px;
+
+}
+
+</string>
+                          </property>
+                          <property name="text">
+                           <string>Associação </string>
+                          </property>
+                          <property name="checkable">
+                           <bool>true</bool>
+                          </property>
+                          <property name="autoExclusive">
+                           <bool>true</bool>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <spacer name="horizontalSpacer_3">
+                          <property name="orientation">
+                           <enum>Qt::Orientation::Horizontal</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>40</width>
+                            <height>20</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                        <item>
+                         <widget class="QPushButton" name="definicoes">
+                          <property name="toolTip">
+                           <string>Definições de Gráfico</string>
+                          </property>
+                          <property name="styleSheet">
+                           <string notr="true">QPushButton {
+background-color: transparent;
+font-family: Roboto;
+font-size:10pt;
+border: none;
+border-radius:2px
+
+}
+
+</string>
+                          </property>
+                          <property name="text">
+                           <string/>
+                          </property>
+                          <property name="icon">
+                           <iconset resource="../img/img.qrc">
+                            <normaloff>:/img/settings_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</normaloff>:/img/settings_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</iconset>
+                          </property>
+                          <property name="iconSize">
+                           <size>
+                            <width>24</width>
+                            <height>24</height>
+                           </size>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </item>
+                      <item>
+                       <widget class="QWidget" name="widget_2" native="true"/>
+                      </item>
+                     </layout>
+                    </widget>
+                    <widget class="QWidget" name="page_4"/>
+                   </widget>
+                  </item>
+                 </layout>
+                </widget>
+               </item>
+              </layout>
+             </item>
+            </layout>
            </widget>
           </item>
          </layout>
@@ -1333,8 +1572,7 @@ border-radius:2px
   </layout>
  </widget>
  <resources>
-  <include location="img/img.qrc"/>
-  <include location="img/img.qrc"/>
+  <include location="../img/img.qrc"/>
  </resources>
  <connections/>
 </ui>

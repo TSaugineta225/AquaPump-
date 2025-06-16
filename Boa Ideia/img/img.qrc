@@ -1,5 +1,12 @@
 <RCC>
   <qresource prefix="img">
+    <file>left_panel_close_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</file>
+    <file>left_panel_open_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</file>
+    <file>settings_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</file>
+    <file>side_navigation_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</file>
+    <file>width_wide_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</file>
+    <file>right_panel_close.png</file>
+    <file>right_panel_open.png</file>
     <file>procurar.png</file>
     <file>arrow-right_1.png</file>
     <file>arrow-up.png</file>

@@ -19,16 +19,17 @@ from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QHBoxLayout,
     QLayout, QLineEdit, QPushButton, QScrollArea,
     QSizePolicy, QSpacerItem, QSplitter, QStackedWidget,
     QVBoxLayout, QWidget)
+from PySide6.QtCharts import  QChartView
 from PySide6.QtWebEngineWidgets import QWebEngineView
 import gui.img_rc
-
 
 class Ui_Form(object):
     def setupUi(self, Form):
         if not Form.objectName():
             Form.setObjectName(u"Form")
-            self.view = QWebEngineView()
-        Form.resize(892, 601)
+        Form.resize(893, 601)
+        self.view = QWebEngineView()
+        self.chart_view = QChartView()
         Form.setStyleSheet(u"QWidget {\n"
 "    background-color: #f9f9f9;\n"
 "    font-family: Roboto, sans-serif;\n"
@@ -39,11 +40,8 @@ class Ui_Form(object):
 "/* --------- QLineEdit --------- */\n"
 "QLineEdit {\n"
 "    background-color: #ffffff;\n"
-"    border-bottom: 3px solid #cfcfcf;\n"
-"    border-top-left-radius: 3px;\n"
-"    border-bottom-left-radius: 0px;\n"
-"    border-top-right-radius: 3px;\n"
-"    border-bottom-right-radius: 0px;\n"
+"    border: 2px solid #cfcfcf;\n"
+"    border-radius: 4px;\n"
 "    padding: 6px 8px;\n"
 "    font-size: 14px;\n"
 "    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
@@ -51,13 +49,13 @@ class Ui_Form(object):
 "}\n"
 "\n"
 "QLineEdit:focus {\n"
-"    border-bottom: 3px solid #95acff;\n"
+"    border: 2px solid #95acff;\n"
 "    background-color: #ffffff;\n"
 "    outline: none;\n"
 "}\n"
 "\n"
 "QLineEdit:hover {\n"
-"    border-bottom: 3px solid #95acff;\n"
+"    border: 2px solid #95acff;\n"
 "	background-color: rgb(252, 252, 252);\n"
 "}\n"
 "\n"
@@ -68,14 +66,14 @@ class Ui_Form(object):
 "    border: 2px solid #cfcfcf;\n"
 "    border-radius: 4px;\n"
 "    padding: 6px 8px;\n"
-"    font-"
-                        "size: 14px;\n"
+"    font-size: 14px;\n"
 "    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
 "    color: #2b2b2b;\n"
 "}\n"
 "\n"
 "QComboBox:hover {\n"
-"    border: 2px solid #95acff;\n"
+"    border: 2px solid"
+                        " #95acff;\n"
 "}\n"
 "\n"
 "QComboBox:focus {\n"
@@ -113,14 +111,14 @@ class Ui_Form(object):
 "    margin:10px 0 10px 0;\n"
 "}\n"
 "\n"
-"QScrol"
-                        "lBar::sub-page:vertical,\n"
+"QScrollBar::sub-page:vertical,\n"
 "QScrollBar::add-page:vertical {\n"
 "    background: transparent;\n"
 "}\n"
 "\n"
 "QScrollBar::handle:vertical {\n"
-"    background-color: #c0c0c0;\n"
+"    ba"
+                        "ckground-color: #c0c0c0;\n"
 "    min-height: 30px;\n"
 "    margin: 2px;\n"
 "    border-radius: 4px;\n"
@@ -157,13 +155,46 @@ class Ui_Form(object):
 "    margin: 2px; \n"
 "}\n"
 "\n"
-"QScrollBar::down-arrow:vertical"
-                        " {\n"
+"QScrollBar::down-arrow:vertical {\n"
 "    image:url(:/img/arrow-down.png);\n"
 "    width: 8px; \n"
 "    height: 9px; \n"
 "    margin: 2px; \n"
 "}\n"
+"\n"
+"    QTabWidget::pane {\n"
+""
+                        "        background: #F5F5F5;\n"
+"        border-radius: 1px;\n"
+"\n"
+"}\n"
+"QTabBar::tab {\n"
+"        background: #E0E0E0;\n"
+"         font-family: \"Segoe UI\", Roboto, sans-serif;\n"
+"        padding:2px 5px;\n"
+"        border-radius: 2px;\n"
+"	font-size: 14px;\n"
+"        margin-right: 2px; \n"
+"        min-width: 20px; }\n"
+"\n"
+"    QTabBar::tab:selected {\n"
+"        color: black;\n"
+"        font-weight: bold;\n"
+"        border-bottom:2px solid rgb(0, 85, 255);\n"
+"    }\n"
+"\n"
+"    QTabBar::tab:!selected {\n"
+"        background: #E0E0E0;\n"
+"\n"
+"        color: #757575;\n"
+"    }\n"
+"\n"
+"    QTabBar::tab:hover {\n"
+"	color: rgb(0, 0, 0);\n"
+"\n"
+"    }\n"
+"\n"
+"\n"
 "\n"
 "")
         self.verticalLayout = QVBoxLayout(Form)
@@ -182,7 +213,8 @@ class Ui_Form(object):
 "font-family: Roboto;\n"
 "font-size:10pt;\n"
 "border: none;\n"
-"border-radius:3px\n"
+"border-radius:3px;\n"
+"padding:0px\n"
 "\n"
 "}\n"
 "\n"
@@ -383,7 +415,7 @@ class Ui_Form(object):
 "\n"
 "")
         icon = QIcon()
-        icon.addFile(u":/img/sidebar-left.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon.addFile(u":/img/left_panel_close_67dp_999999_FILL1_wght400_GRAD0_opsz48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.abrir_layout_2.setIcon(icon)
         self.abrir_layout_2.setIconSize(QSize(26, 26))
 
@@ -445,7 +477,7 @@ class Ui_Form(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 193, 343))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 193, 352))
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.pushButton_5 = QPushButton(self.scrollAreaWidgetContents)
@@ -677,7 +709,7 @@ class Ui_Form(object):
 "}\n"
 "")
         icon9 = QIcon()
-        icon9.addFile(u":/img/settings.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon9.addFile(u":/img/settings_67dp_999999_FILL1_wght400_GRAD0_opsz48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.configuracoes.setIcon(icon9)
         self.configuracoes.setIconSize(QSize(20, 20))
 
@@ -747,7 +779,9 @@ class Ui_Form(object):
 "}\n"
 "\n"
 "")
-        self.fechar_layout_2.setIcon(icon)
+        icon11 = QIcon()
+        icon11.addFile(u":/img/sidebar-left.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.fechar_layout_2.setIcon(icon11)
         self.fechar_layout_2.setIconSize(QSize(26, 26))
 
         self.horizontalLayout_2.addWidget(self.fechar_layout_2)
@@ -811,8 +845,143 @@ class Ui_Form(object):
 
 
         self.verticalLayout_5.addLayout(self.horizontalLayout_2)
-    
-        self.verticalLayout_5.addWidget(self.view)
+
+        self.widget = QWidget(self.page)
+        self.widget.setObjectName(u"widget")
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
+        self.widget.setSizePolicy(sizePolicy3)
+        self.verticalLayout_7 = QVBoxLayout(self.widget)
+        self.verticalLayout_7.setObjectName(u"verticalLayout_7")
+        self.verticalLayout_7.setContentsMargins(4, -1, -1, 0)
+        self.horizontalLayout_5 = QHBoxLayout()
+        self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
+
+        self.horizontalLayout_5.addWidget(self.view)
+
+        self.janelas = QFrame(self.widget)
+        self.janelas.setObjectName(u"janelas")
+        self.janelas.setMaximumSize(QSize(0, 16777215))
+        self.janelas.setFrameShape(QFrame.Shape.StyledPanel)
+        self.janelas.setFrameShadow(QFrame.Shadow.Raised)
+        self.verticalLayout_8 = QVBoxLayout(self.janelas)
+        self.verticalLayout_8.setObjectName(u"verticalLayout_8")
+        self.verticalLayout_8.setContentsMargins(0, 0, 0, 0)
+        self.janelaas_direita = QStackedWidget(self.janelas)
+        self.janelaas_direita.setObjectName(u"janelaas_direita")
+        self.page_3 = QWidget()
+        self.page_3.setObjectName(u"page_3")
+        self.verticalLayout_9 = QVBoxLayout(self.page_3)
+        self.verticalLayout_9.setObjectName(u"verticalLayout_9")
+        self.horizontalLayout_6 = QHBoxLayout()
+        self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
+        self.curva = QPushButton(self.page_3)
+        self.curva.setObjectName(u"curva")
+        self.curva.setMinimumSize(QSize(0, 25))
+        self.curva.setStyleSheet(u"QPushButton {\n"
+"	background-color: rgb(240, 240, 240);\n"
+"padding:5px;\n"
+"border-bottom: 2px solid #cfcfcf;\n"
+"    border-top-left-radius: 5px;\n"
+"    border-bottom-left-radius: 0px;\n"
+"    border-top-right-radius: 5px;\n"
+"    border-bottom-right-radius: 0px;\n"
+"\n"
+"}\n"
+"QPushButton:hover {\n"
+"    background-color: #e0e0e0;\n"
+"    border: 1px solid #e0e0e0;\n"
+"}\n"
+"QPushButton:checked {\n"
+"border-bottom: 2px solid  rgb(85, 85, 255);\n"
+"    border-top-left-radius: 5px;\n"
+"    border-bottom-left-radius: 0px;\n"
+"    border-top-right-radius: 5px;\n"
+"    border-bottom-right-radius: 0px;\n"
+"\n"
+"}\n"
+"")
+        self.curva.setCheckable(True)
+        self.curva.setChecked(True)
+        self.curva.setAutoExclusive(True)
+
+        self.horizontalLayout_6.addWidget(self.curva)
+
+        self.associacao = QPushButton(self.page_3)
+        self.associacao.setObjectName(u"associacao")
+        self.associacao.setMinimumSize(QSize(80, 25))
+        self.associacao.setStyleSheet(u"QPushButton {\n"
+"	background-color: rgb(240, 240, 240);\n"
+"padding:5px;\n"
+"border-bottom: 2px solid #cfcfcf;\n"
+"    border-top-left-radius: 5px;\n"
+"    border-bottom-left-radius: 0px;\n"
+"    border-top-right-radius: 5px;\n"
+"    border-bottom-right-radius: 0px;\n"
+"\n"
+"}\n"
+"QPushButton:hover {\n"
+"    background-color: #e0e0e0;\n"
+"    border: 1px solid #e0e0e0;\n"
+"}\n"
+"QPushButton:checked {\n"
+"border-bottom: 2px solid  rgb(85, 85, 255);\n"
+"    border-top-left-radius: 5px;\n"
+"    border-bottom-left-radius: 0px;\n"
+"    border-top-right-radius: 5px;\n"
+"    border-bottom-right-radius: 0px;\n"
+"\n"
+"}\n"
+"\n"
+"")
+        self.associacao.setCheckable(True)
+        self.associacao.setAutoExclusive(True)
+
+        self.horizontalLayout_6.addWidget(self.associacao)
+
+        self.horizontalSpacer_3 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_6.addItem(self.horizontalSpacer_3)
+
+        self.definicoes = QPushButton(self.page_3)
+        self.definicoes.setObjectName(u"definicoes")
+        self.definicoes.setStyleSheet(u"QPushButton {\n"
+"background-color: transparent;\n"
+"font-family: Roboto;\n"
+"font-size:10pt;\n"
+"border: none;\n"
+"border-radius:2px\n"
+"\n"
+"}\n"
+"\n"
+"")
+        self.definicoes.setIcon(icon9)
+        self.definicoes.setIconSize(QSize(24, 24))
+
+        self.horizontalLayout_6.addWidget(self.definicoes)
+
+
+        self.verticalLayout_9.addLayout(self.horizontalLayout_6)
+
+        self.verticalLayout_9.addWidget(self.chart_view)
+
+        self.janelaas_direita.addWidget(self.page_3)
+        self.page_4 = QWidget()
+        self.page_4.setObjectName(u"page_4")
+        self.janelaas_direita.addWidget(self.page_4)
+
+        self.verticalLayout_8.addWidget(self.janelaas_direita)
+
+
+        self.horizontalLayout_5.addWidget(self.janelas)
+
+
+        self.verticalLayout_7.addLayout(self.horizontalLayout_5)
+
+
+        self.verticalLayout_5.addWidget(self.widget)
 
         self.stackedWidget.addWidget(self.page)
         self.page_2 = QWidget()
@@ -907,5 +1076,11 @@ class Ui_Form(object):
         self.comboBox_3.setItemText(10, QCoreApplication.translate("Form", u"Tubo de chumbo", None))
         self.comboBox_3.setItemText(11, QCoreApplication.translate("Form", u"Tubo de vidro", None))
 
+        self.curva.setText(QCoreApplication.translate("Form", u"Curvas de Bomba", None))
+        self.associacao.setText(QCoreApplication.translate("Form", u"Associa\u00e7\u00e3o ", None))
+#if QT_CONFIG(tooltip)
+        self.definicoes.setToolTip(QCoreApplication.translate("Form", u"Defini\u00e7\u00f5es de Gr\u00e1fico", None))
+#endif // QT_CONFIG(tooltip)
+        self.definicoes.setText("")
     # retranslateUi
 
