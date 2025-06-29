@@ -1,12 +1,12 @@
 import sys
-from PySide6.QtWidgets import QApplication, QWidget, QMenu, QToolButton, QMessageBox, QFileDialog
+from PySide6.QtWidgets import QApplication, QWidget, QMenu, QToolButton, QMessageBox, QFileDialog, QCompleter, QLabel
 from PySide6.QtGui import QAction, QIcon,QDoubleValidator, QSurfaceFormat
-from PySide6.QtCore import QPoint, QEvent, Qt, QSize
+from PySide6.QtCore import QPoint, QEvent, Qt, QSize, Slot, QStringListModel
 from qframelesswindow import FramelessWindow, StandardTitleBar
 from PySide6.QtCore import QPropertyAnimation, QEasingCurve, QUrl, Qt, QTimer
 from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineProfile
 from PySide6.QtWebChannel import QWebChannel
-from gui.Ui_main import Ui_Form
+from gui.Ui_main import Ui_AquaPump
 from gui.Loses_main import Dialog_main
 from gui.config_main import Config_main
 from scripts.animações import Animações
@@ -15,13 +15,14 @@ from scripts.web_channel import Dados, Relatório
 from scripts.pdf_gen import PDF
 from scripts.graficos import Graficos
 from scripts.arquivos import Arquivos
+from scripts.requisicoes import Pesquisa
 import os, json
 import gui.img_rc
 
 os.environ["QT_QUICK_BACKEND"] = "software"
 os.environ["QT_OPENGL"] = "software"
 
-class MainWindow(FramelessWindow, Ui_Form):
+class MainWindow(FramelessWindow, Ui_AquaPump):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
@@ -31,7 +32,6 @@ class MainWindow(FramelessWindow, Ui_Form):
         self.dados_bomba = Relatório()
         self.dados = Dados()
         self.relatorio_pdf = PDF()
-        self.arquivos = Arquivos()
        
        # WebChannel e Permissões
         self._canal = QWebChannel()
@@ -39,10 +39,12 @@ class MainWindow(FramelessWindow, Ui_Form):
         self.view.setPage(self.page)
         self.page.setWebChannel(self._canal)
         self._canal.registerObject("dados_bomba", self.dados_bomba)
-        self.lineEdit_2.textChanged.connect(self.enviar_js)
-        self.lineEdit_3.textChanged.connect(self.enviar_js)
-        self.page.featurePermissionRequested.connect(self.permissao)
         
+        self.Vazao_2.textChanged.connect(self.enviar_js)
+        self.Vazao.textChanged.connect(self.enviar_js)
+        self.page.featurePermissionRequested.connect(self.permissao)
+        self.arquivos = Arquivos(self.view)
+
         self.menu = QMenu(self)
         acao_novo = QAction("Novo", self)
         acao_novo.setShortcut("Ctrl+N")
@@ -65,12 +67,28 @@ class MainWindow(FramelessWindow, Ui_Form):
         self.addAction(acao_sair)
         acao_sair.triggered.connect(lambda: app.quit())
 
+        accao_coor =  QAction(QIcon(u":/img/kml.png"), "Carregar KML", self)
+        self.addAction(accao_coor)
+        accao_coor.triggered.connect(self.arquivos.carregar_kml)
+
+        accao_coor_1 =  QAction(QIcon(u":/img/arquivo.png"), "Carregar camada shapefile", self)
+        self.addAction(accao_coor_1)
+        accao_coor_1.triggered.connect(self.arquivos.carregar_shapefile)
+
+        accao_coor_2 =  QAction(QIcon(u":/img/arquivo-csv.png"), "Carregar coordenadas CSV", self)
+        self.addAction(accao_coor_2)
+        accao_coor_2.triggered.connect(self.arquivos.carregar_csv)
+
         # Adicionar ações ao menu
         self.menu.addAction(acao_novo)
         self.menu.addAction(acao_abrir)
         self.menu.addAction(acao_salvar)
         self.menu.addAction(acao_salvar_como)
         self.menu.addAction(acao_fechar)
+        self.menu.addSeparator()
+        self.menu.addAction(accao_coor)
+        self.menu.addAction(accao_coor_1)
+        self.menu.addAction(accao_coor_2)
         self.menu.addSeparator()
         self.menu.addAction(acao_sair)
 
@@ -113,29 +131,50 @@ class MainWindow(FramelessWindow, Ui_Form):
         self.help.addAction(acao_sobre)
         self.help.addAction(acao_suporte)
 
-        self.arquivo.clicked.connect(lambda:self.menu.popup(self.arquivo.mapToGlobal(self.arquivo.rect().bottomLeft())))
-        self.config.clicked.connect(lambda:self.editar.popup(self.config.mapToGlobal(self.config.rect().bottomLeft())))
-        self.relatorio.clicked.connect(lambda:self.rel.popup(self.relatorio.mapToGlobal(self.relatorio.rect().bottomLeft())))
-        self.ajuda.clicked.connect(lambda:self.help.popup(self.ajuda.mapToGlobal(self.ajuda.rect().bottomLeft())))
-        self.sair_2.clicked.connect(lambda: app.quit())
+        self.arquivo_2.clicked.connect(lambda:self.menu.popup(self.arquivo_2.mapToGlobal(self.arquivo_2.rect().bottomLeft())))
+        self.config_2.clicked.connect(lambda:self.editar.popup(self.config_2.mapToGlobal(self.config_2.rect().bottomLeft())))
+        self.relatorio_2.clicked.connect(lambda:self.rel.popup(self.relatorio_2.mapToGlobal(self.relatorio_2.rect().bottomLeft())))
+        self.ajuda_2.clicked.connect(lambda:self.help.popup(self.ajuda_2.mapToGlobal(self.ajuda_2.rect().bottomLeft())))
         
-        self.abrir_layout_2.clicked.connect(lambda: self.animações.largura(self.frame_3, self.fechar_layout_2))
-        self.fechar_layout_2.clicked.connect(lambda: self.animações.largura(self.frame_3, self.fechar_layout_2)) 
-        self.dimensionar_2.clicked.connect(lambda: self.animações.largura(self.janelas, largura_alvo=450))
+        # Aba Lateral
+        self.abrir_layout_3.clicked.connect(lambda: self.animações.largura(self.frame_4, self.frame_6, largura_alvo=300))
+        self.pesquisar_3.clicked.connect(lambda: self.animações.largura(self.frame_4, self.frame_6, largura_alvo=300))
+        self.projeto.clicked.connect(lambda: self.animações.largura_altura(self.frame_4, self.projecto, self.frame_6))
+        self.exportar_2.clicked.connect(lambda: self.animações.largura_altura(self.frame_4, self.exportar, self.frame_6, altura=100))
+        self.abrir_layout_2.clicked.connect(lambda: self.animações.largura(self.frame_4, self.frame_6)) 
+        self.sair_2.clicked.connect(lambda: app.quit())
+        self.sair_3.clicked.connect(lambda: app.quit())
 
-        self.pushButton_5.clicked.connect(lambda: self.animações.altura(self.projecto))
+        self.projecto_2.clicked.connect(lambda: self.animações.altura(self.projecto, altura=400))
         self.parametros.clicked.connect(lambda: self.animações.altura(self.exportar, altura=100))
         self.configuracoes.clicked.connect(self.janela_config)
+        self.configuracoes_2.clicked.connect(self.janela_config)
         self.exportar_pdf.clicked.connect(self.gerar_pdf)
+
+        self.pushButton.clicked.connect(self.arquivos.carregar_kml)
+        self.pushButton_2.clicked.connect(self.arquivos.carregar_csv)
+        self.pushButton_4.clicked.connect(self.arquivos.carregar_shapefile)
         #self.mapa_2.clicked.connect(self.carregar_arquivo)
 
-        self.pushButton_3.clicked.connect(self.janela_perdas) 
+        #self.pushButton_3.clicked.connect(self.janela_perdas) 
         self.comboBox.setHidden(True)
 
+        # Validadores
         validator = QDoubleValidator(0.0, 1000.0, 3)
         validator.setNotation(QDoubleValidator.StandardNotation)
-        self.lineEdit_2.setValidator(validator)
-        self.lineEdit_3.setValidator(validator)
+        self.Vazao_2.setValidator(validator)
+        self.Vazao.setValidator(validator)
+
+        #Completadores
+        self.completador = QCompleter()
+        self.completador.setCaseSensitivity(Qt.CaseInsensitive)
+        self.pesquisa_line.setCompleter(self.completador)
+
+        self.pesquisa_line.textEdited.connect(self.pesquisa_mapa)
+        self.pesquisa_line.returnPressed.connect(self.pesquisa_mapa)
+
+        self.worker = None
+        self.status_label = QLabel()
 
         # HTML, MAPA
         self.mapinha = Mapa()
@@ -143,7 +182,29 @@ class MainWindow(FramelessWindow, Ui_Form):
         self.page.setHtml(mapa)    
 
     def enviar_js(self):
-        self.dados.enviar_dados(self.lineEdit_2, self.lineEdit_3, self.view)
+        self.dados.enviar_dados(self.Vazao_2, self.Vazao, self.view)
+
+    def pesquisa_mapa(self):
+        texto = self.pesquisa_line.text()
+        pesquisa = f"pesquisar_lugar('{texto}')"
+        self.view.page().runJavaScript(pesquisa)
+
+    @Slot(str)
+    def buscar_sugestoes(self, texto):
+        if len(texto) >= 3:
+            self.status_label.setText("Buscando sugestões...")
+            if self.worker and self.worker.isRunning():
+                self.worker.terminate()
+
+            self.worker = Pesquisa(texto)
+            self.worker.resultado.connect(self.atualizar_completer)
+            self.worker.start()
+
+    @Slot(list)
+    def atualizar_completer(self, sugestoes):
+        self.status_label.setText("")
+        modelo = QStringListModel(sugestoes)
+        self.completador.setModel(modelo)
 
     def gerar_pdf(self):
         try:

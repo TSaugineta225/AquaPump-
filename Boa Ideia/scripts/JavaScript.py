@@ -13,10 +13,12 @@ class Mapa:
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.css"/>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
     <script src="https://unpkg.com/leaflet-plugins/layer/vector/KML.js"></script>
-    
+    <script src="https://unpkg.com/leaflet-omnivore@0.3.4/leaflet-omnivore.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.3.2/papaparse.min.js"></script>
+
     <!-- QWebChannel -->
     <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
-    
+
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         #map { height: 100vh; width: 100vw; }
@@ -50,70 +52,52 @@ class Mapa:
 </head>
 <body>
     <div id="map"></div>
-    
-    <!-- Menu de edição -->
+
+    <!-- Menu Popup -->
     <div id="popup-menu" class="menu-popup">
         <button class="close-btn">&times;</button>
         <h3>Editar Tubulação</h3>
-        
         <label for="line-name">Nome da Tubulação:</label>
         <input type="text" id="line-name" placeholder="Digite um nome">
-
         <label for="line-color">Cor:</label>
         <input type="color" id="line-color" value="#0000ff">
-        
         <label for="line-width">Espessura (1-10):</label>
         <input type="number" id="line-width" value="3" min="1" max="10">
-        
         <button id="apply-style">Aplicar Estilo</button>
         <button id="delete-line" style="background: #dc3545;">Excluir Linha</button>
     </div>
 
     <script>
-        // Camadas base
+        // Inicialização do mapa
         const camadaPadrao = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            attribution: '&copy; OpenStreetMap contributors'
         });
 
         const camadaSatelite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             attribution: '© Esri'
         });
 
-        // Inicialização do mapa
         const map = L.map('map', {
-            center: [-25.9667, 32.5833], 
+            center: [-25.9667, 32.5833],
             zoom: 6,
-            layers: [camadaPadrao] 
+            layers: [camadaPadrao]
         });
 
-        // Camadas base disponíveis
-        const camadasBase = {
-            'Padrão': camadaPadrao,
-            'Satélite': camadaSatelite
-        };
+        L.control.layers({ 'Padrão': camadaPadrao, 'Satélite': camadaSatelite }).addTo(map);
+        map.locate({ setView: true, maxZoom: 18, enableHighAccuracy: true });
+        L.control.scale({ metric: true, imperial: false }).addTo(map);
 
-        // Adiciona controle de camadas
-        L.control.layers(camadasBase).addTo(map);
-
-        map.locate({setView: true, maxZoom: 18, enableHighAccuracy: true});
-
-        L.control.scale({
-            metric: true,
-            imperial: false,
-            maxWidth: 200,
-            position: 'bottomleft'
-        }).addTo(map);
-
-        // FeatureGroup para linhas desenhadas
         const drawnItems = new L.FeatureGroup().addTo(map);
 
         const drawControl = new L.Control.Draw({
             edit: { featureGroup: drawnItems },
-            draw: { polyline: { shapeOptions: { color: '#0000ff', weight: 3 } }, polygon: false, rectangle: false, circle: false, marker: false }
+            draw: {
+                polyline: { shapeOptions: { color: '#0000ff', weight: 3 } },
+                polygon: false, rectangle: false, circle: false, marker: false
+            }
         });
         map.addControl(drawControl);
 
-        // Variáveis globais
         let layer_selecionada = null;
         let valor_1_guardado = null;
         let valor_2_guardado = null;
@@ -122,55 +106,53 @@ class Mapa:
             const data = JSON.parse(conteudo);
             L.geoJSON(data, {
                 onEachFeature: function (feature, layer) {
-                if (feature.properties) {
-                    layer.bindPopup(Object.entries(feature.properties).map(([k, v]) => `${k}: ${v}`).join('<br>'));
-                }
+                    if (feature.properties) {
+                        layer.bindPopup(Object.entries(feature.properties).map(([k, v]) => `${k}: ${v}`).join('<br>'));
+                    }
                 }
             }).addTo(map);
+        }
 
-            // CSV
         function carregarCSV(conteudo) {
-        Papa.parse(conteudo, {
-            header: true,
-            dynamicTyping: true,
-            complete: function(results) {
-            const features = results.data.map(row => {
-                if (!row.latitude || !row.longitude) return null;
-                return {
-                type: "Feature",
-                geometry: {
-                    type: "Point",
-                    coordinates: [parseFloat(row.longitude), parseFloat(row.latitude)]
-                },
-                properties: row
-                };
-            }).filter(f => f !== null);
+            Papa.parse(conteudo, {
+                header: true,
+                dynamicTyping: true,
+                complete: function(results) {
+                    const features = results.data.map(row => {
+                        if (!row.latitude || !row.longitude) return null;
+                        return {
+                            type: "Feature",
+                            geometry: {
+                                type: "Point",
+                                coordinates: [parseFloat(row.longitude), parseFloat(row.latitude)]
+                            },
+                            properties: row
+                        };
+                    }).filter(f => f !== null);
 
-            const geojson = {
-                type: "FeatureCollection",
-                features: features
-            };
+                    const geojson = {
+                        type: "FeatureCollection",
+                        features: features
+                    };
 
-            carregarGeoJSON(JSON.stringify(geojson));
-            }
-        });
-        }
-
-        // KML
-        function carregarKML(conteudo) {
-        const blob = new Blob([conteudo], { type: 'application/vnd.google-earth.kml+xml' });
-        const url = URL.createObjectURL(blob);
-        omnivore.kml(url).on('ready', function() {
-            this.eachLayer(function(layer) {
-            if (layer.feature && layer.feature.properties) {
-                layer.bindPopup(Object.entries(layer.feature.properties).map(([k, v]) => `${k}: ${v}`).join('<br>'));
-            }
+                    carregarGeoJSON(JSON.stringify(geojson));
+                }
             });
-            this.addTo(map);
-        });
         }
 
-        // Comunicação com backend Qt
+        function carregarKML(conteudo) {
+            const blob = new Blob([conteudo], { type: 'application/vnd.google-earth.kml+xml' });
+            const url = URL.createObjectURL(blob);
+            omnivore.kml(url).on('ready', function() {
+                this.eachLayer(function(layer) {
+                    if (layer.feature && layer.feature.properties) {
+                        layer.bindPopup(Object.entries(layer.feature.properties).map(([k, v]) => `${k}: ${v}`).join('<br>'));
+                    }
+                });
+                this.addTo(map);
+            });
+        }
+
         document.addEventListener("DOMContentLoaded", function() {
             if (typeof QWebChannel !== "undefined") {
                 new QWebChannel(qt.webChannelTransport, function (channel) {
@@ -182,7 +164,7 @@ class Mapa:
         });
 
         function captar_mensagem() {
-            let mensagem = `Erro ao obter dados de elevação. Tente ligar-se à internet!`;
+            const mensagem = "Erro ao obter dados de elevação. Tente ligar-se à internet!";
             if (window.mensagem && typeof window.mensagem.mensagem_recebida === "function") {
                 window.mensagem.mensagem_recebida(mensagem);
             } else {
@@ -190,125 +172,95 @@ class Mapa:
             }
         }
 
-        // Função para obter a elevação
         async function getElevation(lat, lon) {
             const url = `https://api.open-elevation.com/api/v1/lookup?locations=${lat},${lon}`;
             try {
                 const response = await fetch(url);
                 if (!response.ok) throw new Error("Falha na resposta da API");
                 const data = await response.json();
-                if (data.results && data.results[0] && typeof data.results[0].elevation === "number") {
-                    return data.results[0].elevation;
-                } else {
-                    throw new Error("Resposta inesperada da API");
-                }
+                return data.results?.[0]?.elevation ?? 0;
             } catch (error) {
                 captar_mensagem();
                 return 0;
             }
         }
 
-        // Calcula diferença de altura entre início e fim da linha
+        async function pesquisar_lugar(lugar) {
+            try {
+                const response = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(lugar)}`, {
+                    headers: { "User-Agent": "MyLeafletApp/1.0" }
+                });
+                const data = await response.json();
+
+                if (data.length > 0) {
+                    let lat = parseFloat(data[0].lat);
+                    let lon = parseFloat(data[0].lon);
+                    map.setView([lat, lon], 18);
+
+                } else {
+
+                }
+            } catch (error) {
+                alert("Erro na pesquisa:", error);
+            }
+        }
+
         async function calcularAltura(layer) {
             const latlngs = layer.getLatLngs();
             if (latlngs.length < 2) return 0;
-            const start = latlngs[0];
-            const end = latlngs[latlngs.length - 1];
-            const startElev = await getElevation(start.lat, start.lng);
-            const endElev = await getElevation(end.lat, end.lng);
-            return Math.abs(endElev - startElev);
-        }
-
-        function formatar_distancia(metros) {
-            return metros >= 1000 ? `${(metros/1000).toFixed(2)} km` : `${metros.toFixed(2)} metros`;
+            const elev1 = await getElevation(latlngs[0].lat, latlngs[0].lng);
+            const elev2 = await getElevation(latlngs[latlngs.length - 1].lat, latlngs[latlngs.length - 1].lng);
+            return Math.abs(elev1 - elev2);
         }
 
         function calcular_distancia(layer) {
-            let latlngs = layer.getLatLngs();
-            let distancia_total = 0;
-            for (let i = 1; i < latlngs.length; i++) {
-                distancia_total += latlngs[i - 1].distanceTo(latlngs[i]);
-            }
-            return distancia_total;
+            const latlngs = layer.getLatLngs();
+            return latlngs.reduce((total, _, i, arr) => {
+                if (i === 0) return 0;
+                return total + arr[i - 1].distanceTo(arr[i]);
+            }, 0);
         }
 
         function calcular_diametro(flow, tempo) {
-            if (typeof flow !== "number" || typeof tempo !== "number" || isNaN(flow) || isNaN(tempo) || tempo <= 0) return null;
-            if (tempo === 24) {
-                return 1.3 * Math.sqrt(flow);
-            } else if (tempo < 24) {
-                return 1.3 * Math.sqrt(flow) * Math.sqrt(tempo/24);
-            }
-            return null;
+            if (tempo === 24) return 1.3 * Math.sqrt(flow);
+            return 1.3 * Math.sqrt(flow) * Math.sqrt(tempo / 24);
         }
 
         function potencia(flow, altura) {
-            if (!altura || isNaN(altura) || !flow || isNaN(flow)) return null;
             return (flow * altura * 1000) / 75;
         }
 
-        function calcular_eficiencia(flow, altura, potencia_valor) {
-            try {
-                if (!potencia_valor || isNaN(potencia_valor)) return null;
-                return (flow * altura * 1000) / potencia_valor;
-            } catch (error) {
-                console.error(error);
-                return null;
-            }
-        }
-
-        function receber_dados(valor_1, valor_2) {
-            valor_1_guardado = Number(valor_1);
-            valor_2_guardado = Number(valor_2);
-            drawnItems.eachLayer(async layer => {
-                await actualizar_popup(layer);
+        function actualizar_popup(layer) {
+            calcularAltura(layer).then(altura => {
+                const flow = valor_1_guardado;
+                const tempo = valor_2_guardado;
+                const nome = layer.customProperties?.name || "Sem nome";
+                const distancia = calcular_distancia(layer);
+                const diametro = calcular_diametro(flow, tempo);
+                const pot = potencia(flow, altura);
+                layer.bindPopup(`
+                    <strong>${nome}</strong><br>
+                    Distância: ${(distancia/1000).toFixed(2)} km<br>
+                    Diâmetro: ${diametro?.toFixed(2)}<br>
+                    Altura: ${altura?.toFixed(2)} m<br>
+                    Potência: ${pot?.toFixed(2)} CV
+                `).openPopup();
             });
         }
 
-        async function actualizar_popup(layer) {
-            const altura = await calcularAltura(layer);
-            const flow = Number(valor_1_guardado);
-            const tempo = Number(valor_2_guardado);
-            const nome = layer.customProperties?.name || "Sem nome";
-            const distancia = formatar_distancia(calcular_distancia(layer));
-            const diametro = calcular_diametro(flow, tempo);
-            const potencia_total = potencia(flow, altura);
-
-            layer.bindPopup(`
-                <strong>${nome}</strong><br>
-                Distância: ${distancia}<br>
-                Diâmetro: ${diametro !== null ? diametro.toFixed(2) : 'N/A'}<br>
-                Altura: ${altura?.toFixed(2)} m<br>
-                Potência: ${potencia_total !== null ? potencia_total.toFixed(2) : 'N/A'} CV
-            `).openPopup();
+        function receber_dados(v1, v2) {
+            valor_1_guardado = Number(v1);
+            valor_2_guardado = Number(v2);
+            drawnItems.eachLayer(actualizar_popup);
         }
 
-        async function obter_dados_bomba(layer) {
-            const flow = Number(valor_1_guardado);
-            const tempo = Number(valor_2_guardado);
-            const diametro = calcular_diametro(flow, tempo);
+        window.receber_dados = receber_dados;
 
-            if (isNaN(flow) || isNaN(tempo) || diametro === null) {
-                console.warn("Dados inválidos para envio ao Python:", { flow, tempo, diametro });
-                return;
-            }
-
-            if (window.dados_bomba && typeof window.dados_bomba.valores_recebidos === "function") {
-                window.dados_bomba.valores_recebidos(flow, tempo, diametro);
-            } else {
-                console.error("Objeto dados_bomba ou método valores_recebidos não encontrado");
-            }
-        }
-
-
-        // Evento de criação de linha
         map.on(L.Draw.Event.CREATED, async e => {
             const layer = e.layer;
             layer.customProperties = { name: "Sem nome" };
             drawnItems.addLayer(layer);
-
-            await actualizar_popup(layer);
-            await obter_dados_bomba(layer);
+            actualizar_popup(layer);
 
             layer.on('click', event => {
                 layer_selecionada = layer;
@@ -319,41 +271,20 @@ class Mapa:
             });
         });
 
-        // Evento de edição de linha
-        map.on(L.Draw.Event.EDITED, async e => {
-            e.layers.eachLayer(async layer => {
-                await actualizar_popup(layer);
-                await obter_dados_bomba(layer);
-            });
-        });
-
-        // Função para mostrar menu popup
-        function mostrar_menu_popup(event) {
-            const menu = document.getElementById('popup-menu');
-            menu.style.display = 'block';
-            // Garante que o menu não ultrapasse a janela
-            menu.style.left = `${Math.min(event.clientX, window.innerWidth - menu.offsetWidth - 10)}px`;
-            menu.style.top = `${Math.min(event.clientY, window.innerHeight - menu.offsetHeight - 10)}px`;
-        }
-
-        // Fechar menu ou excluir linha
         document.querySelectorAll('.close-btn, #delete-line').forEach(btn => {
             btn.addEventListener('click', () => {
                 if (btn.id === 'delete-line' && layer_selecionada) {
-                    if (confirm('Deseja excluir esta linha?')) {
-                        drawnItems.removeLayer(layer_selecionada);
-                        layer_selecionada = null;
-                    }
+                    drawnItems.removeLayer(layer_selecionada);
+                    layer_selecionada = null;
                 }
                 document.getElementById('popup-menu').style.display = 'none';
             });
         });
 
-        // Aplicar estilo à linha selecionada
         document.getElementById('apply-style').addEventListener('click', () => {
             if (layer_selecionada) {
                 const color = document.getElementById('line-color').value;
-                const weight = Math.min(10, Math.max(1, parseInt(document.getElementById('line-width').value)));
+                const weight = parseInt(document.getElementById('line-width').value);
                 const name = document.getElementById('line-name').value;
                 layer_selecionada.setStyle({ color, weight });
                 layer_selecionada.customProperties.name = name;
@@ -361,15 +292,18 @@ class Mapa:
             }
         });
 
-        // Fechar menu ao duplo clique fora dele
+        function mostrar_menu_popup(event) {
+            const menu = document.getElementById('popup-menu');
+            menu.style.display = 'block';
+            menu.style.left = `${Math.min(event.clientX, window.innerWidth - menu.offsetWidth - 10)}px`;
+            menu.style.top = `${Math.min(event.clientY, window.innerHeight - menu.offsetHeight - 10)}px`;
+        }
+
         map.on('dblclick', () => document.getElementById('popup-menu').style.display = 'none');
-
-        // Exemplo de integração: window.receber_dados(valor1, valor2);
-        window.receber_dados = receber_dados;
-
     </script>
 </body>
 </html>
+
 
 """
         

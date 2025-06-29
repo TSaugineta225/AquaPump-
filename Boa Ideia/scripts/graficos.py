@@ -37,9 +37,9 @@ class Graficos:
         self.chart.setTitle("Curva Característica da Bomba (Simulação)")
         self.chart.setTitleFont(QFont("Roboto", 12, QFont.Bold))
 
-    def plotar_grafico(self):
+    def plotar_grafico(self, nome="Curva Característica (H x Q)"):
         self.series = QLineSeries()
-        self.series.setName("Curva Característica (H x Q)")
+        self.series.setName(nome)
         self.series.setPointsVisible(False) 
         self.series.setPen(QPen(QColor("blue"), 2.5))
         for q, h in zip(self.Q_plot, self.H_plot):
@@ -47,21 +47,25 @@ class Graficos:
 
         self.chart.addSeries(self.series)
 
-    def configurar_eixos(self):
+    def configurar_eixo_x(self, tick_count = 10, titulo_x="Vazão", formato ="%.1f"):
         axis_x = QValueAxis()
-        axis_x.setTitleText("Vazão (L/s)")
-        axis_x.setLabelFormat("%.1f")
+        axis_x.setTitleText(titulo_x)
+        axis_x.setLabelFormat(formato)
         axis_x.setGridLineVisible(True)
-        axis_x.setTickCount(10)
-
-        axis_y = QValueAxis()
-        axis_y.setTitleText("Altura Manométrica (m)")
-        axis_y.setLabelFormat("%.1f")
-        axis_y.setGridLineVisible(True)
-        axis_y.setTickCount(8)
-
+        axis_x.setMinorGridLineVisible(True)
+        axis_x.setTickCount(tick_count)
         self.chart.addAxis(axis_x, Qt.AlignBottom)
-        self.chart.addAxis(axis_y, Qt.AlignLeft)
-
         self.series.attachAxis(axis_x)
+        
+
+    def configurar_eixo_y(self, tick_count=10, titulo_y ="Altura Manométrica (m)", formato= "%.1f"):
+        axis_y = QValueAxis()
+        axis_y.setTitleText(titulo_y)
+        axis_y.setLabelFormat(formato)
+        axis_y.setGridLineVisible(True)
+        axis_y.setMinorGridLineVisible(True)
+        axis_y.setTickCount(tick_count)
+        self.chart.addAxis(axis_y, Qt.AlignLeft)
         self.series.attachAxis(axis_y)
+    
+ 

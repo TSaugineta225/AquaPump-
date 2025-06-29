@@ -10,5 +10,7 @@ class Config_main(QDialog):
         self.ui = Ui_Dialog()
         self.ui.setupUi(self)
 
-        self.ui.pushButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.page))
-        self.ui.pushButton_2.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.page_2))
+        self.ui.geral.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.page_2))
+        self.ui.unidades.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.page))
+        self.ui.pushButton.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.page_3))
+        self.ui.avancado.clicked.connect(lambda: self.ui.stackedWidget.setCurrentWidget(self.ui.page_4))

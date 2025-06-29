@@ -1,5 +1,12 @@
 <RCC>
   <qresource prefix="img">
+    <file>search.png</file>
+    <file>exportar.png</file>
+    <file>projecto.png</file>
+    <file>relatorio.png</file>
+    <file>grafico.png</file>
+    <file>arquivo.png</file>
+    <file>kml.png</file>
     <file>left_panel_close_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</file>
     <file>left_panel_open_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</file>
     <file>settings_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</file>
@@ -7,10 +14,12 @@
     <file>width_wide_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</file>
     <file>right_panel_close.png</file>
     <file>right_panel_open.png</file>
-    <file>procurar.png</file>
+    <file>novo-arquivo.png</file>
+    <file>arrow-down-1.png</file>
+    <file>pesquisar.png</file>
+    <file>arrow-left_1.png</file>
     <file>arrow-right_1.png</file>
     <file>arrow-up.png</file>
-    <file>novo-arquivo.png</file>
     <file>recente.png</file>
     <file>pasta (1).png</file>
     <file>pasta.png</file>
@@ -21,7 +30,6 @@
     <file>arrow-down.png</file>
     <file>arrow-up_1.png</file>
     <file>minimize-o-sinal.png</file>
-    <file>arrow-down-1.png</file>
     <file>botao-fechar.png</file>
     <file>download.png</file>
     <file>file-download.png</file>
@@ -37,8 +45,10 @@
     <file>quadrado.png</file>
     <file>save.png</file>
     <file>scale-3d.png</file>
-    <file>setting-menu-1-button-parallel-horizontal-lines-menu-navigation-three-hamburger.png</file>
     <file>settings.png</file>
+    <file>grafico.png</file>
+    <file>janelinha.png</file>
+    <file>sair.png</file>
     <file>sidebar-left.png</file>
   </qresource>
 </RCC>
