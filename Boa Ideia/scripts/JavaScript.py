@@ -195,7 +195,7 @@ class Mapa:
                 if (data.length > 0) {
                     let lat = parseFloat(data[0].lat);
                     let lon = parseFloat(data[0].lon);
-                    map.setView([lat, lon], 18);
+                    map.setView([lat, lon], 9);
 
                 } else {
 
@@ -204,13 +204,13 @@ class Mapa:
                 alert("Erro na pesquisa:", error);
             }
         }
-
+        let altura = None
         async function calcularAltura(layer) {
             const latlngs = layer.getLatLngs();
             if (latlngs.length < 2) return 0;
             const elev1 = await getElevation(latlngs[0].lat, latlngs[0].lng);
             const elev2 = await getElevation(latlngs[latlngs.length - 1].lat, latlngs[latlngs.length - 1].lng);
-            return Math.abs(elev1 - elev2);
+            return altura = Math.abs(elev1 - elev2);
         }
 
         function calcular_distancia(layer) {

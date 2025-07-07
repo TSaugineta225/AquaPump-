@@ -5,15 +5,7 @@ class Animações():
         self.animacoes_ativas = []
 
     def largura(self, frame, botao=None, largura_alvo=280, duracao=300):
-        """
-        Anima a largura de um frame, ocultando ou mostrando um botão opcional.
 
-        Parâmetros:
-        - frame: QWidget (o container cuja largura será animada)
-        - botao: QPushButton ou outro widget (opcional) a ocultar/mostrar junto
-        - largura_alvo: int (largura ao expandir)
-        - duracao: int (tempo da animação em milissegundos)
-        """
         largura_atual = frame.width()
 
         # Determina se está aberto ou fechado

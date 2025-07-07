@@ -4,7 +4,7 @@ from PySide6.QtGui import QBrush, QFont, QColor, QPen
 from PySide6.QtCore import Qt
 
 class Graficos:
-    def __init__(self, vazao_nominal, altura_nominal):
+    def __init__(self, vazao_nominal, altura_nominal = 10):
         self.Q_nominal = vazao_nominal
         self.H_nominal = altura_nominal
         self.H_0 = self.H_nominal * 1.2

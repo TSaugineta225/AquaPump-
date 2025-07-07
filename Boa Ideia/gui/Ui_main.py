@@ -17,17 +17,17 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QHBoxLayout,
     QLineEdit, QPushButton, QScrollArea, QSizePolicy,
-    QSpacerItem, QStackedWidget, QVBoxLayout, QWidget)
+    QSpacerItem, QSplitter, QStackedWidget, QToolButton,
+    QVBoxLayout, QWidget)
 from PySide6.QtWebEngineWidgets import QWebEngineView
 import gui.img_rc
-
 
 class Ui_AquaPump(object):
     def setupUi(self, AquaPump):
         if not AquaPump.objectName():
             AquaPump.setObjectName(u"AquaPump")
+        AquaPump.resize(988, 632)
         self.view = QWebEngineView()
-        AquaPump.resize(982, 635)
         AquaPump.setStyleSheet(u"/* --------- QWidget (Geral) --------- */\n"
 "QWidget {\n"
 "    background-color: #f9f9f9;\n"
@@ -168,6 +168,17 @@ class Ui_AquaPump(object):
 "    height: 9px;\n"
 "    margin: 2px;\n"
 "}\n"
+"\n"
+"QToolButton {\n"
+"background-color: transparent;\n"
+"font-family: Roboto;\n"
+"font-size:10pt;\n"
+"border: none;\n"
+"border-radius:2px\n"
+"\n"
+"}\n"
+"\n"
+"\n"
 "")
         self.verticalLayout_8 = QVBoxLayout(AquaPump)
         self.verticalLayout_8.setObjectName(u"verticalLayout_8")
@@ -422,6 +433,7 @@ class Ui_AquaPump(object):
 "    border-top-right-radius: 0px;\n"
 "    border-bottom-right-radius: 0px;\n"
 "	border-right: 0px solid #d0d0d0;\n"
+"	font-size: 12px;\n"
 "\n"
 "}\n"
 "")
@@ -484,7 +496,7 @@ class Ui_AquaPump(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 193, 352))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 193, 349))
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.projecto_2 = QPushButton(self.scrollAreaWidgetContents)
@@ -1098,12 +1110,12 @@ class Ui_AquaPump(object):
         self.stackedWidget.setObjectName(u"stackedWidget")
         self.page = QWidget()
         self.page.setObjectName(u"page")
-        self.verticalLayout_9 = QVBoxLayout(self.page)
-        self.verticalLayout_9.setSpacing(2)
-        self.verticalLayout_9.setObjectName(u"verticalLayout_9")
-        self.verticalLayout_9.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_10 = QHBoxLayout()
-        self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
+        self.verticalLayout_7 = QVBoxLayout(self.page)
+        self.verticalLayout_7.setSpacing(2)
+        self.verticalLayout_7.setObjectName(u"verticalLayout_7")
+        self.verticalLayout_7.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout = QHBoxLayout()
+        self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.comboBox_3 = QComboBox(self.page)
         self.comboBox_3.addItem("")
         self.comboBox_3.addItem("")
@@ -1122,7 +1134,7 @@ class Ui_AquaPump(object):
         self.comboBox_3.setSizePolicy(sizePolicy2)
         self.comboBox_3.setStyleSheet(u"")
 
-        self.horizontalLayout_10.addWidget(self.comboBox_3)
+        self.horizontalLayout.addWidget(self.comboBox_3)
 
         self.comboBox = QComboBox(self.page)
         self.comboBox.addItem("")
@@ -1149,7 +1161,7 @@ class Ui_AquaPump(object):
         self.comboBox.setMinimumSize(QSize(0, 30))
         self.comboBox.setStyleSheet(u"")
 
-        self.horizontalLayout_10.addWidget(self.comboBox)
+        self.horizontalLayout.addWidget(self.comboBox)
 
         self.horizontalLayout_7 = QHBoxLayout()
         self.horizontalLayout_7.setSpacing(0)
@@ -1189,7 +1201,7 @@ class Ui_AquaPump(object):
         self.horizontalLayout_7.addWidget(self.icone_2)
 
 
-        self.horizontalLayout_10.addLayout(self.horizontalLayout_7)
+        self.horizontalLayout.addLayout(self.horizontalLayout_7)
 
         self.horizontalLayout_6 = QHBoxLayout()
         self.horizontalLayout_6.setSpacing(0)
@@ -1229,29 +1241,149 @@ class Ui_AquaPump(object):
         self.horizontalLayout_6.addWidget(self.icone)
 
 
-        self.horizontalLayout_10.addLayout(self.horizontalLayout_6)
+        self.horizontalLayout.addLayout(self.horizontalLayout_6)
 
 
-        self.verticalLayout_9.addLayout(self.horizontalLayout_10)
+        self.verticalLayout_7.addLayout(self.horizontalLayout)
 
-        self.horizontalLayout_14 = QHBoxLayout()
-        self.horizontalLayout_14.setObjectName(u"horizontalLayout_14")
-
-        self.horizontalLayout_14.addWidget(self.view)
-
-        self.widget = QWidget(self.page)
-        self.widget.setObjectName(u"widget")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
+        self.splitter_2 = QSplitter(self.page)
+        self.splitter_2.setObjectName(u"splitter_2")
+        self.splitter_2.setOrientation(Qt.Orientation.Horizontal)
+        self.splitter = QSplitter(self.splitter_2)
+        self.splitter.setObjectName(u"splitter")
+        self.splitter.setOrientation(Qt.Orientation.Vertical)
+        self.splitter.addWidget(self.view)
+        self.widget_2 = QWidget(self.splitter)
+        self.widget_2.setObjectName(u"widget_2")
+        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Preferred)
         sizePolicy4.setHorizontalStretch(0)
         sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
-        self.widget.setSizePolicy(sizePolicy4)
+        sizePolicy4.setHeightForWidth(self.widget_2.sizePolicy().hasHeightForWidth())
+        self.widget_2.setSizePolicy(sizePolicy4)
+        self.widget_2.setMaximumSize(QSize(16777215, 0))
+        self.widget_2.setStyleSheet(u"")
+        self.verticalLayout_11 = QVBoxLayout(self.widget_2)
+        self.verticalLayout_11.setSpacing(0)
+        self.verticalLayout_11.setObjectName(u"verticalLayout_11")
+        self.verticalLayout_11.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_13 = QHBoxLayout()
+        self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
+        self.horizontalLayout_13.setContentsMargins(9, -1, 9, -1)
+        self.fechar_perfil = QToolButton(self.widget_2)
+        self.fechar_perfil.setObjectName(u"fechar_perfil")
+        icon17 = QIcon()
+        icon17.addFile(u":/img/bottom.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.fechar_perfil.setIcon(icon17)
+        self.fechar_perfil.setIconSize(QSize(24, 24))
+
+        self.horizontalLayout_13.addWidget(self.fechar_perfil)
+
+        self.horizontalSpacer_5 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_13.addItem(self.horizontalSpacer_5)
+
+        self.opcoes_perfil = QToolButton(self.widget_2)
+        self.opcoes_perfil.setObjectName(u"opcoes_perfil")
+        self.opcoes_perfil.setStyleSheet(u"padding-right: 15px")
+        icon18 = QIcon()
+        icon18.addFile(u":/img/opcoes.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.opcoes_perfil.setIcon(icon18)
+        self.opcoes_perfil.setIconSize(QSize(24, 24))
+
+        self.horizontalLayout_13.addWidget(self.opcoes_perfil)
+
+        self.expandir_2 = QToolButton(self.widget_2)
+        self.expandir_2.setObjectName(u"expandir_2")
+        icon19 = QIcon()
+        icon19.addFile(u":/img/zoom.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.expandir_2.setIcon(icon19)
+        self.expandir_2.setIconSize(QSize(24, 24))
+
+        self.horizontalLayout_13.addWidget(self.expandir_2)
+
+
+        self.verticalLayout_11.addLayout(self.horizontalLayout_13)
+
+        self.grafico_2 = QFrame(self.widget_2)
+        self.grafico_2.setObjectName(u"grafico_2")
+        self.grafico_2.setFrameShape(QFrame.Shape.StyledPanel)
+        self.grafico_2.setFrameShadow(QFrame.Shadow.Raised)
+
+        self.verticalLayout_11.addWidget(self.grafico_2)
+
+        self.splitter.addWidget(self.widget_2)
+        self.splitter_2.addWidget(self.splitter)
+        self.widget = QWidget(self.splitter_2)
+        self.widget.setObjectName(u"widget")
+        sizePolicy5 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Expanding)
+        sizePolicy5.setHorizontalStretch(0)
+        sizePolicy5.setVerticalStretch(0)
+        sizePolicy5.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
+        self.widget.setSizePolicy(sizePolicy5)
         self.widget.setMaximumSize(QSize(0, 16777215))
+        self.widget.setStyleSheet(u"")
+        self.verticalLayout_9 = QVBoxLayout(self.widget)
+        self.verticalLayout_9.setSpacing(0)
+        self.verticalLayout_9.setObjectName(u"verticalLayout_9")
+        self.verticalLayout_9.setContentsMargins(0, 0, 0, 0)
+        self.stackedWidget_2 = QStackedWidget(self.widget)
+        self.stackedWidget_2.setObjectName(u"stackedWidget_2")
+        self.graficos_lateral = QWidget()
+        self.graficos_lateral.setObjectName(u"graficos_lateral")
+        self.verticalLayout_10 = QVBoxLayout(self.graficos_lateral)
+        self.verticalLayout_10.setSpacing(0)
+        self.verticalLayout_10.setObjectName(u"verticalLayout_10")
+        self.verticalLayout_10.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_10 = QHBoxLayout()
+        self.horizontalLayout_10.setObjectName(u"horizontalLayout_10")
+        self.fechar_lateral = QToolButton(self.graficos_lateral)
+        self.fechar_lateral.setObjectName(u"fechar_lateral")
+        icon20 = QIcon()
+        icon20.addFile(u":/img/right_panel_close.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.fechar_lateral.setIcon(icon20)
+        self.fechar_lateral.setIconSize(QSize(24, 24))
 
-        self.horizontalLayout_14.addWidget(self.widget)
+        self.horizontalLayout_10.addWidget(self.fechar_lateral)
+
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_10.addItem(self.horizontalSpacer)
+
+        self.definicoes_direita = QToolButton(self.graficos_lateral)
+        self.definicoes_direita.setObjectName(u"definicoes_direita")
+        self.definicoes_direita.setStyleSheet(u"padding-right: 15px")
+        self.definicoes_direita.setIcon(icon18)
+        self.definicoes_direita.setIconSize(QSize(24, 24))
+
+        self.horizontalLayout_10.addWidget(self.definicoes_direita)
+
+        self.expandir = QToolButton(self.graficos_lateral)
+        self.expandir.setObjectName(u"expandir")
+        self.expandir.setIcon(icon19)
+        self.expandir.setIconSize(QSize(24, 24))
+
+        self.horizontalLayout_10.addWidget(self.expandir)
 
 
-        self.verticalLayout_9.addLayout(self.horizontalLayout_14)
+        self.verticalLayout_10.addLayout(self.horizontalLayout_10)
+
+        self.widget_3 = QWidget(self.graficos_lateral)
+        self.widget_3.setObjectName(u"widget_3")
+        sizePolicy5.setHeightForWidth(self.widget_3.sizePolicy().hasHeightForWidth())
+        self.widget_3.setSizePolicy(sizePolicy5)
+
+        self.verticalLayout_10.addWidget(self.widget_3)
+
+        self.stackedWidget_2.addWidget(self.graficos_lateral)
+        self.page_4 = QWidget()
+        self.page_4.setObjectName(u"page_4")
+        self.stackedWidget_2.addWidget(self.page_4)
+
+        self.verticalLayout_9.addWidget(self.stackedWidget_2)
+
+        self.splitter_2.addWidget(self.widget)
+
+        self.verticalLayout_7.addWidget(self.splitter_2)
 
         self.stackedWidget.addWidget(self.page)
         self.page_2 = QWidget()
@@ -1285,6 +1417,7 @@ class Ui_AquaPump(object):
         self.abrir_layout_2.setToolTip(QCoreApplication.translate("AquaPump", u"Fechar Barra Lateral", None))
 #endif // QT_CONFIG(tooltip)
         self.abrir_layout_2.setText("")
+        self.pesquisa_line.setPlaceholderText(QCoreApplication.translate("AquaPump", u"Pesquisar", None))
         self.pesquisar_2.setText("")
         self.projecto_2.setText(QCoreApplication.translate("AquaPump", u"Projecto", None))
 #if QT_CONFIG(tooltip)
@@ -1358,5 +1491,11 @@ class Ui_AquaPump(object):
         self.comboBox.setItemText(18, QCoreApplication.translate("AquaPump", u"Tijolos em executados", None))
         self.comboBox.setItemText(19, QCoreApplication.translate("AquaPump", u"Vidro", None))
 
+        self.fechar_perfil.setText("")
+        self.opcoes_perfil.setText("")
+        self.expandir_2.setText("")
+        self.fechar_lateral.setText("")
+        self.definicoes_direita.setText("")
+        self.expandir.setText("")
     # retranslateUi
 

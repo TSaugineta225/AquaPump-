@@ -506,7 +506,7 @@ QLineEdit:focus {
        <item>
         <widget class="QStackedWidget" name="stackedWidget">
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="page">
           <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -550,7 +550,7 @@ QLineEdit:focus {
               <property name="geometry">
                <rect>
                 <x>0</x>
-                <y>0</y>
+                <y>-287</y>
                 <width>540</width>
                 <height>1065</height>
                </rect>
@@ -1408,7 +1408,7 @@ QLineEdit:hover {
  </widget>
  <resources>
   <include location="../img/img.qrc"/>
-  <include location="../../../../../../Qt/6.9.0/mingw_64/bin/Reposit-rios-/Boa Ideia/img/img.qrc"/>
+  <include location="../img/img.qrc"/>
  </resources>
  <connections>
   <connection>

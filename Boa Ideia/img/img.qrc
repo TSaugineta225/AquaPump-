@@ -1,5 +1,11 @@
 <RCC>
   <qresource prefix="img">
+    <file>bottom.png</file>
+    <file>copy.png</file>
+    <file>left_panel_open_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</file>
+    <file>opcoes.png</file>
+    <file>zoom.png</file>
+    <file>close.png</file>
     <file>search.png</file>
     <file>exportar.png</file>
     <file>projecto.png</file>

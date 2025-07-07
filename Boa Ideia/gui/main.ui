@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>982</width>
-    <height>635</height>
+    <width>988</width>
+    <height>632</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -151,6 +151,17 @@ QScrollBar::down-arrow:vertical {
     height: 9px;
     margin: 2px;
 }
+
+QToolButton {
+background-color: transparent;
+font-family: Roboto;
+font-size:10pt;
+border: none;
+border-radius:2px
+
+}
+
+
 </string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_8">
@@ -535,9 +546,13 @@ border:none
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
 	border-right: 0px solid #d0d0d0;
+	font-size: 12px;
 
 }
 </string>
+             </property>
+             <property name="placeholderText">
+              <string>Pesquisar</string>
              </property>
             </widget>
            </item>
@@ -622,7 +637,7 @@ QPushButton:checked {
              <x>0</x>
              <y>0</y>
              <width>193</width>
-             <height>352</height>
+             <height>349</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -1609,7 +1624,7 @@ QPushButton:pressed {
        <item>
         <widget class="QStackedWidget" name="stackedWidget">
          <widget class="QWidget" name="page">
-          <layout class="QVBoxLayout" name="verticalLayout_9">
+          <layout class="QVBoxLayout" name="verticalLayout_7">
            <property name="spacing">
             <number>2</number>
            </property>
@@ -1626,7 +1641,7 @@ QPushButton:pressed {
             <number>0</number>
            </property>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_10">
+            <layout class="QHBoxLayout" name="horizontalLayout">
              <item>
               <widget class="QComboBox" name="comboBox_3">
                <property name="sizePolicy">
@@ -1920,9 +1935,21 @@ border-left:0px solid #d0d0d0;
             </layout>
            </item>
            <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_14">
-             <item>
+            <widget class="QSplitter" name="splitter_2">
+             <property name="orientation">
+              <enum>Qt::Orientation::Horizontal</enum>
+             </property>
+             <widget class="QSplitter" name="splitter">
+              <property name="orientation">
+               <enum>Qt::Orientation::Vertical</enum>
+              </property>
               <widget class="QFrame" name="frame_5">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
                <property name="styleSheet">
                 <string notr="true">background-color: rgb(107, 117, 255);</string>
                </property>
@@ -1933,24 +1960,268 @@ border-left:0px solid #d0d0d0;
                 <enum>QFrame::Shadow::Raised</enum>
                </property>
               </widget>
-             </item>
-             <item>
-              <widget class="QWidget" name="widget" native="true">
+              <widget class="QWidget" name="widget_2" native="true">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
                <property name="maximumSize">
                 <size>
-                 <width>0</width>
-                 <height>16777215</height>
+                 <width>16777215</width>
+                 <height>0</height>
                 </size>
                </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_11">
+                <property name="spacing">
+                 <number>0</number>
+                </property>
+                <property name="leftMargin">
+                 <number>0</number>
+                </property>
+                <property name="topMargin">
+                 <number>0</number>
+                </property>
+                <property name="rightMargin">
+                 <number>0</number>
+                </property>
+                <property name="bottomMargin">
+                 <number>0</number>
+                </property>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_13">
+                  <property name="leftMargin">
+                   <number>9</number>
+                  </property>
+                  <property name="rightMargin">
+                   <number>9</number>
+                  </property>
+                  <item>
+                   <widget class="QToolButton" name="fechar_perfil">
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="../img/img.qrc">
+                      <normaloff>:/img/bottom.png</normaloff>:/img/bottom.png</iconset>
+                    </property>
+                    <property name="iconSize">
+                     <size>
+                      <width>24</width>
+                      <height>24</height>
+                     </size>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <spacer name="horizontalSpacer_5">
+                    <property name="orientation">
+                     <enum>Qt::Orientation::Horizontal</enum>
+                    </property>
+                    <property name="sizeHint" stdset="0">
+                     <size>
+                      <width>40</width>
+                      <height>20</height>
+                     </size>
+                    </property>
+                   </spacer>
+                  </item>
+                  <item>
+                   <widget class="QToolButton" name="opcoes_perfil">
+                    <property name="styleSheet">
+                     <string notr="true">padding-right: 15px</string>
+                    </property>
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="../img/img.qrc">
+                      <normaloff>:/img/opcoes.png</normaloff>:/img/opcoes.png</iconset>
+                    </property>
+                    <property name="iconSize">
+                     <size>
+                      <width>24</width>
+                      <height>24</height>
+                     </size>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QToolButton" name="expandir_2">
+                    <property name="text">
+                     <string/>
+                    </property>
+                    <property name="icon">
+                     <iconset resource="../img/img.qrc">
+                      <normaloff>:/img/zoom.png</normaloff>:/img/zoom.png</iconset>
+                    </property>
+                    <property name="iconSize">
+                     <size>
+                      <width>24</width>
+                      <height>24</height>
+                     </size>
+                    </property>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+                <item>
+                 <widget class="QFrame" name="grafico_2">
+                  <property name="frameShape">
+                   <enum>QFrame::Shape::StyledPanel</enum>
+                  </property>
+                  <property name="frameShadow">
+                   <enum>QFrame::Shadow::Raised</enum>
+                  </property>
+                 </widget>
+                </item>
+               </layout>
               </widget>
-             </item>
-            </layout>
+             </widget>
+             <widget class="QWidget" name="widget" native="true">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
+              <property name="maximumSize">
+               <size>
+                <width>0</width>
+                <height>16777215</height>
+               </size>
+              </property>
+              <property name="styleSheet">
+               <string notr="true"/>
+              </property>
+              <layout class="QVBoxLayout" name="verticalLayout_9">
+               <property name="spacing">
+                <number>0</number>
+               </property>
+               <property name="leftMargin">
+                <number>0</number>
+               </property>
+               <property name="topMargin">
+                <number>0</number>
+               </property>
+               <property name="rightMargin">
+                <number>0</number>
+               </property>
+               <property name="bottomMargin">
+                <number>0</number>
+               </property>
+               <item>
+                <widget class="QStackedWidget" name="stackedWidget_2">
+                 <widget class="QWidget" name="graficos_lateral">
+                  <layout class="QVBoxLayout" name="verticalLayout_10">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <layout class="QHBoxLayout" name="horizontalLayout_10">
+                     <item>
+                      <widget class="QToolButton" name="fechar_lateral">
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="../img/img.qrc">
+                         <normaloff>:/img/right_panel_close.png</normaloff>:/img/right_panel_close.png</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>24</width>
+                         <height>24</height>
+                        </size>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <spacer name="horizontalSpacer">
+                       <property name="orientation">
+                        <enum>Qt::Orientation::Horizontal</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>40</width>
+                         <height>20</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                     <item>
+                      <widget class="QToolButton" name="definicoes_direita">
+                       <property name="styleSheet">
+                        <string notr="true">padding-right: 15px</string>
+                       </property>
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="../img/img.qrc">
+                         <normaloff>:/img/opcoes.png</normaloff>:/img/opcoes.png</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>24</width>
+                         <height>24</height>
+                        </size>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QToolButton" name="expandir">
+                       <property name="text">
+                        <string/>
+                       </property>
+                       <property name="icon">
+                        <iconset resource="../img/img.qrc">
+                         <normaloff>:/img/zoom.png</normaloff>:/img/zoom.png</iconset>
+                       </property>
+                       <property name="iconSize">
+                        <size>
+                         <width>24</width>
+                         <height>24</height>
+                        </size>
+                       </property>
+                      </widget>
+                     </item>
+                    </layout>
+                   </item>
+                   <item>
+                    <widget class="QWidget" name="widget_3" native="true">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="page_4"/>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </widget>
            </item>
           </layout>
          </widget>
