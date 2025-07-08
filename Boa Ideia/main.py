@@ -13,8 +13,7 @@ from scripts.animações import Animações
 from scripts.JavaScript import Mapa
 from scripts.web_channel import Dados, Relatório
 from scripts.pdf_gen import PDF
-from scripts.graficos import Graficos
-from scripts.graph import Grafico
+from calculos.graph import Grafico
 from scripts.arquivos import Arquivos
 from scripts.requisicoes import Pesquisa
 import os, json
