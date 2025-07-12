@@ -28,11 +28,12 @@ class Relatório (QObject):
         self.longitude = 0
         self.altura = 0
         
-    @Slot(float, float, float)
-    def valores_recebidos(self, flow, tempo, altura):
+    @Slot(float, float, float, float)
+    def valores_recebidos(self, flow, tempo, altura, diametro):
         self.vazão = float(flow)
         self.tempo = float(tempo)
         self.altura = float(altura)
+        self.diametro = float(diametro)
 
 
 

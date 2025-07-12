@@ -1643,189 +1643,47 @@ QPushButton:pressed {
            <item>
             <layout class="QHBoxLayout" name="horizontalLayout">
              <item>
-              <widget class="QComboBox" name="comboBox_3">
+              <widget class="QComboBox" name="darcy">
                <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
                  <horstretch>0</horstretch>
                  <verstretch>0</verstretch>
                 </sizepolicy>
                </property>
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>0</height>
+                </size>
+               </property>
+               <property name="maximumSize">
+                <size>
+                 <width>450</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="styleSheet">
                 <string notr="true"/>
                </property>
-               <item>
-                <property name="text">
-                 <string>PVC</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Polietileno</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Aço galvanizado (novo)</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Ferro fundido (novo)</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Ferro fundido (velho ou corroído)</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Concreto liso</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Concreto rugoso</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Madeira lisa</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Madeira áspera</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Amianto-cimento</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Tubo de chumbo</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Tubo de vidro</string>
-                </property>
-               </item>
               </widget>
              </item>
              <item>
-              <widget class="QComboBox" name="comboBox">
+              <widget class="QComboBox" name="hazen_will">
                <property name="minimumSize">
                 <size>
                  <width>0</width>
                  <height>30</height>
                 </size>
                </property>
+               <property name="maximumSize">
+                <size>
+                 <width>450</width>
+                 <height>16777215</height>
+                </size>
+               </property>
                <property name="styleSheet">
                 <string notr="true"/>
                </property>
-               <item>
-                <property name="text">
-                 <string>Aço Corrugado(chapa ondulada)</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Aço Galvanizado</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Aço Rebitado novo</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Aço Rebitado em uso</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Aço soldado novo</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Aço Soldado em uso</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Aço Soldado com revestimento especial</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Chumbo</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Cimento Amianto</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Cobre</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Concreto com acabamento comum</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Ferro Fundido novo</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Ferro Fundido de 15 a 20 anos de uso</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Ferro Fundido Usado</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Latão</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Ferro Fundido Revestido de Cimento</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Manilha Cerâmica vidrada</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Plástico</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Tijolos em executados</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>Vidro</string>
-                </property>
-               </item>
               </widget>
              </item>
              <item>
@@ -1836,7 +1694,7 @@ QPushButton:pressed {
                <item>
                 <widget class="QLineEdit" name="Vazao_2">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
@@ -1888,7 +1746,7 @@ border-left:0px solid #d0d0d0;
                <item>
                 <widget class="QLineEdit" name="Vazao">
                  <property name="sizePolicy">
-                  <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+                  <sizepolicy hsizetype="Preferred" vsizetype="Fixed">
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>

@@ -3,7 +3,7 @@ from PySide6.QtWidgets import QApplication, QWidget, QMenu, QToolButton, QMessag
 from PySide6.QtGui import QAction, QIcon,QDoubleValidator, QSurfaceFormat
 from PySide6.QtCore import QPoint, QEvent, Qt, QSize, Slot, QStringListModel
 from qframelesswindow import FramelessWindow, StandardTitleBar
-from PySide6.QtCore import QPropertyAnimation, QEasingCurve, QUrl, Qt, QTimer, Signal
+from PySide6.QtCore import QPropertyAnimation, QEasingCurve, QUrl, Qt, QTimer, Signal, QSettings
 from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineProfile
 from PySide6.QtWebChannel import QWebChannel
 from gui.Ui_main import Ui_AquaPump
@@ -13,9 +13,11 @@ from scripts.animações import Animações
 from scripts.JavaScript import Mapa
 from scripts.web_channel import Dados, Relatório
 from scripts.pdf_gen import PDF
-from calculos.graph import Grafico
+from calculos.curvas_bomba import Grafico
+from calculos.perdas_cargas import Perdas 
 from scripts.arquivos import Arquivos
 from scripts.requisicoes import Pesquisa
+from scripts.configurações import Configuracoes
 import os, json
 import gui.img_rc
 
@@ -45,6 +47,10 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.page.setWebChannel(self._canal)
         self._canal.registerObject("dados_bomba", self.dados_bomba)
 
+        # === Settings ===
+        self.config = Configuracoes()
+        self.restaurar_configuracoes()
+
         # === Conexões JS ===
         self.Vazao_2.textChanged.connect(self.enviar_js)
         self.Vazao.textChanged.connect(self.enviar_js)
@@ -54,6 +60,8 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.menu = QMenu(self)
         acao_novo = QAction("Novo", self)
         acao_abrir = QAction("Abrir", self)
+        accao_recente = QAction("Projetos Recentes", self)
+        self.atualizar_menu_recentes()
         acao_salvar = QAction("Salvar", self)
         acao_salvar_como = QAction("Salvar Como", self)
         acao_fechar = QAction("Fechar Projeto", self)
@@ -82,7 +90,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.addAction(accao_coor_2)
 
         self.menu.addActions([
-            acao_novo, acao_abrir, acao_salvar, acao_salvar_como, acao_fechar,
+            acao_novo, acao_abrir, accao_recente, acao_salvar, acao_salvar_como, acao_fechar,
         ])
         self.menu.addSeparator()
         self.menu.addActions([accao_coor, accao_coor_1, accao_coor_2])
@@ -164,7 +172,9 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         #self.mapa_2.clicked.connect(self.carregar_arquivo)
 
         # === ComboBox ===
-        self.comboBox.setHidden(True)
+        self.hazen_will.addItems(Perdas.get_lista_materiais_hazen())        
+        self.hazen_will.setHidden(True)
+        self.darcy.addItems(Perdas.get_lista_materiais_darcy())
 
         # === Validação de Entrada ===
         validator = QDoubleValidator(0.0, 1000.0, 3)
@@ -199,15 +209,30 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.Vazao.setPlaceholderText("Tempo em horas")
 
         # === Gráfico Matplotlib ===
+        perda = self.calcular_perda_carga()
         self.matplot_grafico = Grafico()
         layout = QVBoxLayout(self.widget_3)
         self.widget_3.setLayout(layout)
         self.widget_3.layout().addWidget(self.matplot_grafico)
 
-        # === Status e Threads ===
+        # =========== Status e Threads ==================
         self.worker = None
         self.status_label = QLabel()
 
+    def calcular_perda_carga(self):
+        p = Perdas(self.dados_bomba.diâmetro, self.dados_bomba.tempo, self.dados_bomba.vazão)
+        perda = 0
+        if self.darcy.isVisible():
+            p.definir_material_darcy(self.darcy.currentText())
+            p.calcular_velocidade()
+            perda = p.calcular_perda_carga_darcy()
+        
+        elif self.hazen_will.isVisible():
+            p.definir_material_hazen(self.hazen_will.currentText())
+            p.calcular_velocidade()
+            perda = p.calcular_perda_carga_hazen_williams()
+        
+        return perda
 
     def mudanca_dinamica_Textholder(self):
         self.Vazao_2.setPlaceholderText(f"Vazão em {self.icone_2.currentText()}")
@@ -251,7 +276,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     def gerar_pdf(self):
         try:
             self.relatorio_pdf.adicionar_titulos()
-            self.relatorio_pdf.adicionar_conteudo(self.dados_bomba.vazão, self.dados_bomba.tempo, self.dados_bomba.diâmetro)
+            self.relatorio_pdf.adicionar_conteudo(self.dados_bomba.vazão, self.dados_bomba.tempo, self.dados_bomba.diametro)
             self.relatorio_pdf.gravar_pdf()
         except Exception as e:
             QMessageBox.critical(self, 'ERRO', f'Erro ao gerar pdf devido a {e}')
@@ -270,20 +295,12 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             else:
                 self.page.setFeaturePermission(url, feature, QWebEnginePage.PermissionDeniedByUser)
 
-    def plotar_gráfico(self):
-        self.gráfico = Graficos(self.dados_bomba.vazão)
-        self.grafico.calculo_K()
-        self.grafico.curva_car()
-        self.grafico.configuracoes_grafico()
-        self.grafico.plotar()
-
-        self.graph_curve.setChart(self.grafico.chart())
     
     def formula_hazen_recebida(self, mostrar):
-        self.comboBox_3.setVisible(mostrar)
+        self.hazen_will.setVisible(mostrar)
 
     def formula_darcy_recebida(self, mostrar):
-        self.comboBox.setVisible(mostrar)
+        self.darcy.setVisible(mostrar)
     
     def receber_unidades(self, itens):
         self.icone_2.clear()
@@ -303,6 +320,55 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.sincronizar.connect(janela.actualizar_espaco)
 
         janela.exec()
+
+    def salvar_configuracoes(self):
+        """ Salva todas as configurações da aplicação ao fechar. """
+        self.config.salvar_geometria_janela(self)
+        self.config.salvar_estado_splitter(self.splitter_2, "splitter_principal")
+        self.config.salvar_estado_splitter(self.splitter, "splitter_mapa_perfil")
+        self.config.salvar_texto_lineedit(self.Vazao_2, "vazao_valor")
+        self.config.salvar_indice_combobox(self.icone_2, "vazao_unidade_indice")
+        self.config.salvar_texto_combobox(self.darcy, "darcy_material_texto")
+        self.config.salvar_texto_combobox(self.hazen_will, "hazen_material_texto")
+
+    def restaurar_configuracoes(self):
+        """ Restaura todas as configurações da aplicação no arranque. """
+        self.config.restaurar_geometria_janela(self)
+        self.config.restaurar_estado_splitter(self.splitter_2, "splitter_principal")
+        self.config.restaurar_estado_splitter(self.splitter, "splitter_mapa_perfil")
+        self.config.restaurar_texto_lineedit(self.Vazao_2, "vazao_valor")
+        self.config.restaurar_indice_combobox(self.icone_2, "vazao_unidade_indice")
+        self.config.restaurar_texto_combobox(self.darcy, "darcy_material_texto")
+        self.config.restaurar_texto_combobox(self.hazen_will, "hazen_material_texto")
+
+    def closeEvent(self, event):
+        """ Chamado quando a janela está prestes a ser fechada. """
+        self.salvar_configuracoes()
+        super().closeEvent(event)
+
+    def atualizar_menu_recentes(self):
+        """ Limpa e recria as ações no menu 'Projetos Recentes'. """
+        self.menu_recentes.clear()
+        recentes = self.config.obter_projetos_recentes()
+        if recentes:
+            for caminho in recentes:
+                acao = QAction(caminho, self)
+                # A função lambda captura o valor de 'caminho' no momento da criação
+                acao.triggered.connect(lambda checked=False, path=caminho: self.abrir_projeto(path))
+                self.menu_recentes.addAction(acao)
+        else:
+            self.menu_recentes.setEnabled(False)
+
+    def abrir_ou_salvar_arquivo(self): 
+        caminho_do_arquivo = "caminho/para/o/seu/projeto.json" 
+        if caminho_do_arquivo:
+            self.config.adicionar_projeto_recente(caminho_do_arquivo)
+            self.atualizar_menu_recentes()
+
+    def abrir_projeto(self, caminho):
+        QMessageBox.information(self, "Abrir Projeto", f"A abrir o projeto:\n{caminho}")
+        self.config.adicionar_projeto_recente(caminho)
+        self.atualizar_menu_recentes()
     
     
 
