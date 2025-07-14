@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QDialog, QDoubleSpinBox, QHeaderView
 from PySide6.QtCore import Qt, Signal
 from gui.Ui_config import Ui_Dialog
-import gui.img_rc
+import img.img_rc
 
 
 class Config_main(QDialog):

@@ -18,8 +18,9 @@ from calculos.perdas_cargas import Perdas
 from scripts.arquivos import Arquivos
 from scripts.requisicoes import Pesquisa
 from scripts.configurações import Configuracoes
+from scripts.menus import Menus
 import os, json
-import gui.img_rc
+import img.img_rc
 
 os.environ["QT_QUICK_BACKEND"] = "software"
 os.environ["QT_OPENGL"] = "software"
@@ -39,6 +40,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.dados = Dados()
         self.relatorio_pdf = PDF()
         self.arquivos = Arquivos(self.view)
+        self.menu = Menus(parent=self, arquivos=self.arquivos, config=Configuracoes())
 
         # === WebEngine + WebChannel ===
         self._canal = QWebChannel()
@@ -56,99 +58,16 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.Vazao.textChanged.connect(self.enviar_js)
         self.page.featurePermissionRequested.connect(self.permissao)
 
-        # === Menu Arquivo ===
-        self.menu = QMenu(self)
-        acao_novo = QAction("Novo", self)
-        acao_abrir = QAction("Abrir", self)
-        accao_recente = QAction("Projetos Recentes", self)
-        self.atualizar_menu_recentes()
-        acao_salvar = QAction("Salvar", self)
-        acao_salvar_como = QAction("Salvar Como", self)
-        acao_fechar = QAction("Fechar Projeto", self)
-        acao_sair = QAction("Sair", self)
-
-        acao_novo.setShortcut("Ctrl+N")
-        acao_abrir.setShortcut("Ctrl+O")
-        acao_salvar.setShortcut("Ctrl+S")
-        acao_salvar_como.setShortcut("Ctrl+Shift+S")
-        acao_fechar.setShortcut("Ctrl+W")
-        acao_sair.setShortcut("Ctrl+Q")
-        acao_sair.setShortcutContext(Qt.ApplicationShortcut)
-        acao_sair.triggered.connect(lambda: app.quit())
-        self.addAction(acao_sair)
-
-        accao_coor = QAction(QIcon(":/img/kml.png"), "Carregar KML", self)
-        accao_coor_1 = QAction(QIcon(":/img/arquivo.png"), "Carregar camada shapefile", self)
-        accao_coor_2 = QAction(QIcon(":/img/arquivo-csv.png"), "Carregar coordenadas CSV", self)
-
-        accao_coor.triggered.connect(self.arquivos.carregar_kml)
-        accao_coor_1.triggered.connect(self.arquivos.carregar_shapefile)
-        accao_coor_2.triggered.connect(self.arquivos.carregar_csv)
-
-        self.addAction(accao_coor)
-        self.addAction(accao_coor_1)
-        self.addAction(accao_coor_2)
-
-        self.menu.addActions([
-            acao_novo, acao_abrir, accao_recente, acao_salvar, acao_salvar_como, acao_fechar,
-        ])
-        self.menu.addSeparator()
-        self.menu.addActions([accao_coor, accao_coor_1, accao_coor_2])
-        self.menu.addSeparator()
-        self.menu.addAction(acao_sair)
-
-        # === Menu Editar ===
-        self.editar = QMenu(self)
-        accao_config = QAction("Configurações", self)
-        acao_parametros = QAction("Parâmetros do Projecto", self)
-
-        accao_config.setShortcut("Ctrl+E")
-        accao_config.setShortcutContext(Qt.ApplicationShortcut)
-        acao_parametros.setShortcut("Ctrl+P")
-        accao_config.triggered.connect(self.janela_config)
-
-        self.addAction(accao_config)
-        self.editar.addActions([accao_config, acao_parametros])
-
-        # === Menu Relatório ===
-        self.rel = QMenu(self)
-        acao_relatorio = QAction("Relatório", self)
-        acao_exportar = QAction("Exportar", self)
-        acao_relatorio.setShortcut("Ctrl+R")
-        acao_exportar.setShortcut("Ctrl+E")
-        self.rel.addActions([acao_relatorio, acao_exportar])
-
-        # === Menu Ajuda ===
-        self.help = QMenu(self)
-        acao_manual = QAction("Manual do Usuário", self)
-        acao_dicas = QAction("Dicas de Uso", self)
-        acao_sobre = QAction("Sobre o Programa", self)
-        acao_suporte = QAction("Suporte Técnico", self)
-
-        acao_manual.setShortcut("Ctrl+M")
-        acao_dicas.setShortcut("Ctrl+D")
-        acao_sobre.setShortcut("Ctrl+I")
-        acao_suporte.setShortcut("Ctrl+T")
-        self.help.addActions([acao_manual, acao_dicas, acao_sobre, acao_suporte])
-
-        # === Menu Gráficos ===
-        self.grafico = QMenu(self)
-        self.perfil = QAction("Perfil de Elevação", self)
-        self.curva = QAction("Curvas de Bombas/Associação")
-
-        self.perfil.triggered.connect(lambda: self.animações.altura(self.widget_2, altura=400))
-        self.curva.triggered.connect(lambda: self.animações.largura(self.widget, largura_alvo=500))
-        #self.curva.triggered.connect(self.plotar_gráfico)
-        self.grafico.addActions([self.perfil, self.curva])
-
         # === Botões de Menu Superior ===
-        self.grafico_icon.clicked.connect(lambda: self.grafico.popup(self.grafico_icon.mapToGlobal(self.grafico_icon.rect().topRight())))
-        self.arquivo_2.clicked.connect(lambda: self.menu.popup(self.arquivo_2.mapToGlobal(self.arquivo_2.rect().bottomLeft())))
-        self.config_2.clicked.connect(lambda: self.editar.popup(self.config_2.mapToGlobal(self.config_2.rect().bottomLeft())))
-        self.relatorio_2.clicked.connect(lambda: self.rel.popup(self.relatorio_2.mapToGlobal(self.relatorio_2.rect().bottomLeft())))
-        self.ajuda_2.clicked.connect(lambda: self.help.popup(self.ajuda_2.mapToGlobal(self.ajuda_2.rect().bottomLeft())))
+        self.grafico_icon.clicked.connect(lambda: self.menu.menu_graficos().popup(self.grafico_icon.mapToGlobal(self.grafico_icon.rect().topRight())))
+        self.definicoes_direita_2.clicked.connect(lambda: self.menu.menu_selecao_graficos().popup(self.definicoes_direita_2.mapToGlobal(self.definicoes_direita_2.rect().bottomRight())))
+        self.arquivo_2.clicked.connect(lambda: self.menu.menu_principal().popup(self.arquivo_2.mapToGlobal(self.arquivo_2.rect().bottomLeft())))
+        self.config_2.clicked.connect(lambda: self.menu.menu_editar().popup(self.config_2.mapToGlobal(self.config_2.rect().bottomLeft())))
+        self.relatorio_2.clicked.connect(lambda: self.menu.menu_relatorio().popup(self.relatorio_2.mapToGlobal(self.relatorio_2.rect().bottomLeft())))
+        self.ajuda_2.clicked.connect(lambda: self.menu.menu_ajuda().popup(self.ajuda_2.mapToGlobal(self.ajuda_2.rect().bottomLeft())))
 
         # === Aba Lateral e Frames ===
+        self.fechar_lateral_2.clicked.connect(lambda: self.animações.largura(self.frame_4, largura_alvo=300))
         self.abrir_layout_3.clicked.connect(lambda: self.animações.largura(self.frame_4, self.frame_6, largura_alvo=300))
         self.pesquisar_3.clicked.connect(lambda: self.animações.largura(self.frame_4, self.frame_6, largura_alvo=300))
         self.projeto.clicked.connect(lambda: self.animações.largura_altura(self.frame_4, self.projecto, self.frame_6))
@@ -210,10 +129,33 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
         # === Gráfico Matplotlib ===
         perda = self.calcular_perda_carga()
-        self.matplot_grafico = Grafico()
-        layout = QVBoxLayout(self.widget_3)
-        self.widget_3.setLayout(layout)
-        self.widget_3.layout().addWidget(self.matplot_grafico)
+        layout = QVBoxLayout(self.altura)
+        self.altura.setLayout(layout)
+        self.altura.layout().addWidget(Grafico(tipo = 'altura'))
+        self.altura.setStyleSheet("""
+            background-color: #ffffff;
+            border-radius:8px
+"""
+           
+        )
+        layout = QVBoxLayout(self.potencia)
+        self.potencia.setLayout(layout)
+        self.potencia.layout().addWidget(Grafico(tipo = 'potencia'))
+        self.potencia.setStyleSheet("""
+            background-color: #ffffff;
+            border-radius:8px
+"""
+           
+        )
+        layout = QVBoxLayout(self.rendimento)
+        self.rendimento.setLayout(layout)
+        self.rendimento.layout().addWidget(Grafico(tipo = 'rendimento'))
+        self.rendimento.setStyleSheet("""
+            background-color: #ffffff;
+            border-radius:8px
+"""
+           
+        )
 
         # =========== Status e Threads ==================
         self.worker = None
@@ -346,29 +288,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.salvar_configuracoes()
         super().closeEvent(event)
 
-    def atualizar_menu_recentes(self):
-        """ Limpa e recria as ações no menu 'Projetos Recentes'. """
-        self.menu_recentes.clear()
-        recentes = self.config.obter_projetos_recentes()
-        if recentes:
-            for caminho in recentes:
-                acao = QAction(caminho, self)
-                # A função lambda captura o valor de 'caminho' no momento da criação
-                acao.triggered.connect(lambda checked=False, path=caminho: self.abrir_projeto(path))
-                self.menu_recentes.addAction(acao)
-        else:
-            self.menu_recentes.setEnabled(False)
 
-    def abrir_ou_salvar_arquivo(self): 
-        caminho_do_arquivo = "caminho/para/o/seu/projeto.json" 
-        if caminho_do_arquivo:
-            self.config.adicionar_projeto_recente(caminho_do_arquivo)
-            self.atualizar_menu_recentes()
-
-    def abrir_projeto(self, caminho):
-        QMessageBox.information(self, "Abrir Projeto", f"A abrir o projeto:\n{caminho}")
-        self.config.adicionar_projeto_recente(caminho)
-        self.atualizar_menu_recentes()
     
     
 

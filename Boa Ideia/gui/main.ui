@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>988</width>
-    <height>632</height>
+    <width>1110</width>
+    <height>681</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -533,6 +533,12 @@ border:none
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>30</height>
+              </size>
+             </property>
              <property name="maximumSize">
               <size>
                <width>500</width>
@@ -546,7 +552,8 @@ border:none
     border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
 	border-right: 0px solid #d0d0d0;
-	font-size: 12px;
+	font-size: 14px;
+padding:0px;
 
 }
 </string>
@@ -637,7 +644,7 @@ QPushButton:checked {
              <x>0</x>
              <y>0</y>
              <width>193</width>
-             <height>349</height>
+             <height>386</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -1940,7 +1947,7 @@ border-left:0px solid #d0d0d0;
                </layout>
               </widget>
              </widget>
-             <widget class="QWidget" name="widget" native="true">
+             <widget class="QWidget" name="janel_direita" native="true">
               <property name="sizePolicy">
                <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
                 <horstretch>0</horstretch>
@@ -1973,8 +1980,175 @@ border-left:0px solid #d0d0d0;
                 <number>0</number>
                </property>
                <item>
-                <widget class="QStackedWidget" name="stackedWidget_2">
-                 <widget class="QWidget" name="graficos_lateral">
+                <layout class="QHBoxLayout" name="horizontalLayout_12">
+                 <item>
+                  <widget class="QToolButton" name="fechar_lateral_2">
+                   <property name="toolTip">
+                    <string>Fechar Janela</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../img/img.qrc">
+                     <normaloff>:/img/right_panel_close.png</normaloff>:/img/right_panel_close.png</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>24</width>
+                     <height>24</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_6">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QLabel" name="label_2">
+                   <property name="styleSheet">
+                    <string notr="true">color: rgb(181, 181, 181);</string>
+                   </property>
+                   <property name="text">
+                    <string> Curva H vs Q (Altura vs Vazão) </string>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <spacer name="horizontalSpacer_7">
+                   <property name="orientation">
+                    <enum>Qt::Orientation::Horizontal</enum>
+                   </property>
+                   <property name="sizeHint" stdset="0">
+                    <size>
+                     <width>40</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </spacer>
+                 </item>
+                 <item>
+                  <widget class="QToolButton" name="definicoes_direita_2">
+                   <property name="toolTip">
+                    <string>Alterne o grafico exibido</string>
+                   </property>
+                   <property name="styleSheet">
+                    <string notr="true">padding-right: 15px</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../img/img.qrc">
+                     <normaloff>:/img/opcoes.png</normaloff>:/img/opcoes.png</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>24</width>
+                     <height>24</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QToolButton" name="toolButton">
+                   <property name="toolTip">
+                    <string>Definições de Gráficos</string>
+                   </property>
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../img/img.qrc">
+                     <normaloff>:/img/settings_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</normaloff>:/img/settings_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>20</width>
+                     <height>20</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                 <item>
+                  <widget class="QToolButton" name="expandir_3">
+                   <property name="text">
+                    <string/>
+                   </property>
+                   <property name="icon">
+                    <iconset resource="../img/img.qrc">
+                     <normaloff>:/img/zoom.png</normaloff>:/img/zoom.png</iconset>
+                   </property>
+                   <property name="iconSize">
+                    <size>
+                     <width>24</width>
+                     <height>24</height>
+                    </size>
+                   </property>
+                  </widget>
+                 </item>
+                </layout>
+               </item>
+               <item>
+                <widget class="QStackedWidget" name="stackedWidget_3">
+                 <property name="currentIndex">
+                  <number>0</number>
+                 </property>
+                 <widget class="QWidget" name="page_3">
+                  <layout class="QHBoxLayout" name="horizontalLayout_14">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QWidget" name="altura" native="true"/>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="page_5">
+                  <layout class="QHBoxLayout" name="horizontalLayout_15">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QWidget" name="potencia" native="true"/>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="page_4">
                   <layout class="QVBoxLayout" name="verticalLayout_10">
                    <property name="spacing">
                     <number>0</number>
@@ -1992,89 +2166,10 @@ border-left:0px solid #d0d0d0;
                     <number>0</number>
                    </property>
                    <item>
-                    <layout class="QHBoxLayout" name="horizontalLayout_10">
-                     <item>
-                      <widget class="QToolButton" name="fechar_lateral">
-                       <property name="text">
-                        <string/>
-                       </property>
-                       <property name="icon">
-                        <iconset resource="../img/img.qrc">
-                         <normaloff>:/img/right_panel_close.png</normaloff>:/img/right_panel_close.png</iconset>
-                       </property>
-                       <property name="iconSize">
-                        <size>
-                         <width>24</width>
-                         <height>24</height>
-                        </size>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <spacer name="horizontalSpacer">
-                       <property name="orientation">
-                        <enum>Qt::Orientation::Horizontal</enum>
-                       </property>
-                       <property name="sizeHint" stdset="0">
-                        <size>
-                         <width>40</width>
-                         <height>20</height>
-                        </size>
-                       </property>
-                      </spacer>
-                     </item>
-                     <item>
-                      <widget class="QToolButton" name="definicoes_direita">
-                       <property name="styleSheet">
-                        <string notr="true">padding-right: 15px</string>
-                       </property>
-                       <property name="text">
-                        <string/>
-                       </property>
-                       <property name="icon">
-                        <iconset resource="../img/img.qrc">
-                         <normaloff>:/img/opcoes.png</normaloff>:/img/opcoes.png</iconset>
-                       </property>
-                       <property name="iconSize">
-                        <size>
-                         <width>24</width>
-                         <height>24</height>
-                        </size>
-                       </property>
-                      </widget>
-                     </item>
-                     <item>
-                      <widget class="QToolButton" name="expandir">
-                       <property name="text">
-                        <string/>
-                       </property>
-                       <property name="icon">
-                        <iconset resource="../img/img.qrc">
-                         <normaloff>:/img/zoom.png</normaloff>:/img/zoom.png</iconset>
-                       </property>
-                       <property name="iconSize">
-                        <size>
-                         <width>24</width>
-                         <height>24</height>
-                        </size>
-                       </property>
-                      </widget>
-                     </item>
-                    </layout>
-                   </item>
-                   <item>
-                    <widget class="QWidget" name="widget_3" native="true">
-                     <property name="sizePolicy">
-                      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
-                       <horstretch>0</horstretch>
-                       <verstretch>0</verstretch>
-                      </sizepolicy>
-                     </property>
-                    </widget>
+                    <widget class="QWidget" name="rendimento" native="true"/>
                    </item>
                   </layout>
                  </widget>
-                 <widget class="QWidget" name="page_4"/>
                 </widget>
                </item>
               </layout>

@@ -1,5 +1,9 @@
 <RCC>
   <qresource prefix="img">
+    <file>arrow_back_claro.png</file>
+    <file>arrow_back_mais_claro.png</file>
+    <file>arrow_forward_claro.png</file>
+    <file>arrow_forward_mais claro.png</file>
     <file>bottom.png</file>
     <file>copy.png</file>
     <file>left_panel_open_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</file>

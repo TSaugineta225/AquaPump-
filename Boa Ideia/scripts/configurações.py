@@ -8,7 +8,7 @@ class Configuracoes:
     # ===== GEOMETRIA DA JANELA ========================
     def salvar_geometria_janela(self, janela):
         self.settings.setValue('geometry', janela.saveGeometry())
-        self.settings.setValue('windowState', janela.saveState())
+       # self.settings.setValue('windowState', janela.saveState())
 
     def restaurar_geometria_janela(self, janela):
         geometry = self.settings.value('geometry')

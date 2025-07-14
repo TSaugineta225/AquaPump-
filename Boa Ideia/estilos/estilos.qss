@@ -45,12 +45,19 @@ QMenu {
 QMenu::item {
     padding: 6px 20px;
     background-color: transparent;
+    color: #333333;
 }
 
 QMenu::item:selected {
     background-color: #0078d7;
     color: #ffffff;
     border-radius: 4px;
+}
+
+QMenu::item:disabled {
+    color: #aaaaaa; /* cinza claro */
+    background-color: transparent;
+    font-style:italic
 }
 
 /* Separador */

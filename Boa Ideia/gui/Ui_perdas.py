@@ -20,7 +20,7 @@ from PySide6.QtWidgets import (QAbstractButton, QAbstractItemView, QAbstractScro
     QGroupBox, QHBoxLayout, QHeaderView, QPushButton,
     QRadioButton, QSizePolicy, QSpacerItem, QStackedWidget,
     QTableWidget, QTableWidgetItem, QVBoxLayout, QWidget)
-import gui.img_rc
+import img.img_rc
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
