@@ -21,6 +21,7 @@ from PySide6.QtWidgets import (QApplication, QComboBox, QFrame, QHBoxLayout,
     QToolButton, QVBoxLayout, QWidget)
 from PySide6.QtWebEngineWidgets import QWebEngineView
 import img.img_rc
+
 class Ui_AquaPump(object):
     def setupUi(self, AquaPump):
         if not AquaPump.objectName():
@@ -1227,7 +1228,6 @@ class Ui_AquaPump(object):
         self.splitter = QSplitter(self.splitter_2)
         self.splitter.setObjectName(u"splitter")
         self.splitter.setOrientation(Qt.Orientation.Vertical)
-        
         self.splitter.addWidget(self.view)
         self.widget_2 = QWidget(self.splitter)
         self.widget_2.setObjectName(u"widget_2")
@@ -1335,12 +1335,14 @@ class Ui_AquaPump(object):
 
         self.horizontalLayout_12.addWidget(self.definicoes_direita_2)
 
-        self.toolButton = QToolButton(self.janel_direita)
-        self.toolButton.setObjectName(u"toolButton")
-        self.toolButton.setIcon(icon10)
-        self.toolButton.setIconSize(QSize(20, 20))
+        self.actualizar_grafico = QToolButton(self.janel_direita)
+        self.actualizar_grafico.setObjectName(u"actualizar_grafico")
+        icon21 = QIcon()
+        icon21.addFile(u":/img/refresh.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.actualizar_grafico.setIcon(icon21)
+        self.actualizar_grafico.setIconSize(QSize(20, 20))
 
-        self.horizontalLayout_12.addWidget(self.toolButton)
+        self.horizontalLayout_12.addWidget(self.actualizar_grafico)
 
         self.expandir_3 = QToolButton(self.janel_direita)
         self.expandir_3.setObjectName(u"expandir_3")
@@ -1483,9 +1485,9 @@ class Ui_AquaPump(object):
 #endif // QT_CONFIG(tooltip)
         self.definicoes_direita_2.setText("")
 #if QT_CONFIG(tooltip)
-        self.toolButton.setToolTip(QCoreApplication.translate("AquaPump", u"Defini\u00e7\u00f5es de Gr\u00e1ficos", None))
+        self.actualizar_grafico.setToolTip(QCoreApplication.translate("AquaPump", u"Actualizar Gr\u00e1ficos", None))
 #endif // QT_CONFIG(tooltip)
-        self.toolButton.setText("")
+        self.actualizar_grafico.setText("")
         self.expandir_3.setText("")
     # retranslateUi
 

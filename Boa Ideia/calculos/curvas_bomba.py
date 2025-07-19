@@ -73,7 +73,7 @@ class Grafico(QWidget):
                          fontsize=9)
 
         self.ax.set_ylabel(ylabel, fontsize=10)
-
+    
     def plotar(self):
         self.ax.clear()
 
@@ -102,3 +102,11 @@ class Grafico(QWidget):
         self.ax.grid(True, linestyle='--', linewidth=0.4, alpha=0.6)
         self.ax.legend(frameon=True, loc='best', fontsize=9)
         self.canvas.draw()
+
+    def actualizar_dados(self, altura, perda):
+        """ Atualiza os dados da bomba e recalcula os gráficos. """
+        self.H_geometrico = altura
+        self.perda_carga = perda
+        self.gerar_dados()
+        self.plotar()
+

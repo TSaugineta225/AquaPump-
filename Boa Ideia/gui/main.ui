@@ -2061,16 +2061,16 @@ border-left:0px solid #d0d0d0;
                   </widget>
                  </item>
                  <item>
-                  <widget class="QToolButton" name="toolButton">
+                  <widget class="QToolButton" name="actualizar_grafico">
                    <property name="toolTip">
-                    <string>Definições de Gráficos</string>
+                    <string>Actualizar Gráficos</string>
                    </property>
                    <property name="text">
                     <string/>
                    </property>
                    <property name="icon">
                     <iconset resource="../img/img.qrc">
-                     <normaloff>:/img/settings_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</normaloff>:/img/settings_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</iconset>
+                     <normaloff>:/img/refresh.png</normaloff>:/img/refresh.png</iconset>
                    </property>
                    <property name="iconSize">
                     <size>

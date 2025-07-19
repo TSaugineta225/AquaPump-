@@ -18,22 +18,18 @@ class Outros_dados():
         QMessageBox.Error(None, "Erro", msg)
 
 class Relatório (QObject):
+    valor_recebido = Signal(float, float, float)
     def __init__(self):
         super().__init__()
-        self.vazão = 0
-        self.tempo = 0
-        self.potencia = 0
-        self.diâmetro = 0
-        self.latitude = 0
-        self.longitude = 0
-        self.altura = 0
+
         
-    @Slot(float, float, float, float)
-    def valores_recebidos(self, flow, tempo, altura, diametro):
-        self.vazão = float(flow)
-        self.tempo = float(tempo)
-        self.altura = float(altura)
-        self.diametro = float(diametro)
+    @Slot(float, float, float)
+    def valores_recebidos(self, altura, distancia, diametro):
+        self.valor_recebido.emit(altura, distancia, diametro)
+
+        
+
+       
 
 
 

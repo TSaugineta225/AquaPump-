@@ -1,6 +1,7 @@
 class Mapa:
     def __init__(self):
-        self.html_code =  """<!DOCTYPE html>
+        self.html_code =  """
+<!DOCTYPE html>
 <html lang="pt">
 <head>
     <meta charset="utf-8">
@@ -30,6 +31,7 @@ class Mapa:
             padding: 15px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
             z-index: 1000;
+
             min-width: 220px;
             display: none;
         }
@@ -95,8 +97,7 @@ class Mapa:
                 polyline: { shapeOptions: { color: '#0000ff', weight: 3 } },
                 polygon: false, rectangle: false, circle: false, marker: false
             }
-        });
-        map.addControl(drawControl);
+        }).addTo(map);
 
         let layer_selecionada = null;
         let valor_1_guardado = null;
@@ -204,7 +205,7 @@ class Mapa:
                 alert("Erro na pesquisa:", error);
             }
         }
-        let altura = None
+        let altura = null
         async function calcularAltura(layer) {
             const latlngs = layer.getLatLngs();
             if (latlngs.length < 2) return 0;
@@ -238,6 +239,8 @@ class Mapa:
                 const distancia = calcular_distancia(layer);
                 const diametro = calcular_diametro(flow, tempo);
                 const pot = potencia(flow, altura);
+                
+                window.dados_bomba.valores_recebidos(altura, distancia, diametro)    // Enviar dados de altura e distancia ao python
                 layer.bindPopup(`
                     <strong>${nome}</strong><br>
                     Distância: ${(distancia/1000).toFixed(2)} km<br>
@@ -245,6 +248,8 @@ class Mapa:
                     Altura: ${altura?.toFixed(2)} m<br>
                     Potência: ${pot?.toFixed(2)} CV
                 `).openPopup();
+               
+
             });
         }
 
@@ -256,11 +261,12 @@ class Mapa:
 
         window.receber_dados = receber_dados;
 
-        map.on(L.Draw.Event.CREATED, async e => {
+        map.on(L.Draw.Event.CREATED, e => {
             const layer = e.layer;
             layer.customProperties = { name: "Sem nome" };
+
+
             drawnItems.addLayer(layer);
-            actualizar_popup(layer);
 
             layer.on('click', event => {
                 layer_selecionada = layer;
@@ -269,7 +275,11 @@ class Mapa:
                 document.getElementById('line-width').value = layer.options.weight;
                 mostrar_menu_popup(event.originalEvent);
             });
+
+
+            setTimeout(() => actualizar_popup(layer), 10);
         });
+
 
         document.querySelectorAll('.close-btn, #delete-line').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -303,7 +313,6 @@ class Mapa:
     </script>
 </body>
 </html>
-
 
 """
         

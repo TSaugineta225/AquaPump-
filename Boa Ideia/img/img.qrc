@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="img">
+    <file>refresh.png</file>
     <file>arrow_back_claro.png</file>
     <file>arrow_back_mais_claro.png</file>
     <file>arrow_forward_claro.png</file>

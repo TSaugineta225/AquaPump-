@@ -48,6 +48,12 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.view.setPage(self.page)
         self.page.setWebChannel(self._canal)
         self._canal.registerObject("dados_bomba", self.dados_bomba)
+        # ______________Dados Recebidos________________
+        self.altura_geometrica = 0
+        self.distancia = 0
+        self.diametro = 0
+
+        self.dados_bomba.valor_recebido.connect(self.processamento_dados_recebidos)
 
         # === Settings ===
         self.config = Configuracoes()
@@ -87,13 +93,15 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.pushButton.clicked.connect(self.arquivos.carregar_kml)
         self.pushButton_2.clicked.connect(self.arquivos.carregar_csv)
         self.pushButton_4.clicked.connect(self.arquivos.carregar_shapefile)
-        #self.pushButton_3.clicked.connect(self.janela_perdas) 
-        #self.mapa_2.clicked.connect(self.carregar_arquivo)
 
         # === ComboBox ===
         self.hazen_will.addItems(Perdas.get_lista_materiais_hazen())        
         self.hazen_will.setHidden(True)
         self.darcy.addItems(Perdas.get_lista_materiais_darcy())
+
+        # === LineEdit ===
+        texto = self.Vazao_2.text().strip()
+        self.vazao = float(texto) if texto else 0.0
 
         # === Validação de Entrada ===
         validator = QDoubleValidator(0.0, 1000.0, 3)
@@ -127,55 +135,65 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.Vazao_2.setPlaceholderText(f"Vazão em {self.icone_2.currentText()}")
         self.Vazao.setPlaceholderText("Tempo em horas")
 
-        # === Gráfico Matplotlib ===
-        perda = self.calcular_perda_carga()
-        layout = QVBoxLayout(self.altura)
-        self.altura.setLayout(layout)
-        self.altura.layout().addWidget(Grafico(tipo = 'altura'))
-        self.altura.setStyleSheet("""
-            background-color: #ffffff;
-            border-radius:8px
-"""
-           
-        )
-        layout = QVBoxLayout(self.potencia)
-        self.potencia.setLayout(layout)
-        self.potencia.layout().addWidget(Grafico(tipo = 'potencia'))
-        self.potencia.setStyleSheet("""
-            background-color: #ffffff;
-            border-radius:8px
-"""
-           
-        )
-        layout = QVBoxLayout(self.rendimento)
-        self.rendimento.setLayout(layout)
-        self.rendimento.layout().addWidget(Grafico(tipo = 'rendimento'))
-        self.rendimento.setStyleSheet("""
-            background-color: #ffffff;
-            border-radius:8px
-"""
-           
-        )
-
         # =========== Status e Threads ==================
         self.worker = None
         self.status_label = QLabel()
 
+        # _______________ Inicialização de Gráficos _______________
+        self.inicializar_graficos_curvas()
+
+    def inicializar_graficos_curvas(self):
+        """ Inicializa os gráficos de curvas com os dados da bomba. """
+        perda = self.calcular_perda_carga()
+
+        for widget, tipo in [(self.altura, 'altura'), 
+                             (self.potencia, 'potencia'), 
+                             (self.rendimento, 'rendimento')]:
+            layout = QVBoxLayout()
+            grafico = Grafico(tipo=tipo)
+            grafico.H_geometrico = self.altura_geometrica
+            grafico.perda_carga = perda
+            grafico.gerar_dados()
+            grafico.plotar()
+            layout.addWidget(grafico)
+            widget.setLayout(layout)
+
+    
+    @Slot(float, float, float)
+    def processamento_dados_recebidos(self, altura, distancia, diametro):
+        """ Processa os dados recebidos do JavaScript. """
+        self.altura_geometrica = altura
+        self.distancia = distancia
+        self.diametro = diametro                         
+
+        perda = self.calcular_perda_carga()
+
+        for widget, tipo in [(self.altura, 'altura'), 
+                            (self.potencia, 'potencia'), 
+                            (self.rendimento, 'rendimento')]:
+            layout = widget.layout()
+            if layout and layout.count() > 0:
+                grafico_widget = layout.itemAt(0)
+                if grafico_widget:
+                    grafico = grafico_widget.widget()
+                    if isinstance(grafico, Grafico):
+                        grafico.actualizar_dados(self.altura_geometrica, perda)
+  
     def calcular_perda_carga(self):
-        p = Perdas(self.dados_bomba.diâmetro, self.dados_bomba.tempo, self.dados_bomba.vazão)
+        p = Perdas(self.diametro, self.distancia, self.vazao)
         perda = 0
         if self.darcy.isVisible():
             p.definir_material_darcy(self.darcy.currentText())
             p.calcular_velocidade()
-            perda = p.calcular_perda_carga_darcy()
+            return p.calcular_perda_carga_darcy()
         
         elif self.hazen_will.isVisible():
             p.definir_material_hazen(self.hazen_will.currentText())
             p.calcular_velocidade()
-            perda = p.calcular_perda_carga_hazen_williams()
+            return p.calcular_perda_carga_hazen_williams() 
         
-        return perda
-
+        return 0
+    
     def mudanca_dinamica_Textholder(self):
         self.Vazao_2.setPlaceholderText(f"Vazão em {self.icone_2.currentText()}")
 
