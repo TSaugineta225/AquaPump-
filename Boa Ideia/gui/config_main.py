@@ -5,7 +5,7 @@ import img.img_rc
 
 
 class Config_main(QDialog):
-    unidades = Signal(str, str)
+    unidades = Signal(str, str, str)
     formula_mudada = Signal(bool)
     formula_mudada_2 = Signal(bool)
     sincronizar = Signal(int)
@@ -109,7 +109,7 @@ class Config_main(QDialog):
         diametro = self.ui.diametro_box.currentText()
         potencia = self.ui.potencia_box.currentText()
 
-        self.unidades.emit(caudal, altura)
+        self.unidades.emit(caudal, altura, potencia)
     
     def emitir_sinal_sincro(self, index):
         if self._sincronizar:

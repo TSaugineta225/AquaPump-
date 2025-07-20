@@ -8,10 +8,13 @@ from PySide6.QtWidgets import QWidget, QVBoxLayout
 plt.style.use('seaborn-v0_8')
 
 class Grafico(QWidget):
-    def __init__(self, tipo='altura', perdas=0.003, vazao_nominal=4, altura_nominal=4, parent=None):
+    def __init__(self, tipo='altura', potencia = 'Kw', altura= 'm', v = 'vazao' ,perdas=0.003, vazao_nominal=4, altura_nominal=4, parent=None):
         super().__init__(parent)
 
         self.tipo = tipo.lower()
+        self.potencia = potencia
+        self.altura = altura
+        self.vazao = v
         self.Q_nominal = vazao_nominal
         self.H_nominal = altura_nominal
         self.H_geometrico = altura_nominal
@@ -80,13 +83,13 @@ class Grafico(QWidget):
         if self.tipo == "altura":
             self.ax.plot(self.Q_plot, self.H_plot, label="Curva da Bomba", color='#1f77b4', linewidth=2.2)
             self.ax.plot(self.Q_plot, self.C_plot, label="Curva do Sistema", color='#ff7f0e', linewidth=2.2)
-            self.plotar_ponto_operacao(self.H_op, "Altura (m)")
+            self.plotar_ponto_operacao(self.H_op, f"Altura {self.potencia}")
             self.ax.set_title("Curva da Bomba - Altura vs Vazão", fontsize=11, fontweight='bold')
 
         elif self.tipo == "potencia":
             y_val = np.interp(self.Q_op, self.Q_plot, self.P_plot)
             self.ax.plot(self.Q_plot, self.P_plot, label="Potência", color='#2ca02c', linewidth=2.2)
-            self.plotar_ponto_operacao(y_val, "Potência (kW)")
+            self.plotar_ponto_operacao(y_val, f"Potência {self.potencia}")
             self.ax.set_title("Potência vs Vazão", fontsize=11, fontweight='bold')
 
         elif self.tipo == "rendimento":
@@ -98,7 +101,7 @@ class Grafico(QWidget):
         else:
             self.ax.text(0.5, 0.5, "Tipo de gráfico inválido", ha='center', va='center', fontsize=12)
 
-        self.ax.set_xlabel("Vazão (m³/h)", fontsize=10)
+        self.ax.set_xlabel(f"Vazão {self.vazao}", fontsize=10)
         self.ax.grid(True, linestyle='--', linewidth=0.4, alpha=0.6)
         self.ax.legend(frameon=True, loc='best', fontsize=9)
         self.canvas.draw()

@@ -1,7 +1,7 @@
 from PySide6.QtWidgets import QMenu, QMessageBox
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtCore import Qt
-import img.img_rc  # Supondo que esteja compilado com `pyside6-rcc`
+import img.img_rc 
 
 class Menus:
     def __init__(self, parent=None, arquivos=None, config=None):
@@ -66,7 +66,7 @@ class Menus:
         accao_config.setShortcut("Ctrl+E")
         acao_parametros.setShortcut("Ctrl+P")
         if self.parent:
-            accao_config.triggered.connect(self.parent.janela_config)
+            accao_config.triggered.connect(lambda: self.parent.stackedWidget.setCurrentWidget(self.parent.page))
 
         editar.addActions([accao_config, acao_parametros])
         return editar

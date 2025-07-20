@@ -18,7 +18,7 @@ class Animações():
             if botao:
                 botao.setHidden(False)
 
-        animacao = QPropertyAnimation(frame, b"maximumWidth")
+        animacao = QPropertyAnimation(frame, b"minimumWidth")
         animacao.setDuration(duracao)
         animacao.setStartValue(largura_atual)
         animacao.setEndValue(nova_largura)
@@ -65,7 +65,7 @@ class Animações():
                 botao.setHidden(False)
 
         # Animação de largura
-        animacao_largura = QPropertyAnimation(frame, b"maximumWidth")
+        animacao_largura = QPropertyAnimation(frame, b"minimumWidth")
         animacao_largura.setDuration(duracao)
         animacao_largura.setStartValue(largura_atual)
         animacao_largura.setEndValue(nova_largura)

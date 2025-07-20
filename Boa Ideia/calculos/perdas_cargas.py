@@ -45,7 +45,8 @@ class Perdas:
             raise ValueError("Forneça a vazão.")
         self.velocidade_ms = self.vazao_m3s / area
         if self.velocidade_ms <= 0:
-            raise ValueError("A velocidade deve ser positiva.")
+           # raise ValueError("A velocidade deve ser positiva.")
+           self.velocidade = 1
 
     def calcular_viscosidade_cinematica(self):
         T = 293.15

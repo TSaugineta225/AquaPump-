@@ -6,6 +6,7 @@ from qframelesswindow import FramelessWindow, StandardTitleBar
 from PySide6.QtCore import QPropertyAnimation, QEasingCurve, QUrl, Qt, QTimer, Signal, QSettings
 from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineProfile
 from PySide6.QtWebChannel import QWebChannel
+from pint import UnitRegistry
 from gui.Ui_main import Ui_AquaPump
 from gui.Loses_main import Dialog_main
 from gui.config_main import Config_main
@@ -19,6 +20,7 @@ from scripts.arquivos import Arquivos
 from scripts.requisicoes import Pesquisa
 from scripts.configurações import Configuracoes
 from scripts.menus import Menus
+from scripts.definicoes import Definicoes
 import os, json
 import img.img_rc
 
@@ -32,6 +34,8 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
+        
+        # ___________ Expoentes ______________________
         self.ex_3 = chr(0x00B3)
 
         # === Inicialização de Classes Internas ===
@@ -40,6 +44,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.dados = Dados()
         self.relatorio_pdf = PDF()
         self.arquivos = Arquivos(self.view)
+        self.definicoes = Definicoes(parent=self)
         self.menu = Menus(parent=self, arquivos=self.arquivos, config=Configuracoes())
 
         # === WebEngine + WebChannel ===
@@ -48,6 +53,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.view.setPage(self.page)
         self.page.setWebChannel(self._canal)
         self._canal.registerObject("dados_bomba", self.dados_bomba)
+        
         # ______________Dados Recebidos________________
         self.altura_geometrica = 0
         self.distancia = 0
@@ -85,8 +91,6 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         # === Seções Projeto e Exportar ===
         self.projecto_2.clicked.connect(lambda: self.animações.altura(self.projecto, altura=400))
         self.parametros.clicked.connect(lambda: self.animações.altura(self.exportar, altura=100))
-        self.configuracoes.clicked.connect(self.janela_config)
-        self.configuracoes_2.clicked.connect(self.janela_config)
         self.exportar_pdf.clicked.connect(self.gerar_pdf)
 
         # === Botões Arquivos ===
@@ -98,7 +102,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.hazen_will.addItems(Perdas.get_lista_materiais_hazen())        
         self.hazen_will.setHidden(True)
         self.darcy.addItems(Perdas.get_lista_materiais_darcy())
-
+        
         # === LineEdit ===
         texto = self.Vazao_2.text().strip()
         self.vazao = float(texto) if texto else 0.0
@@ -122,29 +126,28 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         mapa = self.mapinha.html_code
         self.page.setHtml(mapa) 
 
-        # === Combobox com Unidades ===
-        self.icone_2.addItems([
-            f'm{self.ex_3}/s', 
-            f'm{self.ex_3}/min', 
-            f'm{self.ex_3}/h', 
-            f'L/s',
-        ])
-        self.icone_2.currentIndexChanged.connect(self.emitir_sinal_sincro)
-        self.icone_2.currentIndexChanged.connect(self.mudanca_dinamica_Textholder)
+        self.icone_2.currentIndexChanged.connect(self.actualizar_vazao)
         self.icone_2.view().setMinimumWidth(60)
+  
+        # ____________________PlaceHolderText ________________________________
         self.Vazao_2.setPlaceholderText(f"Vazão em {self.icone_2.currentText()}")
         self.Vazao.setPlaceholderText("Tempo em horas")
 
-        # =========== Status e Threads ==================
+         # =========== Status e Threads ==================
         self.worker = None
         self.status_label = QLabel()
 
         # _______________ Inicialização de Gráficos _______________
         self.inicializar_graficos_curvas()
 
+    def actualizar_vazao(self):
+        return self.icone_2.currentText()
+
     def inicializar_graficos_curvas(self):
         """ Inicializa os gráficos de curvas com os dados da bomba. """
-        perda = self.calcular_perda_carga()
+        
+        vazao = self.actualizar_vazao()
+        #perda = self.calcular_perda_carga()
 
         for widget, tipo in [(self.altura, 'altura'), 
                              (self.potencia, 'potencia'), 
@@ -152,7 +155,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             layout = QVBoxLayout()
             grafico = Grafico(tipo=tipo)
             grafico.H_geometrico = self.altura_geometrica
-            grafico.perda_carga = perda
+            #grafico.perda_carga = perda
             grafico.gerar_dados()
             grafico.plotar()
             layout.addWidget(grafico)
@@ -194,9 +197,6 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         
         return 0
     
-    def mudanca_dinamica_Textholder(self):
-        self.Vazao_2.setPlaceholderText(f"Vazão em {self.icone_2.currentText()}")
-
     def emitir_sinal_sincro(self, index):
         if self._sincronizar:
             return
@@ -254,33 +254,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
                 self.page.setFeaturePermission(url, feature, QWebEnginePage.PermissionGrantedByUser)
             else:
                 self.page.setFeaturePermission(url, feature, QWebEnginePage.PermissionDeniedByUser)
-
-    
-    def formula_hazen_recebida(self, mostrar):
-        self.hazen_will.setVisible(mostrar)
-
-    def formula_darcy_recebida(self, mostrar):
-        self.darcy.setVisible(mostrar)
-    
-    def receber_unidades(self, itens):
-        self.icone_2.clear()
-        for item in itens:
-            self.icone_2.addItem(item)
-
-    def janela_perdas(self):
-        janela = Dialog_main()
-        janela.exec()
-
-    def janela_config(self):
-        janela = Config_main()
-        janela.itens_combo.connect(self.receber_unidades)
-        janela.formula_mudada.connect(self.formula_hazen_recebida)
-        janela.formula_mudada_2.connect(self.formula_darcy_recebida)
-        janela.sincronizar.connect(self.actualizar_espaco)
-        self.sincronizar.connect(janela.actualizar_espaco)
-
-        janela.exec()
-
+  
     def salvar_configuracoes(self):
         """ Salva todas as configurações da aplicação ao fechar. """
         self.config.salvar_geometria_janela(self)
@@ -288,6 +262,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.config.salvar_estado_splitter(self.splitter, "splitter_mapa_perfil")
         self.config.salvar_texto_lineedit(self.Vazao_2, "vazao_valor")
         self.config.salvar_indice_combobox(self.icone_2, "vazao_unidade_indice")
+        self.config.restaurar_indice_combobox(self.caudal_box, "vazao_unidade_indice")
         self.config.salvar_texto_combobox(self.darcy, "darcy_material_texto")
         self.config.salvar_texto_combobox(self.hazen_will, "hazen_material_texto")
 
@@ -298,6 +273,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.config.restaurar_estado_splitter(self.splitter, "splitter_mapa_perfil")
         self.config.restaurar_texto_lineedit(self.Vazao_2, "vazao_valor")
         self.config.restaurar_indice_combobox(self.icone_2, "vazao_unidade_indice")
+        self.config.restaurar_indice_combobox(self.caudal_box, "vazao_unidade_indice")
         self.config.restaurar_texto_combobox(self.darcy, "darcy_material_texto")
         self.config.restaurar_texto_combobox(self.hazen_will, "hazen_material_texto")
 
