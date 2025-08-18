@@ -1,5 +1,5 @@
 import sys
-from PySide6.QtWidgets import QApplication, QWidget, QMenu, QToolButton, QMessageBox, QFileDialog, QCompleter, QLabel, QVBoxLayout
+from PySide6.QtWidgets import QApplication, QWidget, QMenu, QToolButton, QMessageBox, QFileDialog, QCompleter, QLabel, QVBoxLayout, QSizePolicy
 from PySide6.QtGui import QAction, QIcon,QDoubleValidator, QSurfaceFormat
 from PySide6.QtCore import QPoint, QEvent, Qt, QSize, Slot, QStringListModel
 from qframelesswindow import FramelessWindow, StandardTitleBar
@@ -8,8 +8,6 @@ from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineProfile
 from PySide6.QtWebChannel import QWebChannel
 from pint import UnitRegistry
 from gui.Ui_main import Ui_AquaPump
-from gui.Loses_main import Dialog_main
-from gui.config_main import Config_main
 from scripts.animações import Animações
 from scripts.JavaScript import Mapa
 from scripts.web_channel import Dados, Relatório
@@ -29,7 +27,6 @@ os.environ["QT_OPENGL"] = "software"
 
 class MainWindow(FramelessWindow, Ui_AquaPump):
     sincronizar = Signal(int)
-
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -88,6 +85,9 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.sair_2.clicked.connect(lambda: app.quit())
         self.sair_3.clicked.connect(lambda: app.quit())
 
+        # == Ampliar Janela Direita ===
+        self.expandir_3.clicked.connect(lambda: self.ampliar_frame(self.janel_direita))
+
         # === Seções Projeto e Exportar ===
         self.projecto_2.clicked.connect(lambda: self.animações.altura(self.projecto, altura=400))
         self.parametros.clicked.connect(lambda: self.animações.altura(self.exportar, altura=100))
@@ -139,6 +139,8 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
         # _______________ Inicialização de Gráficos _______________
         self.inicializar_graficos_curvas()
+        self.Vazao_2.textChanged.connect(self.inicializar_graficos_curvas)
+        self.Vazao.textChanged.connect(self.inicializar_graficos_curvas)
 
     def actualizar_vazao(self):
         return self.icone_2.currentText()
@@ -197,6 +199,17 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         
         return 0
     
+    def ampliar_frame(self, frame):
+        """Ampliar o frame para mostrar mais opções."""
+        
+        for w in (self.frame_4, self.frame_6, self.view):
+            w.setVisible(False)
+
+        self.view.setFixedSize(0, 0)
+
+        frame.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        frame.adjustSize()   
+
     def emitir_sinal_sincro(self, index):
         if self._sincronizar:
             return

@@ -73,6 +73,8 @@ class Definicoes:
     def mostrar_janela_definicoes(self):
         """Mostra a janela de definições."""
         if self.parent:
+            if self.parent.frame_4.width() != 0:
+                self.parent.frame_4.setFixedWidth(0)
             self.parent.frame_6.setHidden(True)
             self.parent.stackedWidget.setCurrentIndex(1)
 
@@ -81,6 +83,7 @@ class Definicoes:
         if self.parent:
             self.parent.stackedWidget.setCurrentIndex(0)
             self.parent.frame_6.setVisible(True)
+
     
     def mudanca_widget(self, index=int):
         self.parent.janela_definicoes.setCurrentIndex(index)

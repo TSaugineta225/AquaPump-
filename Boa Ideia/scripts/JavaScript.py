@@ -7,7 +7,7 @@ class Mapa:
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mapa</title>
-    
+
     <!-- Leaflet e plugins -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
@@ -20,54 +20,59 @@ class Mapa:
     <!-- QWebChannel -->
     <script src="qrc:///qtwebchannel/qwebchannel.js"></script>
 
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        #map { height: 100vh; width: 100vw; }
-        .menu-popup {
-            position: fixed;
-            background: white;
-            border: 1px solid #ccc;
-            border-radius: 8px;
-            padding: 15px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            z-index: 1000;
+<style>
+    * { margin:0; padding:0; box-sizing:border-box; }
+    #map { height:100vh; width:100vw; }
 
-            min-width: 220px;
-            display: none;
-        }
-        .menu-popup h3 { margin-bottom: 10px; color: #333; }
-        .menu-popup label { display: block; margin: 8px 0 4px; color: #666; }
-        .menu-popup input { width: 100%; }
-        .menu-popup button {
-            margin-top: 10px; padding: 8px;
-            width: 100%; background: #007bff;
-            color: white; border: none; border-radius: 4px;
-            cursor: pointer;
-        }
-        .menu-popup button:hover { background: #0056b3; }
-        .close-btn {
-            position: absolute; top: 5px; right: 5px;
-            background: none; border: none;
-            cursor: pointer; font-size: 16px; color: #666;
-        }
-    </style>
-</head>
+    .menu-popup {
+        position: fixed;
+        background:#fff;
+        border:1px solid #ccc;
+        border-radius:10px;
+        padding:15px;
+        box-shadow:0 4px 12px rgba(0,0,0,0.25);
+        z-index:1000;
+        min-width:240px;
+        display:none;
+    }
+    .menu-popup h3 { margin-bottom:12px; font-size:16px; font-weight:bold; color:#222; }
+    .menu-popup label { display:block; margin:10px 0 4px; font-size:13px; color:#444; }
+    .menu-popup input, .menu-popup select {
+        width:100%; padding:6px; border:1px solid #bbb; border-radius:6px; margin-bottom:6px;
+    }
+    .menu-actions { display:flex; gap:10px; margin-top:12px; }
+    .menu-popup button { flex:1; padding:8px; border:none; border-radius:6px; cursor:pointer; color:white; }
+    #apply-accessory { background:#bfbfbf; } #apply-accessory:hover { background:#0056b3; }
+    #delete-accessory { background:#a29898; } #delete-accessory:hover { background:#a71d2a; }
+    .close-btn { position:absolute; top:8px; right:8px; background:none; border:none; font-size:20px; color:#777; cursor:pointer; }
+    .close-btn:hover { color:#333; }
+</style>
+
 <body>
     <div id="map"></div>
 
     <!-- Menu Popup -->
     <div id="popup-menu" class="menu-popup">
         <button class="close-btn">&times;</button>
-        <h3>Editar Tubulação</h3>
-        <label for="line-name">Nome da Tubulação:</label>
-        <input type="text" id="line-name" placeholder="Digite um nome">
-        <label for="line-color">Cor:</label>
-        <input type="color" id="line-color" value="#0000ff">
-        <label for="line-width">Espessura (1-10):</label>
-        <input type="number" id="line-width" value="3" min="1" max="10">
-        <button id="apply-style">Aplicar Estilo</button>
-        <button id="delete-line" style="background: #dc3545;">Excluir Linha</button>
+        <h3>Editar Acessório</h3>
+
+        <label for="acessorio-tipo">Nome do Acessorio</label>
+        <select id="acessorio-tipo">
+            <option value="válvula">Válvula</option>
+            <option value="bomba">Bomba</option>
+            <option value="hidrante">Hidrante</option>
+            <option value="outro">Outro</option>
+        </select>
+
+        <label for="acessorio-cor">Cor</label>
+        <input type="color" id="acessorio-cor" value="#ff0000">
+
+        <div class="menu-actions">
+            <button id="apply-accessory">Aplicar</button>
+            <button id="delete-accessory">Eliminar</button>
+        </div>
     </div>
+
 
     <script>
         // Inicialização do mapa
@@ -100,6 +105,7 @@ class Mapa:
         }).addTo(map);
 
         let layer_selecionada = null;
+        let acessorios = []
         let valor_1_guardado = null;
         let valor_2_guardado = null;
 
@@ -235,11 +241,11 @@ class Mapa:
             calcularAltura(layer).then(altura => {
                 const flow = valor_1_guardado;
                 const tempo = valor_2_guardado;
-                const nome = layer.customProperties?.name || "Sem nome";
+                const nome = layer.customProperties?.name || "Projecto";
                 const distancia = calcular_distancia(layer);
                 const diametro = calcular_diametro(flow, tempo);
                 const pot = potencia(flow, altura);
-                
+
                 window.dados_bomba.valores_recebidos(altura, distancia, diametro)    // Enviar dados de altura e distancia ao python
                 layer.bindPopup(`
                     <strong>${nome}</strong><br>
@@ -248,10 +254,73 @@ class Mapa:
                     Altura: ${altura?.toFixed(2)} m<br>
                     Potência: ${pot?.toFixed(2)} CV
                 `).openPopup();
-               
+
 
             });
         }
+
+    const menu = document.getElementById('popup-menu');
+
+    function mostrarMenuPopup(e){
+        menu.style.display='block';
+        menu.style.left=`${Math.min(e.clientX, window.innerWidth - menu.offsetWidth -10)}px`;
+        menu.style.top=`${Math.min(e.clientY, window.innerHeight - menu.offsetHeight -10)}px`;
+    }
+    function fecharMenu(){ menu.style.display='none'; }
+
+    map.on(L.Draw.Event.CREATED, e=>{
+        const layer = e.layer;
+        layer.customProperties = { tipo:'outro', cor:layer.options.color };
+        drawnItems.addLayer(layer);
+
+        if(layer instanceof L.Circle || layer instanceof L.CircleMarker){
+            layer.on('click', event=>{
+                layer_selecionada = layer;
+                document.getElementById('acessorio-tipo').value = layer.customProperties.tipo;
+                document.getElementById('acessorio-cor').value = layer.customProperties.cor;
+                mostrarMenuPopup(event.originalEvent);
+            });
+        }
+    });
+
+    // Botões do popup
+    document.querySelector('.close-btn').addEventListener('click', fecharMenu);
+
+    document.getElementById('apply-accessory').addEventListener('click', ()=>{
+        if(layer_selecionada){
+            const tipo = document.getElementById('acessorio-tipo').value;
+            const cor  = document.getElementById('acessorio-cor').value;
+
+            layer_selecionada.setStyle({color:cor});
+            layer_selecionada.customProperties = { tipo, cor };
+
+            // ID único
+            const id = L.Util.stamp(layer_selecionada);
+            const obj = { id, tipo, cor};
+
+            const idx = acessorios.findIndex(a => a.id === id);
+            if(idx === -1){
+                acessorios.push(obj);
+            } else {
+                acessorios[idx] = obj;
+            }
+
+            console.log("Lista atual de acessórios:", acessorios);
+        }
+        fecharMenu();
+    });
+
+    document.getElementById('delete-accessory').addEventListener('click', ()=>{
+        if(layer_selecionada){
+            const id = L.Util.stamp(layer_selecionada);
+            acessorios = acessorios.filter(a => a.id !== id);
+            drawnItems.removeLayer(layer_selecionada);
+            layer_selecionada=null;
+            console.log("Lista atual de acessórios:", acessorios);
+        }
+        fecharMenu();
+    });
+
 
         function receber_dados(v1, v2) {
             valor_1_guardado = Number(v1);
@@ -261,58 +330,9 @@ class Mapa:
 
         window.receber_dados = receber_dados;
 
-        map.on(L.Draw.Event.CREATED, e => {
-            const layer = e.layer;
-            layer.customProperties = { name: "Sem nome" };
-
-
-            drawnItems.addLayer(layer);
-
-            layer.on('click', event => {
-                layer_selecionada = layer;
-                document.getElementById('line-name').value = layer.customProperties.name;
-                document.getElementById('line-color').value = layer.options.color;
-                document.getElementById('line-width').value = layer.options.weight;
-                mostrar_menu_popup(event.originalEvent);
-            });
-
-
-            setTimeout(() => actualizar_popup(layer), 10);
-        });
-
-
-        document.querySelectorAll('.close-btn, #delete-line').forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (btn.id === 'delete-line' && layer_selecionada) {
-                    drawnItems.removeLayer(layer_selecionada);
-                    layer_selecionada = null;
-                }
-                document.getElementById('popup-menu').style.display = 'none';
-            });
-        });
-
-        document.getElementById('apply-style').addEventListener('click', () => {
-            if (layer_selecionada) {
-                const color = document.getElementById('line-color').value;
-                const weight = parseInt(document.getElementById('line-width').value);
-                const name = document.getElementById('line-name').value;
-                layer_selecionada.setStyle({ color, weight });
-                layer_selecionada.customProperties.name = name;
-                actualizar_popup(layer_selecionada);
-            }
-        });
-
-        function mostrar_menu_popup(event) {
-            const menu = document.getElementById('popup-menu');
-            menu.style.display = 'block';
-            menu.style.left = `${Math.min(event.clientX, window.innerWidth - menu.offsetWidth - 10)}px`;
-            menu.style.top = `${Math.min(event.clientY, window.innerHeight - menu.offsetHeight - 10)}px`;
-        }
-
         map.on('dblclick', () => document.getElementById('popup-menu').style.display = 'none');
     </script>
 </body>
 </html>
-
 """
         

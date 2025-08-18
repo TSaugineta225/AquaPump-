@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'main.ui'
+## Form generated from reading UI file 'mainJeqyLr.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.0
+## Created by: Qt User Interface Compiler version 6.9.1
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -28,7 +28,7 @@ class Ui_AquaPump(object):
         if not AquaPump.objectName():
             AquaPump.setObjectName(u"AquaPump")
         AquaPump.resize(1165, 749)
-        self.view = QWebEngineView()
+        self.view = QWebEngineView(self)
         AquaPump.setStyleSheet(u"/* --------- QWidget (Geral) --------- */\n"
 "QWidget {\n"
 "    background-color: #ffffff;\n"
@@ -259,6 +259,12 @@ class Ui_AquaPump(object):
 "    border: 1px solid #888888;\n"
 "}\n"
 "")
+        self.layoutWidget = QWidget(AquaPump)
+        self.layoutWidget.setObjectName(u"layoutWidget")
+        self.layoutWidget.setGeometry(QRect(0, 0, 100, 30))
+        self.verticalLayout_12 = QVBoxLayout(self.layoutWidget)
+        self.verticalLayout_12.setObjectName(u"verticalLayout_12")
+        self.verticalLayout_12.setContentsMargins(0, 0, 0, 0)
         self.verticalLayout_8 = QVBoxLayout(AquaPump)
         self.verticalLayout_8.setObjectName(u"verticalLayout_8")
         self.horizontalLayout_4 = QHBoxLayout()
@@ -577,7 +583,7 @@ class Ui_AquaPump(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 193, 452))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 187, 452))
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.projecto_2 = QPushButton(self.scrollAreaWidgetContents)
@@ -1482,12 +1488,8 @@ class Ui_AquaPump(object):
         self.stackedWidget.addWidget(self.page)
         self.definicoes_2 = QWidget()
         self.definicoes_2.setObjectName(u"definicoes_2")
-        self.verticalLayout_13 = QVBoxLayout(self.definicoes_2)
-        self.verticalLayout_13.setSpacing(0)
-        self.verticalLayout_13.setObjectName(u"verticalLayout_13")
-        self.verticalLayout_13.setContentsMargins(0, 0, 0, 9)
-        self.verticalLayout_12 = QVBoxLayout()
-        self.verticalLayout_12.setObjectName(u"verticalLayout_12")
+        self.verticalLayout_32 = QVBoxLayout(self.definicoes_2)
+        self.verticalLayout_32.setObjectName(u"verticalLayout_32")
         self.frame = QFrame(self.definicoes_2)
         self.frame.setObjectName(u"frame")
         self.frame.setStyleSheet(u"")
@@ -1511,6 +1513,9 @@ class Ui_AquaPump(object):
 
         self.pesquisar_label = QLabel(self.frame)
         self.pesquisar_label.setObjectName(u"pesquisar_label")
+        sizePolicy4.setHeightForWidth(self.pesquisar_label.sizePolicy().hasHeightForWidth())
+        self.pesquisar_label.setSizePolicy(sizePolicy4)
+        self.pesquisar_label.setMinimumSize(QSize(0, 30))
         self.pesquisar_label.setMaximumSize(QSize(30, 30))
         self.pesquisar_label.setStyleSheet(u"QLabel {\n"
 "    border: 1px solig rgb(238, 238, 238);\n"
@@ -1530,7 +1535,7 @@ class Ui_AquaPump(object):
         self.pesquisar = QLineEdit(self.frame)
         self.pesquisar.setObjectName(u"pesquisar")
         self.pesquisar.setMinimumSize(QSize(300, 30))
-        self.pesquisar.setMaximumSize(QSize(200, 16777215))
+        self.pesquisar.setMaximumSize(QSize(30, 16777215))
         self.pesquisar.setStyleSheet(u"QLineEdit {\n"
 "    border: 1px solig rgb(238, 238, 238);\n"
 "    border-bottom: 2px solid #ccc;\n"
@@ -1553,7 +1558,7 @@ class Ui_AquaPump(object):
         self.horizontalLayout_27.addWidget(self.pesquisar)
 
 
-        self.verticalLayout_12.addWidget(self.frame)
+        self.verticalLayout_32.addWidget(self.frame)
 
         self.splitter_3 = QSplitter(self.definicoes_2)
         self.splitter_3.setObjectName(u"splitter_3")
@@ -1606,7 +1611,7 @@ class Ui_AquaPump(object):
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollAreaWidgetContents_3 = QWidget()
         self.scrollAreaWidgetContents_3.setObjectName(u"scrollAreaWidgetContents_3")
-        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 221, 566))
+        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 185, 609))
         self.verticalLayout_14 = QVBoxLayout(self.scrollAreaWidgetContents_3)
         self.verticalLayout_14.setSpacing(10)
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
@@ -1662,7 +1667,12 @@ class Ui_AquaPump(object):
 
         self.scrollArea_3.setWidget(self.scrollAreaWidgetContents_3)
         self.splitter_3.addWidget(self.scrollArea_3)
-        self.janela_definicoes = QStackedWidget(self.splitter_3)
+        self.layoutWidget1 = QWidget(self.splitter_3)
+        self.layoutWidget1.setObjectName(u"layoutWidget1")
+        self.verticalLayout_27 = QVBoxLayout(self.layoutWidget1)
+        self.verticalLayout_27.setObjectName(u"verticalLayout_27")
+        self.verticalLayout_27.setContentsMargins(0, 0, 0, 0)
+        self.janela_definicoes = QStackedWidget(self.layoutWidget1)
         self.janela_definicoes.setObjectName(u"janela_definicoes")
         sizePolicy5.setHeightForWidth(self.janela_definicoes.sizePolicy().hasHeightForWidth())
         self.janela_definicoes.setSizePolicy(sizePolicy5)
@@ -1933,9 +1943,8 @@ class Ui_AquaPump(object):
         self.janela_definicoes.addWidget(self.page_2)
         self.unidade = QWidget()
         self.unidade.setObjectName(u"unidade")
-        self.verticalLayout_27 = QVBoxLayout(self.unidade)
-        self.verticalLayout_27.setSpacing(9)
-        self.verticalLayout_27.setObjectName(u"verticalLayout_27")
+        self.verticalLayout_13 = QVBoxLayout(self.unidade)
+        self.verticalLayout_13.setObjectName(u"verticalLayout_13")
         self.label = QLabel(self.unidade)
         self.label.setObjectName(u"label")
         self.label.setStyleSheet(u"QLabel {\n"
@@ -1946,7 +1955,7 @@ class Ui_AquaPump(object):
 "\n"
 "}")
 
-        self.verticalLayout_27.addWidget(self.label)
+        self.verticalLayout_13.addWidget(self.label)
 
         self.scrollArea_4 = QScrollArea(self.unidade)
         self.scrollArea_4.setObjectName(u"scrollArea_4")
@@ -1962,7 +1971,7 @@ class Ui_AquaPump(object):
         self.scrollArea_4.setWidgetResizable(True)
         self.scrollAreaWidgetContents_4 = QWidget()
         self.scrollAreaWidgetContents_4.setObjectName(u"scrollAreaWidgetContents_4")
-        self.scrollAreaWidgetContents_4.setGeometry(QRect(0, -370, 841, 1228))
+        self.scrollAreaWidgetContents_4.setGeometry(QRect(0, 0, 831, 1228))
         self.verticalLayout_28 = QVBoxLayout(self.scrollAreaWidgetContents_4)
         self.verticalLayout_28.setSpacing(30)
         self.verticalLayout_28.setObjectName(u"verticalLayout_28")
@@ -2285,14 +2294,13 @@ class Ui_AquaPump(object):
 
         self.scrollArea_4.setWidget(self.scrollAreaWidgetContents_4)
 
-        self.verticalLayout_27.addWidget(self.scrollArea_4)
+        self.verticalLayout_13.addWidget(self.scrollArea_4)
 
         self.janela_definicoes.addWidget(self.unidade)
-        self.splitter_3.addWidget(self.janela_definicoes)
 
-        self.verticalLayout_12.addWidget(self.splitter_3)
+        self.verticalLayout_27.addWidget(self.janela_definicoes)
 
-        self.frame_8 = QFrame(self.definicoes_2)
+        self.frame_8 = QFrame(self.layoutWidget1)
         self.frame_8.setObjectName(u"frame_8")
         self.frame_8.setStyleSheet(u"QPushButton {\n"
 "    background-color: #f5f5f5;\n"
@@ -2338,10 +2346,11 @@ class Ui_AquaPump(object):
         self.horizontalLayout_10.addWidget(self.aplicar)
 
 
-        self.verticalLayout_12.addWidget(self.frame_8)
+        self.verticalLayout_27.addWidget(self.frame_8)
 
+        self.splitter_3.addWidget(self.layoutWidget1)
 
-        self.verticalLayout_13.addLayout(self.verticalLayout_12)
+        self.verticalLayout_32.addWidget(self.splitter_3)
 
         self.stackedWidget.addWidget(self.definicoes_2)
 
@@ -2359,7 +2368,7 @@ class Ui_AquaPump(object):
         self.projecto_2.setDefault(True)
         self.stackedWidget.setCurrentIndex(0)
         self.stackedWidget_3.setCurrentIndex(1)
-        self.janela_definicoes.setCurrentIndex(3)
+        self.janela_definicoes.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(AquaPump)
