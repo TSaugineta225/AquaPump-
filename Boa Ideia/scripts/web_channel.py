@@ -27,6 +27,16 @@ class Relatório (QObject):
     def valores_recebidos(self, altura, distancia, diametro):
         self.valor_recebido.emit(altura, distancia, diametro)
 
+class Acessorios_sistema(QObject):
+    lista = Signal(list)
+
+    def __init__(self):
+        super().__init__()
+    
+    @Slot(list)
+    def lista_acessorios(self, lista):
+        self.lista.emit(lista)
+        print("Lista de acessórios recebida:", lista)
         
 
        

@@ -10,11 +10,11 @@ class Perdas:
         self.vazao_m3s = vazao_m3s
         self.gravidade_ms2 = gravidade_ms2
 
-        # Esses atributos devem ser definidos após escolha na GUI
         self.material_darcy = None
         self.material_hazen = None
         self.acessorios_k = {}
 
+    # ---------- Métodos de listagem ----------
     @staticmethod
     def get_lista_materiais_darcy():
         return list(Perdas._rugosidade_darcy_mm().keys())
@@ -27,6 +27,7 @@ class Perdas:
     def get_lista_acessorios():
         return list(Perdas._fator_localizadas().keys())
 
+    # ---------- Definições ----------
     def definir_material_darcy(self, material):
         self.material_darcy = material
 
@@ -34,8 +35,46 @@ class Perdas:
         self.material_hazen = material
 
     def definir_acessorios(self, acessorios_dict):
+        """Define manualmente acessórios no formato {tipo: quantidade}"""
         self.acessorios_k = acessorios_dict
 
+    def definir_acessorios_lista(self, lista_acessorios):
+        """
+        Recebe uma lista de acessórios no formato:
+        [{'id':..., 'tipo':..., 'cor':...}, ...]
+        e converte para {tipo: quantidade} para uso no cálculo.
+        """
+        acessorios_dict = {}
+
+        mapa_equivalencia = {
+            "curva-22-5": "Curva de 22.5",
+            "curva-45": "Curva 45",
+            "curva-90": "Curva 90",
+            "cotovelo-ou-joelho-45": "Cotovelo ou joelho de 45",
+            "cotovelo-ou-joelho-90": "Cotovelo ou joelho de 90",
+            "ampliacao-gradual": "Ampliação Gradual",
+            "entrada-normal": "Entrada Normal",
+            "entrada-de-borda": "Entrada de Borda",
+            "saida-livre": "Saída de Canalização",
+            "crivo": "Crivo",
+            "controlador-de-vazao": "Controlador de Vazão",
+            "medidor-venturi": "Medidor Venturi",
+            "comporta-aberta": "Comporta Aberta",
+            "juncao": "Junção",
+            "pequena-derivacao": "Pequena Derivação"
+        }
+
+        for acessorio in lista_acessorios:
+            tipo = acessorio["tipo"].lower()
+            if tipo in mapa_equivalencia:
+                nome_normalizado = mapa_equivalencia[tipo]
+                acessorios_dict[nome_normalizado] = acessorios_dict.get(nome_normalizado, 0) + 1
+            else:
+                print(f"Acessório '{tipo}' não encontrado na base de fatores.")
+
+        self.acessorios_k = acessorios_dict
+
+    # ---------- Cálculos hidráulicos ----------
     def calcular_area_seccao(self):
         return math.pi * (self.diametro_m / 2)**2
 
@@ -45,8 +84,7 @@ class Perdas:
             raise ValueError("Forneça a vazão.")
         self.velocidade_ms = self.vazao_m3s / area
         if self.velocidade_ms <= 0:
-           # raise ValueError("A velocidade deve ser positiva.")
-           self.velocidade = 1
+            self.velocidade_ms = 1e-6  
 
     def calcular_viscosidade_cinematica(self):
         T = 293.15
@@ -87,7 +125,8 @@ class Perdas:
         K = 10.675
         d = self.diametro_m
         return self.comprimento_m * (K / d**4.87) * (self.vazao_m3s / c)**1.852
-
+    
+    # ---------- Bases de dados ----------
     @staticmethod
     def _rugosidade_darcy_mm():
         return {

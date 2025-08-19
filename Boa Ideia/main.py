@@ -10,7 +10,7 @@ from pint import UnitRegistry
 from gui.Ui_main import Ui_AquaPump
 from scripts.animações import Animações
 from scripts.JavaScript import Mapa
-from scripts.web_channel import Dados, Relatório
+from scripts.web_channel import Dados, Relatório, Acessorios_sistema
 from scripts.pdf_gen import PDF
 from calculos.curvas_bomba import Grafico
 from calculos.perdas_cargas import Perdas 
@@ -22,8 +22,8 @@ from scripts.definicoes import Definicoes
 import os, json
 import img.img_rc
 
-os.environ["QT_QUICK_BACKEND"] = "software"
-os.environ["QT_OPENGL"] = "software"
+os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--ignore-gpu-blocklist --enable-gpu-rasterization --enable-zero-copy"
+os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--disable-gpu-vsync --disable-frame-rate-limit"
 
 class MainWindow(FramelessWindow, Ui_AquaPump):
     sincronizar = Signal(int)
@@ -38,6 +38,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         # === Inicialização de Classes Internas ===
         self.animações = Animações()
         self.dados_bomba = Relatório()
+        self.acessorios = Acessorios_sistema()
         self.dados = Dados()
         self.relatorio_pdf = PDF()
         self.arquivos = Arquivos(self.view)
@@ -50,6 +51,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.view.setPage(self.page)
         self.page.setWebChannel(self._canal)
         self._canal.registerObject("dados_bomba", self.dados_bomba)
+        self._canal.registerObject("acessorios", self.acessorios)
         
         # ______________Dados Recebidos________________
         self.altura_geometrica = 0
@@ -57,6 +59,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.diametro = 0
 
         self.dados_bomba.valor_recebido.connect(self.processamento_dados_recebidos)
+        self.acessorios.lista.connect(self.calcular_perda_carga)
 
         # === Settings ===
         self.config = Configuracoes()
@@ -184,21 +187,27 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
                     if isinstance(grafico, Grafico):
                         grafico.actualizar_dados(self.altura_geometrica, perda)
   
-    def calcular_perda_carga(self):
+    def calcular_perda_carga(self, lista):
         p = Perdas(self.diametro, self.distancia, self.vazao)
-        perda = 0
+
+        p.calcular_velocidade()
+        p.definir_acessorios_lista(lista)
+
+        self.perda_distribuida = 0
+        self.perda_localizada = p.calcular_perdas_localizadas()
+
         if self.darcy.isVisible():
             p.definir_material_darcy(self.darcy.currentText())
-            p.calcular_velocidade()
-            return p.calcular_perda_carga_darcy()
-        
+            self.perda_distribuida = p.calcular_perda_carga_darcy()
+
         elif self.hazen_will.isVisible():
             p.definir_material_hazen(self.hazen_will.currentText())
-            p.calcular_velocidade()
-            return p.calcular_perda_carga_hazen_williams() 
+            self.perda_distribuida = p.calcular_perda_carga_hazen_williams()
+
+        perda_total = self.perda_distribuida + self.perda_localizada
+
+        return perda_total
         
-        return 0
-    
     def ampliar_frame(self, frame):
         """Ampliar o frame para mostrar mais opções."""
         

@@ -58,10 +58,31 @@ class Mapa:
 
         <label for="acessorio-tipo">Nome do Acessorio</label>
         <select id="acessorio-tipo">
-            <option value="válvula">Válvula</option>
-            <option value="bomba">Bomba</option>
-            <option value="hidrante">Hidrante</option>
-            <option value="outro">Outro</option>
+              <option value="ampliacao-gradual">Ampliação Gradual</option>
+            <option value="comporta-aberta">Comporta Aberta</option>
+            <option value="controlador-de-vazao">Controlador de Vazão</option>
+            <option value="cotovelo-45">Cotovelo ou joelho de 45</option>
+            <option value="cotovelo-90">Cotovelo ou joelho de 90</option>
+            <option value="crivo">Crivo</option>
+            <option value="curva-22-5">Curva de 22.5</option>
+            <option value="curva-45">Curva 45</option>
+            <option value="curva-90">Curva 90</option>
+            <option value="entrada-de-borda">Entrada de Borda</option>
+            <option value="entrada-normal">Entrada Normal</option>
+            <option value="juncao">Junção</option>
+            <option value="medidor-venturi">Medidor Venturi</option>
+            <option value="pequena-derivacao">Pequena Derivação</option>
+            <option value="reducao-gradual">Redução Gradual</option>
+            <option value="saida-de-canalizacao">Saída de Canalização</option>
+            <option value="te-passagem-directa">Tê de Passagem directa</option>
+            <option value="te-saida-bilateral">Tê de saida Bilateral</option>
+            <option value="te-saida-de-lado">Tê de saida de lado</option>
+            <option value="valvula-borboleta">Válvula Borboleta</option>
+            <option value="valvula-angulo-aberta">Válvula de ângulo aberta</option>
+            <option value="valvula-gaveta-aberta">Válvula de gaveta aberta</option>
+            <option value="valvula-de-pe">Válvula de pé</option>
+            <option value="valvula-de-retencao">Válvula de retenção</option>
+            <option value="valvula-globo-aberta">Válvula globo aberta</option>
         </select>
 
         <label for="acessorio-cor">Cor</label>
@@ -86,7 +107,7 @@ class Mapa:
 
         const map = L.map('map', {
             center: [-25.9667, 32.5833],
-            zoom: 6,
+            zoom: 12,
             layers: [camadaPadrao]
         });
 
@@ -166,6 +187,7 @@ class Mapa:
                     window.backend = channel.objects.backend;
                     window.mensagem = channel.objects.mensagem;
                     window.dados_bomba = channel.objects.dados_bomba;
+                    window.acessorios = channel.objects.acessorios;
                 });
             }
         });
@@ -270,7 +292,7 @@ class Mapa:
 
     map.on(L.Draw.Event.CREATED, e=>{
         const layer = e.layer;
-        layer.customProperties = { tipo:'outro', cor:layer.options.color };
+        layer.customProperties = { tipo:'Válvula de pé', cor:layer.options.color };
         drawnItems.addLayer(layer);
 
         if(layer instanceof L.Circle || layer instanceof L.CircleMarker){
@@ -305,7 +327,8 @@ class Mapa:
                 acessorios[idx] = obj;
             }
 
-            console.log("Lista atual de acessórios:", acessorios);
+            window.acessorios.lista_acessorios(acessorios);
+            //console.log("Lista atual de acessórios:", acessorios);
         }
         fecharMenu();
     });
@@ -316,7 +339,8 @@ class Mapa:
             acessorios = acessorios.filter(a => a.id !== id);
             drawnItems.removeLayer(layer_selecionada);
             layer_selecionada=null;
-            console.log("Lista atual de acessórios:", acessorios);
+            window.acessorios.lista_acessorios(acessorios);
+            //console.log("Lista atual de acessórios:", acessorios);
         }
         fecharMenu();
     });

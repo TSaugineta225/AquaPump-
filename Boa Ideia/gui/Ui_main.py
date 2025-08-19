@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'mainJeqyLr.ui'
+## Form generated from reading UI file 'mainBoeaOg.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -258,6 +258,91 @@ class Ui_AquaPump(object):
 "    background-color: #d0d0d0;\n"
 "    border: 1px solid #888888;\n"
 "}\n"
+"\n"
+"/* --------- QSpinBox e QDoubleSpinBox --------- */\n"
+"QSpinBox,\n"
+"QDoubleSpinBox {\n"
+"    background-color: #ffffff;\n"
+"    border: 2px solid #d9d9d9;\n"
+"    border-radius: 4px;\n"
+"    padding: 6px 24px 6px 8px; /* espa\u00e7o extra para as setas */\n"
+"    font-size: 14px;\n"
+"    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
+"    color: #2b2b2b;\n"
+"}\n"
+"\n"
+"QSpinBox:focus,\n"
+"QDoubleSpinBox:focus {\n"
+"    border: 2px solid #95acff;\n"
+"    background-color: #fcfcfc;\n"
+"}\n"
+"\n"
+"QSpinBox:hover,\n"
+"QDoubleSpinBox:hover {\n"
+"    border: 2px solid #a5baff;\n"
+"    background-color: #fef"
+                        "efe;\n"
+"}\n"
+"\n"
+"/* Bot\u00f5es de incremento/decremento */\n"
+"QSpinBox::up-button,\n"
+"QDoubleSpinBox::up-button {\n"
+"    subcontrol-origin: border;\n"
+"    subcontrol-position: top right;\n"
+"    width: 20px;\n"
+"    border-left: 1px solid #d0d0d0;\n"
+"    background-color: #f5f5f5;\n"
+"    border-top-right-radius: 4px;\n"
+"}\n"
+"\n"
+"QSpinBox::up-button:hover,\n"
+"QDoubleSpinBox::up-button:hover {\n"
+"    background-color: #e0e0e0;\n"
+"}\n"
+"\n"
+"QSpinBox::up-button:pressed,\n"
+"QDoubleSpinBox::up-button:pressed {\n"
+"    background-color: #d0d0d0;\n"
+"}\n"
+"\n"
+"/* \u00cdcone seta para cima */\n"
+"QSpinBox::up-arrow,\n"
+"QDoubleSpinBox::up-arrow {\n"
+"    image: url(:/img/arrow-up.png);\n"
+"    width: 8px;\n"
+"    height: 8px;\n"
+"}\n"
+"\n"
+"/* Bot\u00e3o para baixo */\n"
+"QSpinBox::down-button,\n"
+"QDoubleSpinBox::down-button {\n"
+"    subcontrol-origin: border;\n"
+"    subcontrol-position: bottom right;\n"
+"    width: 20px;\n"
+"    border-left: 1px solid #d0d0d0;\n"
+"    background-color: #f5f5f5;\n"
+""
+                        "    border-bottom-right-radius: 4px;\n"
+"}\n"
+"\n"
+"QSpinBox::down-button:hover,\n"
+"QDoubleSpinBox::down-button:hover {\n"
+"    background-color: #e0e0e0;\n"
+"}\n"
+"\n"
+"QSpinBox::down-button:pressed,\n"
+"QDoubleSpinBox::down-button:pressed {\n"
+"    background-color: #d0d0d0;\n"
+"}\n"
+"\n"
+"/* \u00cdcone seta para baixo */\n"
+"QSpinBox::down-arrow,\n"
+"QDoubleSpinBox::down-arrow {\n"
+"    image: url(:/img/arrow-down-1.png);\n"
+"    width: 8px;\n"
+"    height: 8px;\n"
+"}\n"
+"\n"
 "")
         self.layoutWidget = QWidget(AquaPump)
         self.layoutWidget.setObjectName(u"layoutWidget")
@@ -1313,7 +1398,6 @@ class Ui_AquaPump(object):
         self.splitter = QSplitter(self.splitter_2)
         self.splitter.setObjectName(u"splitter")
         self.splitter.setOrientation(Qt.Orientation.Vertical)
-
         self.splitter.addWidget(self.view)
         self.widget_2 = QWidget(self.splitter)
         self.widget_2.setObjectName(u"widget_2")
@@ -1971,7 +2055,7 @@ class Ui_AquaPump(object):
         self.scrollArea_4.setWidgetResizable(True)
         self.scrollAreaWidgetContents_4 = QWidget()
         self.scrollAreaWidgetContents_4.setObjectName(u"scrollAreaWidgetContents_4")
-        self.scrollAreaWidgetContents_4.setGeometry(QRect(0, 0, 831, 1228))
+        self.scrollAreaWidgetContents_4.setGeometry(QRect(0, 0, 812, 1228))
         self.verticalLayout_28 = QVBoxLayout(self.scrollAreaWidgetContents_4)
         self.verticalLayout_28.setSpacing(30)
         self.verticalLayout_28.setObjectName(u"verticalLayout_28")
