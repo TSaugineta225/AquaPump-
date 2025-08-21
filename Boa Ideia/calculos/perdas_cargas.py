@@ -1,12 +1,15 @@
 import math
+from typing import Optional
 from CoolProp.CoolProp import PropsSI
 
 class Perdas:
-    def __init__(self, diametro_m, comprimento_m, vazao_m3s=None,
-                 gravidade_ms2=9.81):
+    def __init__(self, vazao_m3s: Optional[float] = None, 
+                diametro_m: Optional[float] = None,
+                area: Optional[float] = None, 
+                gravidade_ms2: float = 9.81):
         
         self.diametro_m = diametro_m
-        self.comprimento_m = comprimento_m
+        self.area = area
         self.vazao_m3s = vazao_m3s
         self.gravidade_ms2 = gravidade_ms2
 
@@ -75,14 +78,12 @@ class Perdas:
         self.acessorios_k = acessorios_dict
 
     # ---------- Cálculos hidráulicos ----------
-    def calcular_area_seccao(self):
-        return math.pi * (self.diametro_m / 2)**2
 
     def calcular_velocidade(self):
         area = self.calcular_area_seccao()
         if self.vazao_m3s is None:
             raise ValueError("Forneça a vazão.")
-        self.velocidade_ms = self.vazao_m3s / area
+        self.velocidade_ms = self.vazao_m3s / self.area
         if self.velocidade_ms <= 0:
             self.velocidade_ms = 1e-6  
 
@@ -106,9 +107,9 @@ class Perdas:
         B = (37530 / Re)**16
         return 8 * ((8 / Re)**12 + (A + B)**(-1.5))**(1/12)
 
-    def calcular_perda_carga_darcy(self):
+    def calcular_perda_carga_darcy(self, comprimento_m: Optional[float] = None):
         f = self.calcular_fator_atrito_churchill()
-        return f * (self.comprimento_m / self.diametro_m) * (self.velocidade_ms**2 / (2 * self.gravidade_ms2))
+        return f * (comprimento_m / self.diametro_m) * (self.velocidade_ms**2 / (2 * self.gravidade_ms2))
 
     def calcular_perdas_localizadas(self):
         total_k = 0
@@ -118,14 +119,14 @@ class Perdas:
             total_k += self._fator_localizadas()[acessorio] * qtd
         return total_k * (self.velocidade_ms**2 / (2 * self.gravidade_ms2))
 
-    def calcular_perda_carga_hazen_williams(self):
+    def calcular_perda_carga_hazen_williams(self, comprimento_m: Optional[float] = None):
         if self.material_hazen not in self._fator_c_hazen_williams():
             raise ValueError(f"Material '{self.material_hazen}' inválido.")
         c = self._fator_c_hazen_williams()[self.material_hazen]
         K = 10.675
         d = self.diametro_m
-        return self.comprimento_m * (K / d**4.87) * (self.vazao_m3s / c)**1.852
-    
+        return comprimento_m * (K / d**4.87) * (self.vazao_m3s / c)**1.852
+     
     # ---------- Bases de dados ----------
     @staticmethod
     def _rugosidade_darcy_mm():

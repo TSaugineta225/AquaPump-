@@ -17,15 +17,25 @@ class Outros_dados():
     def mensagem_recebida(self, msg):
         QMessageBox.Error(None, "Erro", msg)
 
-class Relatório (QObject):
-    valor_recebido = Signal(float, float, float)
+class Altura_Geometrica (QObject):
+    altura_recebido = Signal(float)
     def __init__(self):
         super().__init__()
 
         
-    @Slot(float, float, float)
-    def valores_recebidos(self, altura, distancia, diametro):
-        self.valor_recebido.emit(altura, distancia, diametro)
+    @Slot(float)
+    def valores_recebidos(self, altura):
+        self.altura_recebido.emit(altura)
+
+class Dimensao_Tubulacao (QObject):
+    comprimento_recebido = Signal(float)
+    def __init__(self):
+        super().__init__()
+
+    @Slot(float)
+    def valores_recebidos(self, comprimento):
+        self.comprimento_recebido.emit(comprimento)
+
 
 class Acessorios_sistema(QObject):
     lista = Signal(list)

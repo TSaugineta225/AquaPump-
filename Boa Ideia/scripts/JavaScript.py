@@ -186,7 +186,8 @@ class Mapa:
                 new QWebChannel(qt.webChannelTransport, function (channel) {
                     window.backend = channel.objects.backend;
                     window.mensagem = channel.objects.mensagem;
-                    window.dados_bomba = channel.objects.dados_bomba;
+                    window.altura_geometrica = channel.objects.altura_geometrica;
+                    window.comprimento_tubulacao = channel.objects.comprimento_tubulacao;
                     window.acessorios = channel.objects.acessorios;
                 });
             }
@@ -240,15 +241,21 @@ class Mapa:
             const elev1 = await getElevation(latlngs[0].lat, latlngs[0].lng);
             const elev2 = await getElevation(latlngs[latlngs.length - 1].lat, latlngs[latlngs.length - 1].lng);
             return altura = Math.abs(elev1 - elev2);
+            window.altura_geometrica.altura_recebido(altura);  // Enviar dados de altura ao python
         }
 
         function calcular_distancia(layer) {
             const latlngs = layer.getLatLngs();
-            return latlngs.reduce((total, _, i, arr) => {
-                if (i === 0) return 0;
-                return total + arr[i - 1].distanceTo(arr[i]);
-            }, 0);
+            let distancia_total = 0;
+
+            for (let i = 1; i < latlngs.length; i++) {
+                distancia_total += latlngs[i - 1].distanceTo(latlngs[i]);
+            }
+
+            return distancia_total;
+            window.comprimento_recebido.comprimento_recebido(distancia_total);
         }
+
 
         function calcular_diametro(flow, tempo) {
             if (tempo === 24) return 1.3 * Math.sqrt(flow);
@@ -267,8 +274,7 @@ class Mapa:
                 const distancia = calcular_distancia(layer);
                 const diametro = calcular_diametro(flow, tempo);
                 const pot = potencia(flow, altura);
-
-                window.dados_bomba.valores_recebidos(altura, distancia, diametro)    // Enviar dados de altura e distancia ao python
+  
                 layer.bindPopup(`
                     <strong>${nome}</strong><br>
                     Distância: ${(distancia/1000).toFixed(2)} km<br>

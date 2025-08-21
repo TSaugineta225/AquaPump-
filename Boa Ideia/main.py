@@ -1,26 +1,42 @@
 import sys
-from PySide6.QtWidgets import QApplication, QWidget, QMenu, QToolButton, QMessageBox, QFileDialog, QCompleter, QLabel, QVBoxLayout, QSizePolicy
-from PySide6.QtGui import QAction, QIcon,QDoubleValidator, QSurfaceFormat
-from PySide6.QtCore import QPoint, QEvent, Qt, QSize, Slot, QStringListModel
-from qframelesswindow import FramelessWindow, StandardTitleBar
-from PySide6.QtCore import QPropertyAnimation, QEasingCurve, QUrl, Qt, QTimer, Signal, QSettings
-from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineProfile
-from PySide6.QtWebChannel import QWebChannel
-from pint import UnitRegistry
-from gui.Ui_main import Ui_AquaPump
-from scripts.animações import Animações
-from scripts.JavaScript import Mapa
-from scripts.web_channel import Dados, Relatório, Acessorios_sistema
-from scripts.pdf_gen import PDF
-from calculos.curvas_bomba import Grafico
-from calculos.perdas_cargas import Perdas 
-from scripts.arquivos import Arquivos
-from scripts.requisicoes import Pesquisa
-from scripts.configurações import Configuracoes
-from scripts.menus import Menus
-from scripts.definicoes import Definicoes
 import os, json
 import img.img_rc
+
+from pint import UnitRegistry
+
+from PySide6.QtCore import Qt
+from PySide6.QtGui import QIcon
+from PySide6.QtWidgets import QWidget
+from PySide6.QtCore import QUrl, QEvent, QSize, QPoint, QTimer, Signal, Slot, QSettings, QStringListModel
+from PySide6.QtGui import QAction, QDoubleValidator, QSurfaceFormat
+from PySide6.QtWidgets import (
+    QApplication, QLabel, QMenu, QCompleter, QToolButton,
+    QMessageBox, QFileDialog, QVBoxLayout, QSizePolicy
+)
+from PySide6.QtCore import QPropertyAnimation, QEasingCurve
+from PySide6.QtWebChannel import QWebChannel
+from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineProfile
+
+from qframelesswindow import FramelessWindow, StandardTitleBar
+
+from gui.Ui_main import Ui_AquaPump
+
+from scripts.pdf_gen import PDF
+from scripts.menus import Menus
+from scripts.arquivos import Arquivos
+from scripts.definicoes import Definicoes
+from scripts.requisicoes import Pesquisa
+from scripts.conexoes_sinais import ConexoesUI
+from scripts.configurações import Configuracoes
+from scripts.JavaScript import Mapa
+from scripts.animações import Animações
+from scripts.web_channel import (
+    Dados, Altura_Geometrica, Dimensao_Tubulacao, Acessorios_sistema
+)
+
+from calculos.perdas_cargas import Perdas
+from calculos.curvas_bomba import Grafico
+from calculos.dimensionamento_tubulação import Tubulacao
 
 os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--ignore-gpu-blocklist --enable-gpu-rasterization --enable-zero-copy"
 os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = "--disable-gpu-vsync --disable-frame-rate-limit"
@@ -31,84 +47,49 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
-        
+
         # ___________ Expoentes ______________________
         self.ex_3 = chr(0x00B3)
 
+        # ____________ Captura de LineEdit Vazao e Tempo _____________
+        texto = self.Vazao_2.text().strip()
+        self.vazao = float(texto) if texto else 0.0
+
+        tempo = self.Vazao.text().strip()
+        self.tempo = float(tempo) if tempo else 0.0
+
         # === Inicialização de Classes Internas ===
         self.animações = Animações()
-        self.dados_bomba = Relatório()
-        self.acessorios = Acessorios_sistema()
-        self.dados = Dados()
         self.relatorio_pdf = PDF()
         self.arquivos = Arquivos(self.view)
         self.definicoes = Definicoes(parent=self)
         self.menu = Menus(parent=self, arquivos=self.arquivos, config=Configuracoes())
+        self.config = Configuracoes()
 
-        # === WebEngine + WebChannel ===
+        #  ______________Inicializacao de Classes de Calculo _____________
+        self.grafico = Grafico()
+        self._diametro = Tubulacao()
+
+        #  _____________ Inicializacao de Classes de WebEngine _____________
+        self.altura_geometrica = Altura_Geometrica()
+        self.comprimento_tubulacao = Dimensao_Tubulacao()
+        self.acessorios = Acessorios_sistema()
+        self.dados = Dados()
+
+        # ===_______ WebEngine + WebChannel _____________===
         self._canal = QWebChannel()
         self.page = QWebEnginePage(self)
         self.view.setPage(self.page)
         self.page.setWebChannel(self._canal)
-        self._canal.registerObject("dados_bomba", self.dados_bomba)
+        self._canal.registerObject("altura_geometrica", self.altura_geometrica)
+        self._canal.registerObject("comprimento_tubulacao", self.comprimento_tubulacao)
         self._canal.registerObject("acessorios", self.acessorios)
-        
-        # ______________Dados Recebidos________________
-        self.altura_geometrica = 0
-        self.distancia = 0
-        self.diametro = 0
 
-        self.dados_bomba.valor_recebido.connect(self.processamento_dados_recebidos)
-        self.acessorios.lista.connect(self.calcular_perda_carga)
-
-        # === Settings ===
-        self.config = Configuracoes()
-        self.restaurar_configuracoes()
-
-        # === Conexões JS ===
-        self.Vazao_2.textChanged.connect(self.enviar_js)
-        self.Vazao.textChanged.connect(self.enviar_js)
-        self.page.featurePermissionRequested.connect(self.permissao)
-
-        # === Botões de Menu Superior ===
-        self.grafico_icon.clicked.connect(lambda: self.menu.menu_graficos().popup(self.grafico_icon.mapToGlobal(self.grafico_icon.rect().topRight())))
-        self.definicoes_direita_2.clicked.connect(lambda: self.menu.menu_selecao_graficos().popup(self.definicoes_direita_2.mapToGlobal(self.definicoes_direita_2.rect().bottomRight())))
-        self.arquivo_2.clicked.connect(lambda: self.menu.menu_principal().popup(self.arquivo_2.mapToGlobal(self.arquivo_2.rect().bottomLeft())))
-        self.config_2.clicked.connect(lambda: self.menu.menu_editar().popup(self.config_2.mapToGlobal(self.config_2.rect().bottomLeft())))
-        self.relatorio_2.clicked.connect(lambda: self.menu.menu_relatorio().popup(self.relatorio_2.mapToGlobal(self.relatorio_2.rect().bottomLeft())))
-        self.ajuda_2.clicked.connect(lambda: self.menu.menu_ajuda().popup(self.ajuda_2.mapToGlobal(self.ajuda_2.rect().bottomLeft())))
-
-        # === Aba Lateral e Frames ===
-        self.fechar_lateral_2.clicked.connect(lambda: self.animações.largura(self.frame_4, largura_alvo=300))
-        self.abrir_layout_3.clicked.connect(lambda: self.animações.largura(self.frame_4, self.frame_6, largura_alvo=300))
-        self.pesquisar_3.clicked.connect(lambda: self.animações.largura(self.frame_4, self.frame_6, largura_alvo=300))
-        self.projeto.clicked.connect(lambda: self.animações.largura_altura(self.frame_4, self.projecto, self.frame_6))
-        self.exportar_2.clicked.connect(lambda: self.animações.largura_altura(self.frame_4, self.exportar, self.frame_6, altura=100))
-        self.abrir_layout_2.clicked.connect(lambda: self.animações.largura(self.frame_4, self.frame_6)) 
-        self.sair_2.clicked.connect(lambda: app.quit())
-        self.sair_3.clicked.connect(lambda: app.quit())
-
-        # == Ampliar Janela Direita ===
-        self.expandir_3.clicked.connect(lambda: self.ampliar_frame(self.janel_direita))
-
-        # === Seções Projeto e Exportar ===
-        self.projecto_2.clicked.connect(lambda: self.animações.altura(self.projecto, altura=400))
-        self.parametros.clicked.connect(lambda: self.animações.altura(self.exportar, altura=100))
-        self.exportar_pdf.clicked.connect(self.gerar_pdf)
-
-        # === Botões Arquivos ===
-        self.pushButton.clicked.connect(self.arquivos.carregar_kml)
-        self.pushButton_2.clicked.connect(self.arquivos.carregar_csv)
-        self.pushButton_4.clicked.connect(self.arquivos.carregar_shapefile)
 
         # === ComboBox ===
-        self.hazen_will.addItems(Perdas.get_lista_materiais_hazen())        
+        self.hazen_will.addItems(Perdas.get_lista_materiais_hazen())
         self.hazen_will.setHidden(True)
         self.darcy.addItems(Perdas.get_lista_materiais_darcy())
-        
-        # === LineEdit ===
-        texto = self.Vazao_2.text().strip()
-        self.vazao = float(texto) if texto else 0.0
 
         # === Validação de Entrada ===
         validator = QDoubleValidator(0.0, 1000.0, 3)
@@ -120,33 +101,48 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.completador = QCompleter()
         self.completador.setCaseSensitivity(Qt.CaseInsensitive)
         self.pesquisa_line.setCompleter(self.completador)
-        self.pesquisar_2.clicked.connect(self.pesquisa_mapa)
-        self.pesquisa_line.returnPressed.connect(self.pesquisa_mapa)
         self.pesquisa_line.setPlaceholderText("Pesquisar")
 
         # === WebEngine + Mapa ===
         self.mapinha = Mapa()
         mapa = self.mapinha.html_code
-        self.page.setHtml(mapa) 
+        self.page.setHtml(mapa)
 
-        self.icone_2.currentIndexChanged.connect(self.actualizar_vazao)
         self.icone_2.view().setMinimumWidth(60)
-  
+
         # ____________________PlaceHolderText ________________________________
         self.Vazao_2.setPlaceholderText(f"Vazão em {self.icone_2.currentText()}")
         self.Vazao.setPlaceholderText("Tempo em horas")
 
-         # =========== Status e Threads ==================
+        # =========== Status e Threads ==================
         self.worker = None
         self.status_label = QLabel()
 
-        # _______________ Inicialização de Gráficos _______________
-        self.inicializar_graficos_curvas()
-        self.Vazao_2.textChanged.connect(self.inicializar_graficos_curvas)
-        self.Vazao.textChanged.connect(self.inicializar_graficos_curvas)
+        #  _________________ Conexões e Configurações (vai para ConexoesUI) _________________
+        self.conexoes = ConexoesUI(parent=self, menu=self.menu, animacoes=self.animações, configuracoes=self.config)
+
 
     def actualizar_vazao(self):
         return self.icone_2.currentText()
+    
+    def calculo_diametro_tubulacao(self):
+        self.diametro_tubulacao = self._diametro.calcular_diametro(self.vazao, self.tempo)
+    
+    def perdas_carga(self):
+        self.calculo_diametro_tubulacao()
+        self.perdas = Perdas(self.vazao, self.diametro_tubulacao, self._diametro.area_seccao())
+
+    def definir_acessorios(self, lista_acessorios):
+        self.perdas_carga()
+        self.perdas.definir_acessorios_lista(lista_acessorios)
+
+    def perdas_carga_distribuidas_hazen_williams(self, comprimento):
+        self.perdas_carga()
+        self.perdas.calcular_perda_carga_hazen_williams(comprimento)
+
+    def perdas_carga_distribuidas_darcy(self, comprimento):
+        self.perdas_carga()
+        self.perdas.calcular_perda_carga_darcy(comprimento)
 
     def inicializar_graficos_curvas(self):
         """ Inicializa os gráficos de curvas com os dados da bomba. """
@@ -166,13 +162,12 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             layout.addWidget(grafico)
             widget.setLayout(layout)
 
-    
-    @Slot(float, float, float)
-    def processamento_dados_recebidos(self, altura, distancia, diametro):
+
+    @Slot(float, float)
+    def processamento_dados_recebidos(self, altura, distancia):
         """ Processa os dados recebidos do JavaScript. """
         self.altura_geometrica = altura
-        self.distancia = distancia
-        self.diametro = diametro                         
+        self.distancia = distancia              
 
         perda = self.calcular_perda_carga()
 
@@ -187,9 +182,10 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
                     if isinstance(grafico, Grafico):
                         grafico.actualizar_dados(self.altura_geometrica, perda)
   
-    def calcular_perda_carga(self, lista):
-        p = Perdas(self.diametro, self.distancia, self.vazao)
+    def calcular_perda_carga(self, altura, ):
+        p = Perdas(self._diametro.calcular_diametro(), self._diametro.area_seccao(), )
 
+        lista = {}
         p.calcular_velocidade()
         p.definir_acessorios_lista(lista)
 
