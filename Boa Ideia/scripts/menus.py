@@ -66,7 +66,7 @@ class Menus:
         accao_config.setShortcut("Ctrl+E")
         acao_parametros.setShortcut("Ctrl+P")
         if self.parent:
-            accao_config.triggered.connect(lambda: self.parent.stackedWidget.setCurrentWidget(self.parent.page))
+            accao_config.triggered.connect(lambda: self.parent.stackedWidget.setCurrentIndex(1))
 
         editar.addActions([accao_config, acao_parametros])
         return editar

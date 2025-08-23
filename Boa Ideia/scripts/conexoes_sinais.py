@@ -8,7 +8,7 @@ class ConexoesUI():
 
         # Inicializa as conexões organizadas
         self._conectar_configuracoes()
-        #self._conectar_diametro()
+        self._conectar_diametro()
         self._conectar_js()
         self._conectar_menus()
         self._conectar_abas_frames()
@@ -24,8 +24,8 @@ class ConexoesUI():
 
     # ===================== DIÂMETRO =====================
     def _conectar_diametro(self):
-        self.parent.Vazao_2.textChanged.connect(self.parent.diametro)
-        self.parent.Vazao.textChanged.connect(self.parent.diametro)
+        self.parent.Vazao_2.textChanged.connect(self.parent.calculo_diametro_tubulacao)
+        self.parent.Vazao.textChanged.connect(self.parent.calculo_diametro_tubulacao)
 
     # ===================== CONEXÕES JS =====================
     def _conectar_js(self):
@@ -89,8 +89,8 @@ class ConexoesUI():
 
     # ===================== BOTÕES DE SAÍDA =====================
     def _conectar_botoes_sair(self):
-        self.parent.sair_2.clicked.connect(lambda: self.app.quit())
-        self.parent.sair_3.clicked.connect(lambda: self.app.quit())
+        self.parent.sair_2.clicked.connect(self.parent.close)
+        self.parent.sair_3.clicked.connect(self.parent.close)
 
     # ===================== PESQUISA =====================
     def _conectar_pesquisa(self):
@@ -104,8 +104,9 @@ class ConexoesUI():
 
     # ===================== PERDAS =====================
     def _conectar_perdas(self):
-        self.parent.acessorios.lista.connect(self.parent.calcular_perda_carga)
-        self.parent.Vazao_2.textChanged.connect(self.parent.calculo_diametro_tubulacao)
+        self.parent.acessorios.lista.connect(self.parent.definir_acessorios)
+        self.parent.altura_geometrica.altura_recebido.connect(self.parent.calcular_altura_manometrica)
+        self.parent.comprimento_tubulacao.comprimento_recebido.connect(self.parent.perdas_carga_totais)
 
     # ===================== COMBO ICONE =====================
     def _conectar_combo_icone(self):

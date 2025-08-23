@@ -24,8 +24,9 @@ class Altura_Geometrica (QObject):
 
         
     @Slot(float)
-    def valores_recebidos(self, altura):
+    def altura_(self, altura):
         self.altura_recebido.emit(altura)
+        print(f"A altura é: {altura}")
 
 class Dimensao_Tubulacao (QObject):
     comprimento_recebido = Signal(float)
@@ -33,8 +34,9 @@ class Dimensao_Tubulacao (QObject):
         super().__init__()
 
     @Slot(float)
-    def valores_recebidos(self, comprimento):
+    def comprimento_(self, comprimento):
         self.comprimento_recebido.emit(comprimento)
+        print(f"O comprimento é: {comprimento}")
 
 
 class Acessorios_sistema(QObject):

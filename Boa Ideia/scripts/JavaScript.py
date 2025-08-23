@@ -186,8 +186,8 @@ class Mapa:
                 new QWebChannel(qt.webChannelTransport, function (channel) {
                     window.backend = channel.objects.backend;
                     window.mensagem = channel.objects.mensagem;
-                    window.altura_geometrica = channel.objects.altura_geometrica;
-                    window.comprimento_tubulacao = channel.objects.comprimento_tubulacao;
+                    window.altura = channel.objects.altura;
+                    window.comprimento = channel.objects.comprimento;
                     window.acessorios = channel.objects.acessorios;
                 });
             }
@@ -274,6 +274,9 @@ class Mapa:
                 const distancia = calcular_distancia(layer);
                 const diametro = calcular_diametro(flow, tempo);
                 const pot = potencia(flow, altura);
+                
+                window.altura.altura_(altura);
+                window.comprimento.comprimento_(distancia);
   
                 layer.bindPopup(`
                     <strong>${nome}</strong><br>
@@ -283,7 +286,7 @@ class Mapa:
                     Potência: ${pot?.toFixed(2)} CV
                 `).openPopup();
 
-
+                
             });
         }
 

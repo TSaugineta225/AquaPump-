@@ -81,8 +81,8 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.page = QWebEnginePage(self)
         self.view.setPage(self.page)
         self.page.setWebChannel(self._canal)
-        self._canal.registerObject("altura_geometrica", self.altura_geometrica)
-        self._canal.registerObject("comprimento_tubulacao", self.comprimento_tubulacao)
+        self._canal.registerObject("altura", self.altura_geometrica)
+        self._canal.registerObject("comprimento", self.comprimento_tubulacao)
         self._canal.registerObject("acessorios", self.acessorios)
 
 
@@ -120,111 +120,51 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
         #  _________________ Conexões e Configurações (vai para ConexoesUI) _________________
         self.conexoes = ConexoesUI(parent=self, menu=self.menu, animacoes=self.animações, configuracoes=self.config)
-
-
+        
     def actualizar_vazao(self):
         return self.icone_2.currentText()
     
     def calculo_diametro_tubulacao(self):
         self.diametro_tubulacao = self._diametro.calcular_diametro(self.vazao, self.tempo)
+        print(self.diametro_tubulacao)
     
     def perdas_carga(self):
-        self.calculo_diametro_tubulacao()
         self.perdas = Perdas(self.vazao, self.diametro_tubulacao, self._diametro.area_seccao())
 
-    def definir_acessorios(self, lista_acessorios):
+    def definir_acessorios(self, lista):
         self.perdas_carga()
-        self.perdas.definir_acessorios_lista(lista_acessorios)
+        self.perdas.definir_acessorios_lista(lista)
+        self.localizadas = self.perdas.calcular_perdas_localizadas()
+        print(self.localizadas)
 
-    def perdas_carga_distribuidas_hazen_williams(self, comprimento):
+    def perdas_carga_totais(self, comprimento):
         self.perdas_carga()
-        self.perdas.calcular_perda_carga_hazen_williams(comprimento)
-
-    def perdas_carga_distribuidas_darcy(self, comprimento):
-        self.perdas_carga()
-        self.perdas.calcular_perda_carga_darcy(comprimento)
+        if self.radioButton_7.isChecked():
+            self.perdas_totais = self.perdas.calcular_perda_carga_darcy(comprimento) + self.localizadas()
+        elif self.radioButton_8.isChecked():
+            self.perdas_totais = self.perdas.calcular_perda_carga_hazen_williams(comprimento) + self.localizadas()
+        return self.perdas_totais
+        
+    def calcular_altura_manometrica(self, altura):
+        self.altura_geometrica = altura
+        self.altura_manometrica = self.altura_geometrica + self.perdas_totais if hasattr(self, 'perdas_totais') else self.altura_geometrica
+        return self.altura_manometrica
 
     def inicializar_graficos_curvas(self):
         """ Inicializa os gráficos de curvas com os dados da bomba. """
         
-        vazao = self.actualizar_vazao()
-        #perda = self.calcular_perda_carga()
 
         for widget, tipo in [(self.altura, 'altura'), 
                              (self.potencia, 'potencia'), 
                              (self.rendimento, 'rendimento')]:
             layout = QVBoxLayout()
             grafico = Grafico(tipo=tipo)
-            grafico.H_geometrico = self.altura_geometrica
-            #grafico.perda_carga = perda
+            grafico.H_geometrico = self.altura_manometrica if hasattr(self, 'altura_manometrica') else 0
+            grafico.perda_carga = self.perdas_totais if hasattr(self, 'perdas_totais') else 0
             grafico.gerar_dados()
             grafico.plotar()
             layout.addWidget(grafico)
             widget.setLayout(layout)
-
-
-    @Slot(float, float)
-    def processamento_dados_recebidos(self, altura, distancia):
-        """ Processa os dados recebidos do JavaScript. """
-        self.altura_geometrica = altura
-        self.distancia = distancia              
-
-        perda = self.calcular_perda_carga()
-
-        for widget, tipo in [(self.altura, 'altura'), 
-                            (self.potencia, 'potencia'), 
-                            (self.rendimento, 'rendimento')]:
-            layout = widget.layout()
-            if layout and layout.count() > 0:
-                grafico_widget = layout.itemAt(0)
-                if grafico_widget:
-                    grafico = grafico_widget.widget()
-                    if isinstance(grafico, Grafico):
-                        grafico.actualizar_dados(self.altura_geometrica, perda)
-  
-    def calcular_perda_carga(self, altura, ):
-        p = Perdas(self._diametro.calcular_diametro(), self._diametro.area_seccao(), )
-
-        lista = {}
-        p.calcular_velocidade()
-        p.definir_acessorios_lista(lista)
-
-        self.perda_distribuida = 0
-        self.perda_localizada = p.calcular_perdas_localizadas()
-
-        if self.darcy.isVisible():
-            p.definir_material_darcy(self.darcy.currentText())
-            self.perda_distribuida = p.calcular_perda_carga_darcy()
-
-        elif self.hazen_will.isVisible():
-            p.definir_material_hazen(self.hazen_will.currentText())
-            self.perda_distribuida = p.calcular_perda_carga_hazen_williams()
-
-        perda_total = self.perda_distribuida + self.perda_localizada
-
-        return perda_total
-        
-    def ampliar_frame(self, frame):
-        """Ampliar o frame para mostrar mais opções."""
-        
-        for w in (self.frame_4, self.frame_6, self.view):
-            w.setVisible(False)
-
-        self.view.setFixedSize(0, 0)
-
-        frame.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        frame.adjustSize()   
-
-    def emitir_sinal_sincro(self, index):
-        if self._sincronizar:
-            return
-        
-        self.sincronizar.emit(index)
-    
-    def actualizar_espaco(self, index):
-        self._sincronizar = True
-        self.icone_2.setCurrentIndex(index)
-        self._sincronizar = False
 
     def enviar_js(self):
         self.dados.enviar_dados(self.Vazao_2, self.Vazao, self.view)

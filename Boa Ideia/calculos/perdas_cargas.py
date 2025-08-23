@@ -79,8 +79,8 @@ class Perdas:
 
     # ---------- Cálculos hidráulicos ----------
 
+
     def calcular_velocidade(self):
-        area = self.calcular_area_seccao()
         if self.vazao_m3s is None:
             raise ValueError("Forneça a vazão.")
         self.velocidade_ms = self.vazao_m3s / self.area

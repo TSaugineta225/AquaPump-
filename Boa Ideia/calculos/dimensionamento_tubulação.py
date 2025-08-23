@@ -8,7 +8,7 @@ class Tubulacao:
         self.peso_especifico = self.rho * 9.81  # kg/m³ * m/s² = N/m³
 
     def calcular_diametro(self, vazao, tempo):
-        if self.tempo == 24:
+        if tempo == 24:
             self.D = 1.2 * math.sqrt(vazao)
         else:
             self.D = 1.3 * math.sqrt(vazao) * (tempo / 24) ** (1 / 4)
