@@ -50,13 +50,17 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
         # ___________ Expoentes ______________________
         self.ex_3 = chr(0x00B3)
-
-        # ____________ Captura de LineEdit Vazao e Tempo _____________
-        texto = self.Vazao_2.text().strip()
-        self.vazao = float(texto) if texto else 0.0
-
-        tempo = self.Vazao.text().strip()
-        self.tempo = float(tempo) if tempo else 0.0
+        self.setWindowTitle("AquaPump")
+        
+        # =========== System Calculation Attributes ===========
+        self.vazao = 0.0
+        self.tempo = 0.0
+        self.diametro_tubulacao = 0.0
+        self.comprimento_tubulacao_val = 0.0
+        self.altura_geometrica_val = 0.0
+        self.localizadas = 0.0
+        self.perdas_totais = 0.0
+        self.altura_manometrica = 0.0
 
         # === Inicialização de Classes Internas ===
         self.animações = Animações()
@@ -67,13 +71,12 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.config = Configuracoes()
 
         #  ______________Inicializacao de Classes de Calculo _____________
-        self.grafico = Grafico()
         self._diametro = Tubulacao()
-
+        
         #  _____________ Inicializacao de Classes de WebEngine _____________
-        self.altura_geometrica = Altura_Geometrica()
-        self.comprimento_tubulacao = Dimensao_Tubulacao()
-        self.acessorios = Acessorios_sistema()
+        self.altura_geometrica_channel = Altura_Geometrica()
+        self.comprimento_tubulacao_channel = Dimensao_Tubulacao()
+        self.acessorios_channel = Acessorios_sistema()
         self.dados = Dados()
 
         # ===_______ WebEngine + WebChannel _____________===
@@ -81,10 +84,9 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.page = QWebEnginePage(self)
         self.view.setPage(self.page)
         self.page.setWebChannel(self._canal)
-        self._canal.registerObject("altura", self.altura_geometrica)
-        self._canal.registerObject("comprimento", self.comprimento_tubulacao)
-        self._canal.registerObject("acessorios", self.acessorios)
-
+        self._canal.registerObject("altura", self.altura_geometrica_channel)
+        self._canal.registerObject("comprimento", self.comprimento_tubulacao_channel)
+        self._canal.registerObject("acessorios", self.acessorios_channel)
 
         # === ComboBox ===
         self.hazen_will.addItems(Perdas.get_lista_materiais_hazen())
@@ -92,7 +94,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.darcy.addItems(Perdas.get_lista_materiais_darcy())
 
         # === Validação de Entrada ===
-        validator = QDoubleValidator(0.0, 1000.0, 3)
+        validator = QDoubleValidator(0.0, 10000.0, 3)
         validator.setNotation(QDoubleValidator.StandardNotation)
         self.Vazao_2.setValidator(validator)
         self.Vazao.setValidator(validator)
@@ -105,9 +107,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
         # === WebEngine + Mapa ===
         self.mapinha = Mapa()
-        mapa = self.mapinha.html_code
-        self.page.setHtml(mapa)
-
+        self.page.setHtml(self.mapinha.html_code)
         self.icone_2.view().setMinimumWidth(60)
 
         # ____________________PlaceHolderText ________________________________
@@ -118,53 +118,121 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.worker = None
         self.status_label = QLabel()
 
-        #  _________________ Conexões e Configurações (vai para ConexoesUI) _________________
+        # =========== Initialize Graphs ==================
+        self.inicializar_graficos_curvas()
+
+        #  _________________ Conexões e Configurações _________________
         self.conexoes = ConexoesUI(parent=self, menu=self.menu, animacoes=self.animações, configuracoes=self.config)
+        self.atualizar_parametros_entrada() 
         
     def actualizar_vazao(self):
         return self.icone_2.currentText()
-    
+
+    @Slot()
+    def atualizar_parametros_entrada(self):
+        """Lê os valores de vazão e tempo e inicia a cascata de cálculos."""
+        texto_vazao = self.Vazao_2.text().strip().replace(',', '.')
+        self.vazao = float(texto_vazao) if texto_vazao else 0.0
+        
+        texto_tempo = self.Vazao.text().strip().replace(',', '.')
+        self.tempo = float(texto_tempo) if texto_tempo else 0.0
+
+        self.calculo_diametro_tubulacao()
+        self.perdas_carga()
+        self.recalcular_sistema_completo()
+
     def calculo_diametro_tubulacao(self):
         self.diametro_tubulacao = self._diametro.calcular_diametro(self.vazao, self.tempo)
-        print(self.diametro_tubulacao)
     
     def perdas_carga(self):
-        self.perdas = Perdas(self.vazao, self.diametro_tubulacao, self._diametro.area_seccao())
+        vazao_m3s = self.vazao 
+        self.perdas = Perdas(vazao_m3s, self.diametro_tubulacao, self._diametro.area_seccao())
 
+    @Slot(list)
     def definir_acessorios(self, lista):
-        self.perdas_carga()
+        """Recebe a lista de acessórios do JS e recalcula o sistema."""
+        if not hasattr(self, 'perdas'): return
         self.perdas.definir_acessorios_lista(lista)
-        self.localizadas = self.perdas.calcular_perdas_localizadas()
-        print(self.localizadas)
+        try:
+            self.localizadas = self.perdas.calcular_perdas_localizadas()
+        except (ValueError, AttributeError):
+            self.localizadas = 0.0
+        self.recalcular_sistema_completo()
 
-    def perdas_carga_totais(self, comprimento):
-        self.perdas_carga()
-        if self.radioButton_7.isChecked():
-            self.perdas_totais = self.perdas.calcular_perda_carga_darcy(comprimento) + self.localizadas()
-        elif self.radioButton_8.isChecked():
-            self.perdas_totais = self.perdas.calcular_perda_carga_hazen_williams(comprimento) + self.localizadas()
-        return self.perdas_totais
-        
-    def calcular_altura_manometrica(self, altura):
-        self.altura_geometrica = altura
-        self.altura_manometrica = self.altura_geometrica + self.perdas_totais if hasattr(self, 'perdas_totais') else self.altura_geometrica
-        return self.altura_manometrica
+    @Slot(float)
+    def receber_comprimento(self, comprimento):
+        """Recebe o comprimento da tubulação do JS e recalcula o sistema."""
+        self.comprimento_tubulacao_val = comprimento
+        print("Comprimento da tubulação recebido:", comprimento)
+        self.recalcular_sistema_completo()
+
+    @Slot(float)
+    def receber_altura(self, altura):
+        """Recebe a altura geométrica do JS e recalcula o sistema."""
+        self.altura_geometrica_val = altura
+        print("Altura geométrica recebida:", altura)
+        self.recalcular_sistema_completo()
+
+    @Slot()
+    def recalcular_sistema_completo(self):
+        """Função central que recalcula perdas, altura manométrica e atualiza os gráficos."""
+        if not hasattr(self, 'perdas') or not self.diametro_tubulacao > 0:
+            return
+
+        perda_distribuida = 0.0
+        if self.comprimento_tubulacao_val > 0:
+            try:
+                if self.radioButton_7.isChecked():  # Darcy-Weisbach
+                    self.perdas.definir_material_darcy(self.darcy.currentText())
+                    perda_distribuida = self.perdas.calcular_perda_carga_darcy(self.comprimento_tubulacao_val)
+                elif self.radioButton_8.isChecked():  # Hazen-Williams
+                    self.perdas.definir_material_hazen(self.hazen_will.currentText())
+                    perda_distribuida = self.perdas.calcular_perda_carga_hazen_williams(self.comprimento_tubulacao_val)
+            except (ValueError, AttributeError):
+                 perda_distribuida = 0.0
+
+        self.perdas_totais = perda_distribuida + self.localizadas
+        print("Perdas totais:", self.perdas_totais)
+
+        # 2. Calcular altura manométrica
+        self.altura_manometrica = self.altura_geometrica_val + self.perdas_totais
+        print("Altura manométrica calculada:", self.altura_manometrica)
+
+        # 3. Atualizar gráficos
+        self.atualizar_graficos_curvas()
 
     def inicializar_graficos_curvas(self):
-        """ Inicializa os gráficos de curvas com os dados da bomba. """
+        """Cria as instâncias dos gráficos uma única vez."""
+        self.grafico_altura = Grafico(tipo='altura')
+        self.grafico_potencia = Grafico(tipo='potencia')
+        self.grafico_rendimento = Grafico(tipo='rendimento')
         
+        # Limpa layouts antigos se existirem
+        for widget in [self.altura, self.potencia, self.rendimento]:
+            if widget.layout():
+                while widget.layout().count():
+                    child = widget.layout().takeAt(0)
+                    if child.widget():
+                        child.widget().deleteLater()
+        
+        layout_altura = QVBoxLayout(self.altura)
+        layout_altura.addWidget(self.grafico_altura)
+        
+        layout_potencia = QVBoxLayout(self.potencia)
+        layout_potencia.addWidget(self.grafico_potencia)
+        
+        layout_rendimento = QVBoxLayout(self.rendimento)
+        layout_rendimento.addWidget(self.grafico_rendimento)
 
-        for widget, tipo in [(self.altura, 'altura'), 
-                             (self.potencia, 'potencia'), 
-                             (self.rendimento, 'rendimento')]:
-            layout = QVBoxLayout()
-            grafico = Grafico(tipo=tipo)
-            grafico.H_geometrico = self.altura_manometrica if hasattr(self, 'altura_manometrica') else 0
-            grafico.perda_carga = self.perdas_totais if hasattr(self, 'perdas_totais') else 0
-            grafico.gerar_dados()
-            grafico.plotar()
-            layout.addWidget(grafico)
-            widget.setLayout(layout)
+    def atualizar_graficos_curvas(self):
+        """Atualiza os gráficos com os dados mais recentes."""
+
+        vazao_m3h_quadrado = self.vazao ** 2
+        coeficiente_perda = self.perdas_totais / vazao_m3h_quadrado if vazao_m3h_quadrado > 1e-9 else 0.0
+        
+        self.grafico_altura.actualizar_dados(self.altura_geometrica_val, coeficiente_perda)
+        self.grafico_potencia.actualizar_dados(self.altura_geometrica_val, coeficiente_perda)
+        self.grafico_rendimento.actualizar_dados(self.altura_geometrica_val, coeficiente_perda)
 
     def enviar_js(self):
         self.dados.enviar_dados(self.Vazao_2, self.Vazao, self.view)
@@ -180,7 +248,6 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             self.status_label.setText("Buscando sugestões...")
             if self.worker and self.worker.isRunning():
                 self.worker.terminate()
-
             self.worker = Pesquisa(texto)
             self.worker.resultado.connect(self.atualizar_completer)
             self.worker.start()
@@ -202,19 +269,14 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     def permissao(self, url, feature):
         if feature == QWebEnginePage.Feature.Geolocation:
             resposta = QMessageBox.question(
-                self,
-                "Permissão de Localização",
+                self, "Permissão de Localização",
                 "Este site deseja acessar sua localização. Permitir?",
                 QMessageBox.Yes | QMessageBox.No
             )
-
-            if resposta == QMessageBox.Yes:
-                self.page.setFeaturePermission(url, feature, QWebEnginePage.PermissionGrantedByUser)
-            else:
-                self.page.setFeaturePermission(url, feature, QWebEnginePage.PermissionDeniedByUser)
+            permission = QWebEnginePage.PermissionGrantedByUser if resposta == QMessageBox.Yes else QWebEnginePage.PermissionDeniedByUser
+            self.page.setFeaturePermission(url, feature, permission)
   
     def salvar_configuracoes(self):
-        """ Salva todas as configurações da aplicação ao fechar. """
         self.config.salvar_geometria_janela(self)
         self.config.salvar_estado_splitter(self.splitter_2, "splitter_principal")
         self.config.salvar_estado_splitter(self.splitter, "splitter_mapa_perfil")
@@ -225,7 +287,6 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.config.salvar_texto_combobox(self.hazen_will, "hazen_material_texto")
 
     def restaurar_configuracoes(self):
-        """ Restaura todas as configurações da aplicação no arranque. """
         self.config.restaurar_geometria_janela(self)
         self.config.restaurar_estado_splitter(self.splitter_2, "splitter_principal")
         self.config.restaurar_estado_splitter(self.splitter, "splitter_mapa_perfil")
@@ -236,21 +297,17 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.config.restaurar_texto_combobox(self.hazen_will, "hazen_material_texto")
 
     def closeEvent(self, event):
-        """ Chamado quando a janela está prestes a ser fechada. """
         self.salvar_configuracoes()
         super().closeEvent(event)
 
-
-    
-    
-
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-
-    with open(r"estilos\estilos.qss", "r") as f:
-        app.setStyleSheet(f.read())
-
+    # Apply stylesheet if it exists
+    try:
+        with open(r"estilos\estilos.qss", "r") as f:
+            app.setStyleSheet(f.read())
+    except FileNotFoundError:
+        print("Stylesheet not found.")
     window = MainWindow()
     window.show()
-    app.exec()
-
+    sys.exit(app.exec())

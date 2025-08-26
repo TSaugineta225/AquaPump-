@@ -1,4 +1,3 @@
-
 class ConexoesUI():
     def __init__(self, parent=None, menu=None, animacoes=None, configuracoes=None):
         self.parent = parent
@@ -6,35 +5,50 @@ class ConexoesUI():
         self.animacoes = animacoes
         self.config = configuracoes
 
-        # Inicializa as conexões organizadas
+        # Inicializa todas as conexões
         self._conectar_configuracoes()
-        self._conectar_diametro()
-        self._conectar_js()
+        self._conectar_entradas_calculo()
+        self._conectar_js_e_mapa()
         self._conectar_menus()
         self._conectar_abas_frames()
         self._conectar_botoes_sair()
         self._conectar_pesquisa()
-        self._conectar_graficos()
-        self._conectar_perdas()
-        self._conectar_combo_icone()
 
-    # ===================== CONFIG =====================
     def _conectar_configuracoes(self):
+        """Restaura as configurações da sessão anterior."""
         self.parent.restaurar_configuracoes()
 
-    # ===================== DIÂMETRO =====================
-    def _conectar_diametro(self):
-        self.parent.Vazao_2.textChanged.connect(self.parent.calculo_diametro_tubulacao)
-        self.parent.Vazao.textChanged.connect(self.parent.calculo_diametro_tubulacao)
+    def _conectar_entradas_calculo(self):
+        """Conecta todas as entradas do usuário que afetam os cálculos hidráulicos."""
+        # Vazão e Tempo de funcionamento
+        self.parent.Vazao_2.textChanged.connect(self.parent.atualizar_parametros_entrada)
+        self.parent.Vazao.textChanged.connect(self.parent.atualizar_parametros_entrada)
+        
+        # Sinais da UI para seleção de fórmula e material
+        self.parent.radioButton_7.toggled.connect(self.parent.recalcular_sistema_completo)
+        self.parent.radioButton_8.toggled.connect(self.parent.recalcular_sistema_completo)
+        self.parent.darcy.currentIndexChanged.connect(self.parent.recalcular_sistema_completo)
+        self.parent.hazen_will.currentIndexChanged.connect(self.parent.recalcular_sistema_completo)
 
-    # ===================== CONEXÕES JS =====================
-    def _conectar_js(self):
+        # Unidade de vazão
+        self.parent.icone_2.currentIndexChanged.connect(self.parent.actualizar_vazao)
+
+    def _conectar_js_e_mapa(self):
+        """Conecta os sinais vindos do QWebChannel (JavaScript)."""
+        # Envio de dados para o JS
         self.parent.Vazao_2.textChanged.connect(self.parent.enviar_js)
         self.parent.Vazao.textChanged.connect(self.parent.enviar_js)
+        
+        # Permissão de geolocalização
         self.parent.page.featurePermissionRequested.connect(self.parent.permissao)
+        
+        # Recebimento de dados do JS para cálculos
+        self.parent.acessorios_channel.lista.connect(self.parent.definir_acessorios)
+        self.parent.altura_geometrica_channel.altura_recebido.connect(self.parent.receber_altura)
+        self.parent.comprimento_tubulacao_channel.comprimento_recebido.connect(self.parent.receber_comprimento)
 
-    # ===================== MENUS SUPERIORES =====================
     def _conectar_menus(self):
+        """Conecta os botões da barra de título aos seus respectivos menus."""
         self.parent.grafico_icon.clicked.connect(
             lambda: self.menu.menu_graficos().popup(
                 self.parent.grafico_icon.mapToGlobal(self.parent.grafico_icon.rect().topRight())
@@ -66,8 +80,8 @@ class ConexoesUI():
             )
         )
 
-    # ===================== FRAMES E ABAS LATERAIS =====================
     def _conectar_abas_frames(self):
+        """Conecta os botões para animações de painéis laterais."""
         self.parent.fechar_lateral_2.clicked.connect(
             lambda: self.animacoes.largura(self.parent.frame_4, largura_alvo=300)
         )
@@ -87,27 +101,12 @@ class ConexoesUI():
             lambda: self.animacoes.largura(self.parent.frame_4, self.parent.frame_6)
         )
 
-    # ===================== BOTÕES DE SAÍDA =====================
     def _conectar_botoes_sair(self):
+        """Conecta os botões de fechar a aplicação."""
         self.parent.sair_2.clicked.connect(self.parent.close)
         self.parent.sair_3.clicked.connect(self.parent.close)
 
-    # ===================== PESQUISA =====================
     def _conectar_pesquisa(self):
+        """Conecta a barra de pesquisa de localização."""
         self.parent.pesquisar_2.clicked.connect(self.parent.pesquisa_mapa)
         self.parent.pesquisa_line.returnPressed.connect(self.parent.pesquisa_mapa)
-
-    # ===================== GRÁFICOS =====================
-    def _conectar_graficos(self):
-        self.parent.Vazao_2.textChanged.connect(self.parent.inicializar_graficos_curvas)
-        self.parent.Vazao.textChanged.connect(self.parent.inicializar_graficos_curvas)
-
-    # ===================== PERDAS =====================
-    def _conectar_perdas(self):
-        self.parent.acessorios.lista.connect(self.parent.definir_acessorios)
-        self.parent.altura_geometrica.altura_recebido.connect(self.parent.calcular_altura_manometrica)
-        self.parent.comprimento_tubulacao.comprimento_recebido.connect(self.parent.perdas_carga_totais)
-
-    # ===================== COMBO ICONE =====================
-    def _conectar_combo_icone(self):
-        self.parent.icone_2.currentIndexChanged.connect(self.parent.actualizar_vazao)
