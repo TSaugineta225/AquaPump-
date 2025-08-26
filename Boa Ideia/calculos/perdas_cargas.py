@@ -5,7 +5,9 @@ from CoolProp.CoolProp import PropsSI
 class Perdas:
     def __init__(self, vazao_m3s: Optional[float] = None, 
                 diametro_m: Optional[float] = None,
-                area: Optional[float] = None, 
+                area: Optional[float] = None,
+                material_darcy: Optional[str] = None,
+                material_hazen: Optional[str] = None,
                 gravidade_ms2: float = 9.81):
         
         self.diametro_m = diametro_m
@@ -13,9 +15,13 @@ class Perdas:
         self.vazao_m3s = vazao_m3s
         self.gravidade_ms2 = gravidade_ms2
 
-        self.material_darcy = None
-        self.material_hazen = None
+        self.material_darcy = material_darcy
+        self.material_hazen = material_hazen
         self.acessorios_k = {}
+
+        self.velocidade_ms = 0.0  # Inicializar com um valor padrão
+        if self.vazao_m3s is not None and self.area is not None and self.area > 0:
+            self.calcular_velocidade()
 
     # ---------- Métodos de listagem ----------
     @staticmethod

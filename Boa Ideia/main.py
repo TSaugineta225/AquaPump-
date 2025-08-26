@@ -146,7 +146,8 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     
     def perdas_carga(self):
         vazao_m3s = self.vazao 
-        self.perdas = Perdas(vazao_m3s, self.diametro_tubulacao, self._diametro.area_seccao())
+        self.perdas = Perdas(vazao_m3s, self.diametro_tubulacao, self._diametro.area_seccao(), self.darcy.currentText(), self.hazen_will.currentText())
+
 
     @Slot(list)
     def definir_acessorios(self, lista):
@@ -185,18 +186,22 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
                 if self.radioButton_7.isChecked():  # Darcy-Weisbach
                     self.perdas.definir_material_darcy(self.darcy.currentText())
                     perda_distribuida = self.perdas.calcular_perda_carga_darcy(self.comprimento_tubulacao_val)
-                elif self.radioButton_8.isChecked():  # Hazen-Williams
+                elif self.radioButton_8.isChecked():  
                     self.perdas.definir_material_hazen(self.hazen_will.currentText())
                     perda_distribuida = self.perdas.calcular_perda_carga_hazen_williams(self.comprimento_tubulacao_val)
             except (ValueError, AttributeError):
                  perda_distribuida = 0.0
 
         self.perdas_totais = perda_distribuida + self.localizadas
-        print("Perdas totais:", self.perdas_totais)
+        print(f"Perdas totais: {self.perdas_totais:.8f} m")
 
         # 2. Calcular altura manométrica
         self.altura_manometrica = self.altura_geometrica_val + self.perdas_totais
         print("Altura manométrica calculada:", self.altura_manometrica)
+        print(f"Altura geométrica: {self.altura_geometrica_val} m, Perdas distribuídas: {perda_distribuida} m, Perdas localizadas: {self.localizadas} m")
+        print(f"Area da seção: {self._diametro.area_seccao():.6f} m²")
+        print(f"Vazão: {self.vazao} m³/s, Diâmetro: {self.diametro_tubulacao} m")
+        print(f"{self.darcy.currentText()} - {self.hazen_will.currentText()}")
 
         # 3. Atualizar gráficos
         self.atualizar_graficos_curvas()
@@ -229,7 +234,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
         vazao_m3h_quadrado = self.vazao ** 2
         coeficiente_perda = self.perdas_totais / vazao_m3h_quadrado if vazao_m3h_quadrado > 1e-9 else 0.0
-        
+
         self.grafico_altura.actualizar_dados(self.altura_geometrica_val, coeficiente_perda)
         self.grafico_potencia.actualizar_dados(self.altura_geometrica_val, coeficiente_perda)
         self.grafico_rendimento.actualizar_dados(self.altura_geometrica_val, coeficiente_perda)
