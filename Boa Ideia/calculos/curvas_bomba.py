@@ -1,14 +1,87 @@
 import numpy as np
-import matplotlib.pyplot as plt
-from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg as FigureCanvas
-from matplotlib.backends.backend_qtagg import NavigationToolbar2QT as NavigationBar
-from PySide6.QtWidgets import QWidget, QVBoxLayout
+from PySide6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QToolBar, 
+                               QPushButton, QLabel, QSizePolicy)
+from PySide6.QtCharts import QChart, QChartView, QLineSeries, QValueAxis, QScatterSeries
+from PySide6.QtCore import Qt, QPointF
+from PySide6.QtGui import QPainter, QPen, QColor, QFont, QAction
 
-# Aplicar estilo moderno global (estilo 'seaborn-v0_8' ou outro moderno como 'bmh', 'ggplot', 'fivethirtyeight')
-plt.style.use('seaborn-v0_8')
+class NavigationToolbar(QToolBar):
+    def __init__(self, chart_view, parent=None):
+        super().__init__(parent)
+        self.chart_view = chart_view
+        self.setMovable(False)
+        self.setFloatable(False)
+        
+        # Botões de navegação
+        self.zoom_in_action = QAction("Zoom In", self)
+        self.zoom_in_action.triggered.connect(self.zoom_in)
+        self.addAction(self.zoom_in_action)
+        
+        self.zoom_out_action = QAction("Zoom Out", self)
+        self.zoom_out_action.triggered.connect(self.zoom_out)
+        self.addAction(self.zoom_out_action)
+        
+        self.pan_left_action = QAction("Pan Left", self)
+        self.pan_left_action.triggered.connect(self.pan_left)
+        self.addAction(self.pan_left_action)
+        
+        self.pan_right_action = QAction("Pan Right", self)
+        self.pan_right_action.triggered.connect(self.pan_right)
+        self.addAction(self.pan_right_action)
+        
+        self.reset_action = QAction("Reset View", self)
+        self.reset_action.triggered.connect(self.reset_view)
+        self.addAction(self.reset_action)
+        
+        # Adicionar um espaçador
+        spacer = QWidget()
+        spacer.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Preferred)
+        self.addWidget(spacer)
+        
+        # Label para mostrar informações do ponto de operação
+        self.ponto_op_label = QLabel("Ponto de operação: ")
+        self.addWidget(self.ponto_op_label)
+    
+    def zoom_in(self):
+        self.chart_view.chart().zoomIn()
+    
+    def zoom_out(self):
+        self.chart_view.chart().zoomOut()
+    
+    def pan_left(self):
+        chart = self.chart_view.chart()
+        axis_x = chart.axisX()[0]
+        current_min = axis_x.min()
+        current_max = axis_x.max()
+        range_val = current_max - current_min
+        axis_x.setRange(current_min - range_val * 0.1, current_max - range_val * 0.1)
+    
+    def pan_right(self):
+        chart = self.chart_view.chart()
+        axis_x = chart.axisX()[0]
+        current_min = axis_x.min()
+        current_max = axis_x.max()
+        range_val = current_max - current_min
+        axis_x.setRange(current_min + range_val * 0.1, current_max + range_val * 0.1)
+    
+    def reset_view(self):
+        self.chart_view.chart().zoomReset()
+    
+    def atualizar_ponto_operacao(self, x, y, tipo_grafico, unidade_x, unidade_y):
+        """Atualiza o label com as informações do ponto de operação"""
+        if tipo_grafico == "altura":
+            texto = f"Ponto de operação: Q = {x:.2f} {unidade_x}, H = {y:.2f} {unidade_y}"
+        elif tipo_grafico == "potencia":
+            texto = f"Ponto de operação: Q = {x:.2f} {unidade_x}, P = {y:.2f} {unidade_y}"
+        else:  # rendimento
+            texto = f"Ponto de operação: Q = {x:.2f} {unidade_x}, η = {y:.2f}%"
+        
+        self.ponto_op_label.setText(texto)
+
 
 class Grafico(QWidget):
-    def __init__(self, tipo='altura', potencia = 'Kw', altura= 'm', v = 'vazao' ,perdas=0.003, vazao_nominal=4, altura_nominal=4, parent=None):
+    def __init__(self, tipo='altura', potencia='Kw', altura='m', v='vazao', 
+                 perdas=0.003, vazao_nominal=4, altura_nominal=4, parent=None):
         super().__init__(parent)
 
         self.tipo = tipo.lower()
@@ -23,13 +96,26 @@ class Grafico(QWidget):
         self.H_0 = self.H_nominal * 1.2
         self.A = (self.H_0 - self.H_nominal) / (self.Q_nominal ** 2) if self.Q_nominal > 0 else 0
 
-        self.figure, self.ax = plt.subplots()
-        self.canvas = FigureCanvas(self.figure)
-        self.toolbar = NavigationBar(self.canvas, self)
-
+        # Configurar o layout e gráfico
         layout_principal = QVBoxLayout()
+        
+        # Criar chart e chart view
+        self.chart = QChart()
+        self.chart.setTheme(QChart.ChartThemeLight)
+        self.chart.setAnimationOptions(QChart.AllAnimations)
+        
+        self.chart_view = QChartView(self.chart)
+        self.chart_view.setRenderHint(QPainter.Antialiasing)
+        
+        # Criar eixos (serão configurados no plotar)
+        self.axis_x = QValueAxis()
+        self.axis_y = QValueAxis()
+        
+        # Barra de navegação personalizada
+        self.toolbar = NavigationToolbar(self.chart_view)
+        
         layout_principal.addWidget(self.toolbar)
-        layout_principal.addWidget(self.canvas)
+        layout_principal.addWidget(self.chart_view)
         self.setLayout(layout_principal)
 
         self.gerar_dados()
@@ -56,7 +142,7 @@ class Grafico(QWidget):
 
     def calcular_potencia(self, g=9.81):
         rho = 1000
-        Q_m3s = self.Q_plot / 3600
+        Q_m3s = self.Q_plot 
         eta_seguro = np.where(self.eta_plot > 0, self.eta_plot, np.nan)
         P = (rho * g * Q_m3s * self.H_plot) / eta_seguro
         return P / 1000
@@ -66,50 +152,144 @@ class Grafico(QWidget):
         indice_otimo = np.argmin(diferenca)
         return self.Q_plot[indice_otimo], self.H_plot[indice_otimo]
 
-    def plotar_ponto_operacao(self, y_valor, ylabel):
-        self.ax.plot(self.Q_op, y_valor, 'o', markersize=8, color='black', label="Ponto de Operação")
-        self.ax.annotate(f"Q = {self.Q_op:.2f}\nY = {y_valor:.2f}",
-                         (self.Q_op, y_valor),
-                         xytext=(12, -25),
-                         textcoords="offset points",
-                         bbox=dict(boxstyle="round,pad=0.4", fc='#f0f0f0', ec='gray'),
-                         fontsize=9)
+    def criar_serie(self, x_data, y_data, nome, cor, espessura=2.2):
+        """Cria uma série de linha com os dados fornecidos"""
+        serie = QLineSeries()
+        serie.setName(nome)
+        
+        # Adicionar pontos à série
+        for x, y in zip(x_data, y_data):
+            if not np.isnan(y):  # Ignorar valores NaN
+                serie.append(float(x), float(y))
+        
+        # Configurar estilo da linha
+        pen = QPen(QColor(cor))
+        pen.setWidthF(espessura)
+        serie.setPen(pen)
+        
+        return serie
 
-        self.ax.set_ylabel(ylabel, fontsize=10)
-    
-    def plotar(self):
-        self.ax.clear()
+    def criar_ponto_operacao(self, x, y):
+        """Cria um ponto de operação (scatter)"""
+        serie = QScatterSeries()
+        serie.setName("Ponto de Operação")
+        serie.append(float(x), float(y))
+        serie.setMarkerSize(12.0)
+        serie.setColor(QColor('#FF0000'))  # Vermelho
+        serie.setBorderColor(QColor('#000000'))
+        #serie.setBorderWidth(2)
+        
+        return serie
 
+    def configurar_eixos(self):
+        """Configura os eixos com base no tipo de gráfico"""
+        # Configurar eixo X
+        self.axis_x.setTitleText(f"Vazão [{self.vazao}]")
+        self.axis_x.setLabelFormat("%.1f")
+        
+        # Configurar eixo Y com base no tipo de gráfico
         if self.tipo == "altura":
-            self.ax.plot(self.Q_plot, self.H_plot, label="Curva da Bomba", color='#1f77b4', linewidth=2.2)
-            self.ax.plot(self.Q_plot, self.C_plot, label="Curva do Sistema", color='#ff7f0e', linewidth=2.2)
-            self.plotar_ponto_operacao(self.H_op, f"Altura {self.potencia}")
-            self.ax.set_title("Curva da Bomba - Altura vs Vazão", fontsize=11, fontweight='bold')
+            self.axis_y.setTitleText(f"Altura [{self.altura}]")
+            # Ajustar faixa dos eixos
+            min_y = min(np.min(self.H_plot), np.min(self.C_plot)) * 0.9
+            max_y = max(np.max(self.H_plot), np.max(self.C_plot)) * 1.1
+        elif self.tipo == "potencia":
+            self.axis_y.setTitleText(f"Potência [{self.potencia}]")
+            min_y = np.min(self.P_plot) * 0.9
+            max_y = np.max(self.P_plot) * 1.1
+        elif self.tipo == "rendimento":
+            self.axis_y.setTitleText("Rendimento [%]")
+            min_y = 0  # Rendimento não pode ser negativo
+            max_y = np.max(self.eta_plot * 100) * 1.1
+        
+        # Ajustar faixa do eixo X
+        min_x = 0
+        max_x = np.max(self.Q_plot) * 1.05
+        
+        self.axis_x.setRange(min_x, max_x)
+        self.axis_y.setRange(min_y, max_y)
 
+    def plotar(self):
+        # Limpar gráfico existente, mas manter os eixos
+        self.chart.removeAllSeries()
+        
+        # Configurar eixos
+        self.configurar_eixos()
+        
+        # Adicionar eixos se não estiverem já adicionados
+        if not self.chart.axisX():
+            self.chart.addAxis(self.axis_x, Qt.AlignBottom)
+        if not self.chart.axisY():
+            self.chart.addAxis(self.axis_y, Qt.AlignLeft)
+        
+        if self.tipo == "altura":
+            # Adicionar séries
+            serie_bomba = self.criar_serie(self.Q_plot, self.H_plot, "Curva da Bomba", '#1f77b4')
+            serie_sistema = self.criar_serie(self.Q_plot, self.C_plot, "Curva do Sistema", '#ff7f0e')
+            ponto_op = self.criar_ponto_operacao(self.Q_op, self.H_op)
+            
+            self.chart.addSeries(serie_bomba)
+            self.chart.addSeries(serie_sistema)
+            self.chart.addSeries(ponto_op)
+            
+            self.chart.setTitle("Curva da Bomba - Altura vs Vazão")
+            
+            # Atualizar informações do ponto de operação
+            self.toolbar.atualizar_ponto_operacao(
+                self.Q_op, self.H_op, self.tipo, self.vazao, self.altura
+            )
+            
         elif self.tipo == "potencia":
             y_val = np.interp(self.Q_op, self.Q_plot, self.P_plot)
-            self.ax.plot(self.Q_plot, self.P_plot, label="Potência", color='#2ca02c', linewidth=2.2)
-            self.plotar_ponto_operacao(y_val, f"Potência {self.potencia}")
-            self.ax.set_title("Potência vs Vazão", fontsize=11, fontweight='bold')
-
+            
+            serie_potencia = self.criar_serie(self.Q_plot, self.P_plot, "Potência", '#2ca02c')
+            ponto_op = self.criar_ponto_operacao(self.Q_op, y_val)
+            
+            self.chart.addSeries(serie_potencia)
+            self.chart.addSeries(ponto_op)
+            
+            self.chart.setTitle("Potência vs Vazão")
+            
+            # Atualizar informações do ponto de operação
+            self.toolbar.atualizar_ponto_operacao(
+                self.Q_op, y_val, self.tipo, self.vazao, self.potencia
+            )
+            
         elif self.tipo == "rendimento":
             y_val = np.interp(self.Q_op, self.Q_plot, self.eta_plot * 100)
-            self.ax.plot(self.Q_plot, self.eta_plot * 100, label="Rendimento", color='#d62728', linewidth=2.2)
-            self.plotar_ponto_operacao(y_val, "Rendimento (%)")
-            self.ax.set_title("Rendimento vs Vazão", fontsize=11, fontweight='bold')
-
+            
+            serie_rendimento = self.criar_serie(self.Q_plot, self.eta_plot * 100, "Rendimento", '#d62728')
+            ponto_op = self.criar_ponto_operacao(self.Q_op, y_val)
+            
+            self.chart.addSeries(serie_rendimento)
+            self.chart.addSeries(ponto_op)
+            
+            self.chart.setTitle("Rendimento vs Vazão")
+            
+            # Atualizar informações do ponto de operação
+            self.toolbar.atualizar_ponto_operacao(
+                self.Q_op, y_val, self.tipo, self.vazao, "%"
+            )
+            
         else:
-            self.ax.text(0.5, 0.5, "Tipo de gráfico inválido", ha='center', va='center', fontsize=12)
+            # Tipo inválido
+            return
 
-        self.ax.set_xlabel(f"Vazão {self.vazao}", fontsize=10)
-        self.ax.grid(True, linestyle='--', linewidth=0.4, alpha=0.6)
-        self.ax.legend(frameon=True, loc='best', fontsize=9)
-        self.canvas.draw()
+        # Conectar séries aos eixos
+        for series in self.chart.series():
+            series.attachAxis(self.axis_x)
+            series.attachAxis(self.axis_y)
+        
+        # Configurar legendas
+        self.chart.legend().setVisible(True)
+        self.chart.legend().setAlignment(Qt.AlignBottom)
+        
+        # Ajustar visualização
+        self.chart_view.update()
 
     def actualizar_dados(self, altura, perda):
-        """ Atualiza os dados da bomba e recalcula os gráficos. """
+        """Atualiza os dados da bomba e recalcula os gráficos."""
         self.H_geometrico = altura
         self.perda_carga = perda
         self.gerar_dados()
         self.plotar()
-

@@ -7,8 +7,8 @@ class Dados():
         self.valor_2 = 0
 
     def enviar_dados(self, vazão, tempo, pagina):
-        self.valor_1 = float(vazão.text())
-        self.valor_2 = float(tempo.text())
+        self.valor_1 = float(vazão)
+        self.valor_2 = float(tempo)
 
         pagina.page().runJavaScript(f"receber_dados({self.valor_1}, {self.valor_2})")
 

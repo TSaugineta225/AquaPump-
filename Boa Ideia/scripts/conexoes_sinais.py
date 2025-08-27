@@ -13,6 +13,8 @@ class ConexoesUI():
         self._conectar_abas_frames()
         self._conectar_botoes_sair()
         self._conectar_pesquisa()
+        self._perda_carga_dinamica()
+        self._conectar_actualizao_graph()
 
     def _conectar_configuracoes(self):
         """Restaura as configurações da sessão anterior."""
@@ -38,10 +40,7 @@ class ConexoesUI():
         # Envio de dados para o JS
         self.parent.Vazao_2.textChanged.connect(self.parent.enviar_js)
         self.parent.Vazao.textChanged.connect(self.parent.enviar_js)
-        
-        # Permissão de geolocalização
-        self.parent.page.featurePermissionRequested.connect(self.parent.permissao)
-        
+                
         # Recebimento de dados do JS para cálculos
         self.parent.acessorios_channel.lista.connect(self.parent.definir_acessorios)
         self.parent.altura_geometrica_channel.altura_recebido.connect(self.parent.receber_altura)
@@ -110,3 +109,11 @@ class ConexoesUI():
         """Conecta a barra de pesquisa de localização."""
         self.parent.pesquisar_2.clicked.connect(self.parent.pesquisa_mapa)
         self.parent.pesquisa_line.returnPressed.connect(self.parent.pesquisa_mapa)
+
+    def _perda_carga_dinamica(self):
+        """Recalcula as perdas de carga quando o comprimento ou acessórios mudam."""
+        self.parent.radioButton_7.toggled.connect(self.parent.mudanca_dinamica_perdas_carga)
+        self.parent.radioButton_8.toggled.connect(self.parent.mudanca_dinamica_perdas_carga)
+
+    def _conectar_actualizao_graph(self):
+        self.parent.actualizar_grafico.clicked.connect(self.parent.atualizar_graficos_curvas)
