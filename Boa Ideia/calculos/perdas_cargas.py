@@ -92,6 +92,7 @@ class Perdas:
         self.velocidade_ms = self.vazao_m3s / self.area
         if self.velocidade_ms <= 0:
             self.velocidade_ms = 1e-6  
+        return self.velocidade_ms
 
     def calcular_viscosidade_cinematica(self):
         T = 293.15

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'mainBoeaOg.ui'
+## Form generated from reading UI file 'mainnqUKhj.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -29,321 +29,7 @@ class Ui_AquaPump(object):
             AquaPump.setObjectName(u"AquaPump")
         AquaPump.resize(1165, 749)
         self.view = QWebEngineView(self)
-        AquaPump.setStyleSheet(u"/* --------- QWidget (Geral) --------- */\n"
-"QWidget {\n"
-"    background-color: #ffffff;\n"
-"    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
-"    font-size: 14px;\n"
-"    color: #333333;\n"
-"}\n"
-"\n"
-"/* --------- QLineEdit --------- */\n"
-"QLineEdit {\n"
-"    background-color: #ffffff;\n"
-"    border: 2px solid #d9d9d9;\n"
-"    border-radius: 4px;\n"
-"    padding: 6px 8px;\n"
-"    font-size: 14px;\n"
-"    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
-"    color: #2b2b2b;\n"
-"}\n"
-"\n"
-"QLineEdit:focus {\n"
-"    border: 2px solid #95acff;\n"
-"    background-color: #fcfcfc;\n"
-"}\n"
-"\n"
-"QLineEdit:hover {\n"
-"    border: 2px solid #a5baff;\n"
-"    background-color: #fefefe;\n"
-"}\n"
-"\n"
-"/* --------- QComboBox --------- */\n"
-"QComboBox {\n"
-"    background-color: #fdfdfd;\n"
-"    border: 2px solid #d0d0d0;\n"
-"    border-radius: 4px;\n"
-"    padding: 6px 8px;\n"
-"    font-size: 14px;\n"
-"    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
-"    color: #2b2b2b;\n"
-"}\n"
-"\n"
-"QComboBox:hover,\n"
-""
-                        "QComboBox:focus {\n"
-"    border: 2px solid #95acff;\n"
-"    background-color: #ffffff;\n"
-"}\n"
-"\n"
-"QComboBox::drop-down {\n"
-"    subcontrol-origin: padding;\n"
-"    subcontrol-position: top right;\n"
-"    width: 28px;\n"
-"    border-left: 1px solid #d0d0d0;\n"
-"    background-color: transparent;\n"
-"}\n"
-"\n"
-"QComboBox::down-arrow {\n"
-"    image: url(:/img/arrow-down-1.png);\n"
-"    width: 10px;\n"
-"    height: 10px;\n"
-"    margin-right: 5px;\n"
-"}\n"
-"\n"
-"QComboBox QAbstractItemView {\n"
-"    background-color: #ffffff;\n"
-"    border: 1px solid #cfcfcf;\n"
-"    border-radius: 4px;\n"
-"    selection-background-color: #2684ff;\n"
-"    selection-color: #ffffff;\n"
-"    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
-"}\n"
-"\n"
-"/* --------- QScrollArea --------- */\n"
-"QScrollArea {\n"
-"    background-color: #f9f9f9;\n"
-"    border: none;\n"
-"    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
-"    font-size: 14px;\n"
-"    color: #333333;\n"
-"}\n"
-"\n"
-"QScrollArea QWidget {\n"
-"    background-color"
-                        ": transparent;\n"
-"}\n"
-"\n"
-"/* --------- ScrollBars --------- */\n"
-"QScrollBar:vertical,\n"
-"QScrollBar:horizontal {\n"
-"    background: rgb(231, 231, 231);\n"
-"    width: 12px;\n"
-"    height: 12px;\n"
-"    margin: 10px 0 10px 0;\n"
-"    border: none;\n"
-"}\n"
-"\n"
-"QScrollBar::sub-page:vertical,\n"
-"QScrollBar::add-page:vertical,\n"
-"QScrollBar::sub-page:horizontal,\n"
-"QScrollBar::add-page:horizontal {\n"
-"    background: transparent;\n"
-"}\n"
-"\n"
-"QScrollBar::handle:vertical,\n"
-"QScrollBar::handle:horizontal {\n"
-"    background-color: #c0c0c0;\n"
-"    min-height: 30px;\n"
-"    min-width: 30px;\n"
-"    margin: 2px;\n"
-"    border-radius: 4px;\n"
-"}\n"
-"\n"
-"QScrollBar::handle:vertical:hover,\n"
-"QScrollBar::handle:horizontal:hover {\n"
-"    background-color: #a0a0a0;\n"
-"}\n"
-"\n"
-"QScrollBar::sub-line:vertical,\n"
-"QScrollBar::add-line:vertical,\n"
-"QScrollBar::sub-line:horizontal,\n"
-"QScrollBar::add-line:horizontal {\n"
-"    background: #e1e1e1;\n"
-"    height: 12px;\n"
-"    width: 12px;\n"
-"    bo"
-                        "rder-radius: 6px;\n"
-"}\n"
-"\n"
-"QScrollBar::up-arrow:vertical {\n"
-"    image: url(:/img/arrow-up.png);\n"
-"    width: 8px;\n"
-"    height: 9px;\n"
-"    margin: 2px;\n"
-"}\n"
-"\n"
-"QScrollBar::down-arrow:vertical {\n"
-"    image: url(:/img/arrow-down-1.png);\n"
-"    width: 8px;\n"
-"    height: 9px;\n"
-"    margin: 2px;\n"
-"}\n"
-"\n"
-"QToolButton {\n"
-"background-color: transparent;\n"
-"font-family: Roboto;\n"
-"font-size:10pt;\n"
-"border: none;\n"
-"border-radius:2px\n"
-"\n"
-"}\n"
-"/* --------- QGroupBox --------- */\n"
-"QGroupBox {\n"
-"    border: 1px solid #dcdcdc;\n"
-"    border-radius: 6px;\n"
-"    margin-top: 15px;\n"
-"    background-color: transparent;\n"
-"    font-size: 14px;\n"
-"    color: #212121;\n"
-"	padding:8px;\n"
-"}\n"
-"\n"
-"QGroupBox::title {\n"
-"    subcontrol-origin: margin;\n"
-"    subcontrol-position: top left;\n"
-"    padding: 0 10px;\n"
-"    margin-top: -4px;\n"
-"    background-color: transparent;\n"
-"    font-family: \"Segoe UI\", \"Roboto\", sans-serif;\n"
-"    font-size: 19px;\n"
-"    fo"
-                        "nt-weight: bold;\n"
-"    color: #000000;\n"
-"    \n"
-"}\n"
-"\n"
-"QTableView {\n"
-"    background-color: #ffffff;\n"
-"    alternate-background-color: #f9f9f9;\n"
-"    gridline-color: #e0e0e0;\n"
-"    font-family: Segoe UI, Roboto, sans-serif;\n"
-"    font-size: 13px;\n"
-"    color: #333333;\n"
-"    selection-background-color: #cce4ff;   /* Azul bem claro na sele\u00e7\u00e3o */\n"
-"    selection-color: #000000;              /* Texto preto quando selecionado */\n"
-"    border: 1px solid #dcdcdc;\n"
-"}\n"
-"\n"
-"QHeaderView::section {\n"
-"    background-color: #f1f1f1;\n"
-"    padding: 4px;\n"
-"    border: 1px solid #dcdcdc;\n"
-"    font-weight: bold;\n"
-"    color: #444444;\n"
-"}\n"
-"\n"
-"QTableView::item {\n"
-"    padding: 4px;\n"
-"}\n"
-"\n"
-"QTableView::item:selected {\n"
-"    background-color: #cce4ff;\n"
-"    color: #000000;\n"
-"}\n"
-"\n"
-"QTableView QTableCornerButton::section {\n"
-"    background-color: #f1f1f1;\n"
-"    border: 1px solid #dcdcdc;\n"
-"}\n"
-"\n"
-"QTableView::item:hover {\n"
-"    background-co"
-                        "lor: #eaf4ff;}\n"
-"\n"
-"QPushButton {\n"
-"    background-color: #f5f5f5;\n"
-"    color: #000000;\n"
-"    border: 1px solid #c2c2c2;\n"
-"    border-radius: 3px;\n"
-"    font-size: 14px;\n"
-"}\n"
-"\n"
-"QPushButton:hover {\n"
-"    background-color: #e0e0e0;\n"
-"    border: 1px solid #e0e0e0;\n"
-"}\n"
-"\n"
-"QPushButton:pressed {\n"
-"    background-color: #d0d0d0;\n"
-"    border: 1px solid #888888;\n"
-"}\n"
-"\n"
-"/* --------- QSpinBox e QDoubleSpinBox --------- */\n"
-"QSpinBox,\n"
-"QDoubleSpinBox {\n"
-"    background-color: #ffffff;\n"
-"    border: 2px solid #d9d9d9;\n"
-"    border-radius: 4px;\n"
-"    padding: 6px 24px 6px 8px; /* espa\u00e7o extra para as setas */\n"
-"    font-size: 14px;\n"
-"    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
-"    color: #2b2b2b;\n"
-"}\n"
-"\n"
-"QSpinBox:focus,\n"
-"QDoubleSpinBox:focus {\n"
-"    border: 2px solid #95acff;\n"
-"    background-color: #fcfcfc;\n"
-"}\n"
-"\n"
-"QSpinBox:hover,\n"
-"QDoubleSpinBox:hover {\n"
-"    border: 2px solid #a5baff;\n"
-"    background-color: #fef"
-                        "efe;\n"
-"}\n"
-"\n"
-"/* Bot\u00f5es de incremento/decremento */\n"
-"QSpinBox::up-button,\n"
-"QDoubleSpinBox::up-button {\n"
-"    subcontrol-origin: border;\n"
-"    subcontrol-position: top right;\n"
-"    width: 20px;\n"
-"    border-left: 1px solid #d0d0d0;\n"
-"    background-color: #f5f5f5;\n"
-"    border-top-right-radius: 4px;\n"
-"}\n"
-"\n"
-"QSpinBox::up-button:hover,\n"
-"QDoubleSpinBox::up-button:hover {\n"
-"    background-color: #e0e0e0;\n"
-"}\n"
-"\n"
-"QSpinBox::up-button:pressed,\n"
-"QDoubleSpinBox::up-button:pressed {\n"
-"    background-color: #d0d0d0;\n"
-"}\n"
-"\n"
-"/* \u00cdcone seta para cima */\n"
-"QSpinBox::up-arrow,\n"
-"QDoubleSpinBox::up-arrow {\n"
-"    image: url(:/img/arrow-up.png);\n"
-"    width: 8px;\n"
-"    height: 8px;\n"
-"}\n"
-"\n"
-"/* Bot\u00e3o para baixo */\n"
-"QSpinBox::down-button,\n"
-"QDoubleSpinBox::down-button {\n"
-"    subcontrol-origin: border;\n"
-"    subcontrol-position: bottom right;\n"
-"    width: 20px;\n"
-"    border-left: 1px solid #d0d0d0;\n"
-"    background-color: #f5f5f5;\n"
-""
-                        "    border-bottom-right-radius: 4px;\n"
-"}\n"
-"\n"
-"QSpinBox::down-button:hover,\n"
-"QDoubleSpinBox::down-button:hover {\n"
-"    background-color: #e0e0e0;\n"
-"}\n"
-"\n"
-"QSpinBox::down-button:pressed,\n"
-"QDoubleSpinBox::down-button:pressed {\n"
-"    background-color: #d0d0d0;\n"
-"}\n"
-"\n"
-"/* \u00cdcone seta para baixo */\n"
-"QSpinBox::down-arrow,\n"
-"QDoubleSpinBox::down-arrow {\n"
-"    image: url(:/img/arrow-down-1.png);\n"
-"    width: 8px;\n"
-"    height: 8px;\n"
-"}\n"
-"\n"
-"")
+        AquaPump.setStyleSheet(u"")
         self.layoutWidget = QWidget(AquaPump)
         self.layoutWidget.setObjectName(u"layoutWidget")
         self.layoutWidget.setGeometry(QRect(0, 0, 100, 30))
@@ -1159,6 +845,7 @@ class Ui_AquaPump(object):
         self.projeto.setObjectName(u"projeto")
         self.projeto.setStyleSheet(u"QPushButton {\n"
 "padding-top:8px;\n"
+"padding-bottom:5px\n"
 "}")
         icon13 = QIcon()
         icon13.addFile(u":/img/projecto.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
@@ -1169,9 +856,8 @@ class Ui_AquaPump(object):
 
         self.exportar_2 = QPushButton(self.frame_6)
         self.exportar_2.setObjectName(u"exportar_2")
-        self.exportar_2.setStyleSheet(u"QPushButton {\n"
-"padding-top:6px;\n"
-"}")
+        self.exportar_2.setStyleSheet(u"padding-top:5px;\n"
+"padding-bottom:5px")
         icon14 = QIcon()
         icon14.addFile(u":/img/exportar.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.exportar_2.setIcon(icon14)
@@ -1181,6 +867,8 @@ class Ui_AquaPump(object):
 
         self.relatorio_3 = QPushButton(self.frame_6)
         self.relatorio_3.setObjectName(u"relatorio_3")
+        self.relatorio_3.setStyleSheet(u"padding-top:5px;\n"
+"padding-bottom:5px")
         icon15 = QIcon()
         icon15.addFile(u":/img/relatorio.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.relatorio_3.setIcon(icon15)
@@ -1190,6 +878,8 @@ class Ui_AquaPump(object):
 
         self.grafico_icon = QPushButton(self.frame_6)
         self.grafico_icon.setObjectName(u"grafico_icon")
+        self.grafico_icon.setStyleSheet(u"padding-top:5px;\n"
+"padding-bottom:5px")
         icon16 = QIcon()
         icon16.addFile(u":/img/grafico.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.grafico_icon.setIcon(icon16)
@@ -1357,34 +1047,13 @@ class Ui_AquaPump(object):
         sizePolicy.setHeightForWidth(self.Vazao.sizePolicy().hasHeightForWidth())
         self.Vazao.setSizePolicy(sizePolicy)
         self.Vazao.setStyleSheet(u"QLineEdit {\n"
-"    border-top-left-radius: 4px;\n"
-"    border-bottom-left-radius: 4px;\n"
-"    border-top-right-radius: 0px;\n"
-"    border-bottom-right-radius: 0px;\n"
-"	border-right: 0px solid #d0d0d0;\n"
+"    border-radius: 4px;\n"
+"\n"
 "\n"
 "}\n"
 "")
 
         self.horizontalLayout_6.addWidget(self.Vazao)
-
-        self.icone = QComboBox(self.page)
-        self.icone.setObjectName(u"icone")
-        self.icone.setMaximumSize(QSize(32, 16777215))
-        self.icone.setStyleSheet(u"QComboBox {\n"
-"    border-top: 2px solid #d0d0d0;\n"
-"    border-top-left-radius: 0px;\n"
-"    border-bottom-left-radius: 0px;\n"
-"    border-top-right-radius: 4px;\n"
-"    border-bottom-right-radius: 4px;\n"
-"border-left:0px solid #d0d0d0;\n"
-" border-bottom: 2px solid #d0d0d0;\n"
-" border-right: 2px solid #d0d0d0;\n"
-"\n"
-"}\n"
-"")
-
-        self.horizontalLayout_6.addWidget(self.icone)
 
 
         self.horizontalLayout.addLayout(self.horizontalLayout_6)
@@ -1595,52 +1264,6 @@ class Ui_AquaPump(object):
 
         self.horizontalLayout_27.addWidget(self.label_11)
 
-        self.pesquisar_label = QLabel(self.frame)
-        self.pesquisar_label.setObjectName(u"pesquisar_label")
-        sizePolicy4.setHeightForWidth(self.pesquisar_label.sizePolicy().hasHeightForWidth())
-        self.pesquisar_label.setSizePolicy(sizePolicy4)
-        self.pesquisar_label.setMinimumSize(QSize(0, 30))
-        self.pesquisar_label.setMaximumSize(QSize(30, 30))
-        self.pesquisar_label.setStyleSheet(u"QLabel {\n"
-"    border: 1px solig rgb(238, 238, 238);\n"
-"    border-bottom: 2px solid #ccc;\n"
-"    padding-left: 2px; \n"
-"    height: 24px;\n"
-"    font-size: 14px;\n"
-"    color: #333;\n"
-"    background: rgb(255, 255, 255);\n"
-"    image-position: left;\n"
-"}")
-        self.pesquisar_label.setPixmap(QPixmap(u":/img/pesquisar.png"))
-        self.pesquisar_label.setScaledContents(True)
-
-        self.horizontalLayout_27.addWidget(self.pesquisar_label)
-
-        self.pesquisar = QLineEdit(self.frame)
-        self.pesquisar.setObjectName(u"pesquisar")
-        self.pesquisar.setMinimumSize(QSize(300, 30))
-        self.pesquisar.setMaximumSize(QSize(30, 16777215))
-        self.pesquisar.setStyleSheet(u"QLineEdit {\n"
-"    border: 1px solig rgb(238, 238, 238);\n"
-"    border-bottom: 2px solid #ccc;\n"
-"    padding-left: 2px; \n"
-"	border-radius:0px;\n"
-"    height: 24px;\n"
-"    font-size: 14px;\n"
-"    color: #333;\n"
-"    background: rgb(255, 255, 255);\n"
-"    image-position: left;\n"
-"}\n"
-"\n"
-"QLineEdit:focus {\n"
-"    border-bottom: 2px solid #2979ff;\n"
-"    outline: none;\n"
-"}\n"
-"")
-        self.pesquisar.setEchoMode(QLineEdit.EchoMode.Normal)
-
-        self.horizontalLayout_27.addWidget(self.pesquisar)
-
 
         self.verticalLayout_32.addWidget(self.frame)
 
@@ -1735,16 +1358,6 @@ class Ui_AquaPump(object):
 
         self.verticalLayout_14.addWidget(self.banco_dados)
 
-        self.avancado = QPushButton(self.scrollAreaWidgetContents_3)
-        self.avancado.setObjectName(u"avancado")
-        icon25 = QIcon()
-        icon25.addFile(u":/img/avancado.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.avancado.setIcon(icon25)
-        self.avancado.setCheckable(True)
-        self.avancado.setAutoExclusive(True)
-
-        self.verticalLayout_14.addWidget(self.avancado)
-
         self.verticalSpacer_3 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_14.addItem(self.verticalSpacer_3)
@@ -1762,9 +1375,8 @@ class Ui_AquaPump(object):
         self.janela_definicoes.setSizePolicy(sizePolicy5)
         self.geral_2 = QWidget()
         self.geral_2.setObjectName(u"geral_2")
-        self.verticalLayout_26 = QVBoxLayout(self.geral_2)
-        self.verticalLayout_26.setSpacing(30)
-        self.verticalLayout_26.setObjectName(u"verticalLayout_26")
+        self.verticalLayout_16 = QVBoxLayout(self.geral_2)
+        self.verticalLayout_16.setObjectName(u"verticalLayout_16")
         self.label_5 = QLabel(self.geral_2)
         self.label_5.setObjectName(u"label_5")
         self.label_5.setStyleSheet(u"QLabel {\n"
@@ -1775,7 +1387,7 @@ class Ui_AquaPump(object):
 "\n"
 "}")
 
-        self.verticalLayout_26.addWidget(self.label_5)
+        self.verticalLayout_16.addWidget(self.label_5)
 
         self.groupBox_8 = QGroupBox(self.geral_2)
         self.groupBox_8.setObjectName(u"groupBox_8")
@@ -1807,34 +1419,29 @@ class Ui_AquaPump(object):
         self.verticalLayout_15.addWidget(self.comboBox_6)
 
 
-        self.verticalLayout_26.addWidget(self.groupBox_8)
+        self.verticalLayout_16.addWidget(self.groupBox_8)
 
-        self.groupBox_7 = QGroupBox(self.geral_2)
-        self.groupBox_7.setObjectName(u"groupBox_7")
-        self.verticalLayout_16 = QVBoxLayout(self.groupBox_7)
-        self.verticalLayout_16.setObjectName(u"verticalLayout_16")
-        self.radioButton_4 = QRadioButton(self.groupBox_7)
-        self.radioButton_4.setObjectName(u"radioButton_4")
-        self.radioButton_4.setChecked(True)
+        self.groupBox_13 = QGroupBox(self.geral_2)
+        self.groupBox_13.setObjectName(u"groupBox_13")
+        self.verticalLayout_21 = QVBoxLayout(self.groupBox_13)
+        self.verticalLayout_21.setObjectName(u"verticalLayout_21")
+        self.radioButton_9 = QRadioButton(self.groupBox_13)
+        self.radioButton_9.setObjectName(u"radioButton_9")
+        self.radioButton_9.setChecked(True)
 
-        self.verticalLayout_16.addWidget(self.radioButton_4)
+        self.verticalLayout_21.addWidget(self.radioButton_9)
 
-        self.radioButton_6 = QRadioButton(self.groupBox_7)
-        self.radioButton_6.setObjectName(u"radioButton_6")
+        self.radioButton_10 = QRadioButton(self.groupBox_13)
+        self.radioButton_10.setObjectName(u"radioButton_10")
 
-        self.verticalLayout_16.addWidget(self.radioButton_6)
-
-        self.radioButton_5 = QRadioButton(self.groupBox_7)
-        self.radioButton_5.setObjectName(u"radioButton_5")
-
-        self.verticalLayout_16.addWidget(self.radioButton_5)
+        self.verticalLayout_21.addWidget(self.radioButton_10)
 
 
-        self.verticalLayout_26.addWidget(self.groupBox_7)
+        self.verticalLayout_16.addWidget(self.groupBox_13)
 
         self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
-        self.verticalLayout_26.addItem(self.verticalSpacer_4)
+        self.verticalLayout_16.addItem(self.verticalSpacer_4)
 
         self.janela_definicoes.addWidget(self.geral_2)
         self.Banco = QWidget()
@@ -1943,83 +1550,6 @@ class Ui_AquaPump(object):
         self.page_2.setObjectName(u"page_2")
         self.verticalLayout_31 = QVBoxLayout(self.page_2)
         self.verticalLayout_31.setObjectName(u"verticalLayout_31")
-        self.label_10 = QLabel(self.page_2)
-        self.label_10.setObjectName(u"label_10")
-        font = QFont()
-        font.setFamilies([u"Segoe UI"])
-        font.setWeight(QFont.DemiBold)
-        self.label_10.setFont(font)
-        self.label_10.setStyleSheet(u"QLabel {\n"
-"    font-family: \"Segoe UI\", \"Roboto\", sans-serif;\n"
-"    font-size: 20px;\n"
-"    font-weight: 600; /* Semi-Bold */\n"
-"    color: rgb(166, 166, 166);\n"
-"\n"
-"}")
-
-        self.verticalLayout_31.addWidget(self.label_10)
-
-        self.groupBox_10 = QGroupBox(self.page_2)
-        self.groupBox_10.setObjectName(u"groupBox_10")
-        self.verticalLayout_18 = QVBoxLayout(self.groupBox_10)
-        self.verticalLayout_18.setObjectName(u"verticalLayout_18")
-        self.radioButton_7 = QRadioButton(self.groupBox_10)
-        self.radioButton_7.setObjectName(u"radioButton_7")
-        self.radioButton_7.setChecked(True)
-
-        self.verticalLayout_18.addWidget(self.radioButton_7)
-
-        self.radioButton_8 = QRadioButton(self.groupBox_10)
-        self.radioButton_8.setObjectName(u"radioButton_8")
-
-        self.verticalLayout_18.addWidget(self.radioButton_8)
-
-
-        self.verticalLayout_31.addWidget(self.groupBox_10)
-
-        self.groupBox_9 = QGroupBox(self.page_2)
-        self.groupBox_9.setObjectName(u"groupBox_9")
-        self.verticalLayout_30 = QVBoxLayout(self.groupBox_9)
-        self.verticalLayout_30.setObjectName(u"verticalLayout_30")
-        self.label_12 = QLabel(self.groupBox_9)
-        self.label_12.setObjectName(u"label_12")
-
-        self.verticalLayout_30.addWidget(self.label_12)
-
-        self.horizontalLayout_28 = QHBoxLayout()
-        self.horizontalLayout_28.setObjectName(u"horizontalLayout_28")
-        self.pushButton_5 = QPushButton(self.groupBox_9)
-        self.pushButton_5.setObjectName(u"pushButton_5")
-        self.pushButton_5.setStyleSheet(u"    padding: 6px 12px;")
-
-        self.horizontalLayout_28.addWidget(self.pushButton_5)
-
-        self.lineEdit = QLineEdit(self.groupBox_9)
-        self.lineEdit.setObjectName(u"lineEdit")
-        self.lineEdit.setStyleSheet(u"QLineEdit {\n"
-"    background-color: #ffffff;\n"
-"    border: 1px solid #c2c2c2;\n"
-"    border-radius: 6px;\n"
-"    padding: 6px;\n"
-"}\n"
-"\n"
-"QLineEdit:focus {\n"
-"    border: 1px solid #0078d7;\n"
-"    background-color: #f0f8ff;\n"
-"}\n"
-"\n"
-"QLineEdit:hover {\n"
-"    border: 1px solid #0078d7;\n"
-"}")
-
-        self.horizontalLayout_28.addWidget(self.lineEdit)
-
-
-        self.verticalLayout_30.addLayout(self.horizontalLayout_28)
-
-
-        self.verticalLayout_31.addWidget(self.groupBox_9)
-
         self.verticalSpacer_5 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
         self.verticalLayout_31.addItem(self.verticalSpacer_5)
@@ -2055,7 +1585,7 @@ class Ui_AquaPump(object):
         self.scrollArea_4.setWidgetResizable(True)
         self.scrollAreaWidgetContents_4 = QWidget()
         self.scrollAreaWidgetContents_4.setObjectName(u"scrollAreaWidgetContents_4")
-        self.scrollAreaWidgetContents_4.setGeometry(QRect(0, 0, 812, 1228))
+        self.scrollAreaWidgetContents_4.setGeometry(QRect(0, 0, 831, 822))
         self.verticalLayout_28 = QVBoxLayout(self.scrollAreaWidgetContents_4)
         self.verticalLayout_28.setSpacing(30)
         self.verticalLayout_28.setObjectName(u"verticalLayout_28")
@@ -2065,11 +1595,11 @@ class Ui_AquaPump(object):
         self.verticalLayout_17.setObjectName(u"verticalLayout_17")
         self.label_3 = QLabel(self.groupBox)
         self.label_3.setObjectName(u"label_3")
-        font1 = QFont()
-        font1.setFamilies([u"Segoe UI"])
-        font1.setBold(False)
-        font1.setItalic(True)
-        self.label_3.setFont(font1)
+        font = QFont()
+        font.setFamilies([u"Segoe UI"])
+        font.setBold(False)
+        font.setItalic(True)
+        self.label_3.setFont(font)
         self.label_3.setStyleSheet(u"QLabel{\n"
 "    font-family: \"Segoe UI\", \"Roboto\", sans-serif;\n"
 "    font-size: 14px;\n"
@@ -2114,12 +1644,12 @@ class Ui_AquaPump(object):
         self.label_7 = QLabel(self.groupBox_2)
         self.label_7.setObjectName(u"label_7")
         self.label_7.setMaximumSize(QSize(450, 16777215))
-        font2 = QFont()
-        font2.setFamilies([u"Segoe UI"])
-        font2.setBold(False)
-        font2.setItalic(True)
-        font2.setStyleStrategy(QFont.PreferAntialias)
-        self.label_7.setFont(font2)
+        font1 = QFont()
+        font1.setFamilies([u"Segoe UI"])
+        font1.setBold(False)
+        font1.setItalic(True)
+        font1.setStyleStrategy(QFont.PreferAntialias)
+        self.label_7.setFont(font1)
         self.label_7.setStyleSheet(u"QLabel{\n"
 "    font-family: \"Segoe UI\", \"Roboto\", sans-serif;\n"
 "    font-size: 14px;\n"
@@ -2156,7 +1686,10 @@ class Ui_AquaPump(object):
 
         self.label_8 = QLabel(self.scrollAreaWidgetContents_4)
         self.label_8.setObjectName(u"label_8")
-        self.label_8.setFont(font)
+        font2 = QFont()
+        font2.setFamilies([u"Segoe UI"])
+        font2.setWeight(QFont.DemiBold)
+        self.label_8.setFont(font2)
         self.label_8.setStyleSheet(u"QLabel {\n"
 "    font-family: \"Segoe UI\", \"Roboto\", sans-serif;\n"
 "    font-size: 15px;\n"
@@ -2170,7 +1703,7 @@ class Ui_AquaPump(object):
 
         self.label_4 = QLabel(self.scrollAreaWidgetContents_4)
         self.label_4.setObjectName(u"label_4")
-        self.label_4.setFont(font1)
+        self.label_4.setFont(font)
         self.label_4.setStyleSheet(u"QLabel{\n"
 "    font-family: \"Segoe UI\", \"Roboto\", sans-serif;\n"
 "    font-size: 14px;\n"
@@ -2224,23 +1757,6 @@ class Ui_AquaPump(object):
 
         self.verticalLayout_20.addLayout(self.horizontalLayout_17)
 
-        self.horizontalLayout_18 = QHBoxLayout()
-        self.horizontalLayout_18.setObjectName(u"horizontalLayout_18")
-        self.velocidade = QLabel(self.groupBox_4)
-        self.velocidade.setObjectName(u"velocidade")
-        self.velocidade.setMaximumSize(QSize(180, 16777215))
-
-        self.horizontalLayout_18.addWidget(self.velocidade)
-
-        self.velocidade_box = QComboBox(self.groupBox_4)
-        self.velocidade_box.setObjectName(u"velocidade_box")
-        self.velocidade_box.setMaximumSize(QSize(500, 16777215))
-
-        self.horizontalLayout_18.addWidget(self.velocidade_box)
-
-
-        self.verticalLayout_20.addLayout(self.horizontalLayout_18)
-
         self.horizontalLayout_19 = QHBoxLayout()
         self.horizontalLayout_19.setObjectName(u"horizontalLayout_19")
         self.npsh = QLabel(self.groupBox_4)
@@ -2260,32 +1776,6 @@ class Ui_AquaPump(object):
 
 
         self.verticalLayout_28.addWidget(self.groupBox_4)
-
-        self.groupBox_3 = QGroupBox(self.scrollAreaWidgetContents_4)
-        self.groupBox_3.setObjectName(u"groupBox_3")
-        self.verticalLayout_21 = QVBoxLayout(self.groupBox_3)
-        self.verticalLayout_21.setObjectName(u"verticalLayout_21")
-        self.horizontalLayout_20 = QHBoxLayout()
-        self.horizontalLayout_20.setObjectName(u"horizontalLayout_20")
-        self.densidade = QLabel(self.groupBox_3)
-        self.densidade.setObjectName(u"densidade")
-        self.densidade.setMaximumSize(QSize(180, 16777215))
-
-        self.horizontalLayout_20.addWidget(self.densidade)
-
-        self.densidade_box = QComboBox(self.groupBox_3)
-        self.densidade_box.setObjectName(u"densidade_box")
-        sizePolicy2.setHeightForWidth(self.densidade_box.sizePolicy().hasHeightForWidth())
-        self.densidade_box.setSizePolicy(sizePolicy2)
-        self.densidade_box.setMaximumSize(QSize(500, 16777215))
-
-        self.horizontalLayout_20.addWidget(self.densidade_box)
-
-
-        self.verticalLayout_21.addLayout(self.horizontalLayout_20)
-
-
-        self.verticalLayout_28.addWidget(self.groupBox_3)
 
         self.groupBox_6 = QGroupBox(self.scrollAreaWidgetContents_4)
         self.groupBox_6.setObjectName(u"groupBox_6")
@@ -2337,25 +1827,6 @@ class Ui_AquaPump(object):
         self.groupBox_5.setObjectName(u"groupBox_5")
         self.verticalLayout_23 = QVBoxLayout(self.groupBox_5)
         self.verticalLayout_23.setObjectName(u"verticalLayout_23")
-        self.horizontalLayout_23 = QHBoxLayout()
-        self.horizontalLayout_23.setObjectName(u"horizontalLayout_23")
-        self.pressao = QLabel(self.groupBox_5)
-        self.pressao.setObjectName(u"pressao")
-        self.pressao.setMaximumSize(QSize(180, 16777215))
-
-        self.horizontalLayout_23.addWidget(self.pressao)
-
-        self.pressao_box = QComboBox(self.groupBox_5)
-        self.pressao_box.setObjectName(u"pressao_box")
-        sizePolicy2.setHeightForWidth(self.pressao_box.sizePolicy().hasHeightForWidth())
-        self.pressao_box.setSizePolicy(sizePolicy2)
-        self.pressao_box.setMaximumSize(QSize(500, 16777215))
-
-        self.horizontalLayout_23.addWidget(self.pressao_box)
-
-
-        self.verticalLayout_23.addLayout(self.horizontalLayout_23)
-
         self.horizontalLayout_24 = QHBoxLayout()
         self.horizontalLayout_24.setObjectName(u"horizontalLayout_24")
         self.potencia_2 = QLabel(self.groupBox_5)
@@ -2526,12 +1997,9 @@ class Ui_AquaPump(object):
         self.actualizar_grafico.setText("")
         self.expandir_3.setText("")
         self.label_11.setText(QCoreApplication.translate("AquaPump", u"Defini\u00e7\u00f5es", None))
-        self.pesquisar_label.setText("")
-        self.pesquisar.setPlaceholderText(QCoreApplication.translate("AquaPump", u"Pesquisar", None))
         self.geral.setText(QCoreApplication.translate("AquaPump", u"Geral", None))
         self.unidades.setText(QCoreApplication.translate("AquaPump", u"Unidades", None))
         self.banco_dados.setText(QCoreApplication.translate("AquaPump", u"Banco de Dados", None))
-        self.avancado.setText(QCoreApplication.translate("AquaPump", u"Avan\u00e7ado ", None))
         self.label_5.setText(QCoreApplication.translate("AquaPump", u"Geral", None))
         self.groupBox_8.setTitle("")
         self.label_6.setText(QCoreApplication.translate("AquaPump", u"Apar\u00eancia ", None))
@@ -2543,10 +2011,9 @@ class Ui_AquaPump(object):
         self.comboBox_6.setItemText(0, QCoreApplication.translate("AquaPump", u"Portugu\u00eas", None))
         self.comboBox_6.setItemText(1, QCoreApplication.translate("AquaPump", u"Ingl\u00eas", None))
 
-        self.groupBox_7.setTitle(QCoreApplication.translate("AquaPump", u"Modo  Gr\u00e1fico", None))
-        self.radioButton_4.setText(QCoreApplication.translate("AquaPump", u"Padr\u00e3o ", None))
-        self.radioButton_6.setText(QCoreApplication.translate("AquaPump", u"Open GL", None))
-        self.radioButton_5.setText(QCoreApplication.translate("AquaPump", u"DirectX", None))
+        self.groupBox_13.setTitle(QCoreApplication.translate("AquaPump", u"F\u00f3rmulas Pr\u00e9-definidas/ Perdas de Carga", None))
+        self.radioButton_9.setText(QCoreApplication.translate("AquaPump", u"Hazen Williams", None))
+        self.radioButton_10.setText(QCoreApplication.translate("AquaPump", u"Darcy", None))
         self.Banco_dados.setText(QCoreApplication.translate("AquaPump", u"Banco de Dados", None))
         self.groupBox_11.setTitle(QCoreApplication.translate("AquaPump", u"Gerenciar Materiais de Tubula\u00e7\u00e3o", None))
         self.adicionar_2.setText(QCoreApplication.translate("AquaPump", u"Adicionar Novo", None))
@@ -2558,13 +2025,6 @@ class Ui_AquaPump(object):
         self.remover.setText(QCoreApplication.translate("AquaPump", u"Remover Selecionado", None))
         self.editar.setText(QCoreApplication.translate("AquaPump", u"Editar", None))
         self.salvar.setText(QCoreApplication.translate("AquaPump", u"Salvar", None))
-        self.label_10.setText(QCoreApplication.translate("AquaPump", u"Avan\u00e7ado ", None))
-        self.groupBox_10.setTitle(QCoreApplication.translate("AquaPump", u"F\u00f3rmulas Pr\u00e9-definidas/ Perdas de Carga", None))
-        self.radioButton_7.setText(QCoreApplication.translate("AquaPump", u"Hazen Williams", None))
-        self.radioButton_8.setText(QCoreApplication.translate("AquaPump", u"Darcy", None))
-        self.groupBox_9.setTitle("")
-        self.label_12.setText(QCoreApplication.translate("AquaPump", u"Caminho para Salvar Arquivos", None))
-        self.pushButton_5.setText(QCoreApplication.translate("AquaPump", u"Escolha", None))
         self.label.setText(QCoreApplication.translate("AquaPump", u"Unidades", None))
         self.groupBox.setTitle(QCoreApplication.translate("AquaPump", u"Padr\u00e3o de Unidades Preferencial", None))
         self.label_3.setText(QCoreApplication.translate("AquaPump", u"Escolha entre os sistemas de unidades M\u00e9trico (SI) ou Imperial (EUA) para configurar todas as suas prefer\u00eancias de uma vez. ", None))
@@ -2589,15 +2049,11 @@ class Ui_AquaPump(object):
         self.groupBox_4.setTitle(QCoreApplication.translate("AquaPump", u"Desempenho", None))
         self.caudal.setText(QCoreApplication.translate("AquaPump", u"Caudal", None))
         self.altura_2.setText(QCoreApplication.translate("AquaPump", u"Altura Man\u00f4metrica", None))
-        self.velocidade.setText(QCoreApplication.translate("AquaPump", u"Velocidade de Rota\u00e7\u00e3o", None))
         self.npsh.setText(QCoreApplication.translate("AquaPump", u"NPSH", None))
-        self.groupBox_3.setTitle(QCoreApplication.translate("AquaPump", u"Fluido", None))
-        self.densidade.setText(QCoreApplication.translate("AquaPump", u"Densidade", None))
         self.groupBox_6.setTitle(QCoreApplication.translate("AquaPump", u"Dimens\u00f5es F\u00edsicas", None))
         self.diametro.setText(QCoreApplication.translate("AquaPump", u"Di\u00e2metro da Tubagem", None))
         self.comprimento.setText(QCoreApplication.translate("AquaPump", u"Comprimento da Tubagem", None))
-        self.groupBox_5.setTitle(QCoreApplication.translate("AquaPump", u"Press\u00e3o e Pot\u00eancia ", None))
-        self.pressao.setText(QCoreApplication.translate("AquaPump", u"Press\u00e3o", None))
+        self.groupBox_5.setTitle(QCoreApplication.translate("AquaPump", u"Pot\u00eancia ", None))
         self.potencia_2.setText(QCoreApplication.translate("AquaPump", u"Pot\u00eancia", None))
         self.voltar.setText(QCoreApplication.translate("AquaPump", u"Voltar", None))
         self.cancelar.setText(QCoreApplication.translate("AquaPump", u"Cancelar", None))

@@ -1,3 +1,214 @@
+/* --------- QWidget (Geral) --------- */
+QWidget {
+    background-color: #ffffff;
+    font-family: "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    color: #333333;
+}
+
+/* --------- QLineEdit --------- */
+QLineEdit {
+    background-color: #ffffff;
+    border: 2px solid #d9d9d9;
+    border-radius: 4px;
+    padding: 6px 8px;
+    font-size: 14px;
+    font-family: "Segoe UI", Roboto, sans-serif;
+    color: #2b2b2b;
+}
+
+QLineEdit:focus {
+    border: 2px solid #95acff;
+    background-color: #fcfcfc;
+}
+
+QLineEdit:hover {
+    border: 2px solid #a5baff;
+    background-color: #fefefe;
+}
+
+/* --------- QComboBox --------- */
+QComboBox {
+    background-color: #fdfdfd;
+    border: 2px solid #d0d0d0;
+    border-radius: 4px;
+    padding: 6px 8px;
+    font-size: 14px;
+    font-family: "Segoe UI", Roboto, sans-serif;
+    color: #2b2b2b;
+}
+
+QComboBox:hover,
+QComboBox:focus {
+    border: 2px solid #95acff;
+    background-color: #ffffff;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 28px;
+    border-left: 1px solid #d0d0d0;
+    background-color: transparent;
+}
+
+QComboBox::down-arrow {
+    image: url(:/img/baixo.png);
+    width: 10px;
+    height: 10px;
+    margin-right: 5px;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #ffffff;
+    border: 1px solid #cfcfcf;
+    border-radius: 4px;
+    selection-background-color: #2684ff;
+    selection-color: #ffffff;
+    font-family: "Segoe UI", Roboto, sans-serif;
+}
+
+/* --------- QScrollArea --------- */
+QScrollArea {
+    background-color: #f9f9f9;
+    border: none;
+    font-family: "Segoe UI", Roboto, sans-serif;
+    font-size: 14px;
+    color: #333333;
+}
+
+QScrollArea QWidget {
+    background-color: transparent;
+}
+
+/* --------- ScrollBars --------- */
+QScrollBar:vertical,
+QScrollBar:horizontal {
+    background: rgb(231, 231, 231);
+    width: 12px;
+    height: 12px;
+    margin: 10px 0 10px 0;
+    border: none;
+}
+
+QScrollBar::sub-page:vertical,
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:horizontal,
+QScrollBar::add-page:horizontal {
+    background: transparent;
+}
+
+QScrollBar::handle:vertical,
+QScrollBar::handle:horizontal {
+    background-color: #c0c0c0;
+    min-height: 30px;
+    min-width: 30px;
+    margin: 2px;
+    border-radius: 4px;
+}
+
+QScrollBar::handle:vertical:hover,
+QScrollBar::handle:horizontal:hover {
+    background-color: #a0a0a0;
+}
+
+QScrollBar::sub-line:vertical,
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:horizontal,
+QScrollBar::add-line:horizontal {
+    background: #e1e1e1;
+    height: 12px;
+    width: 12px;
+    border-radius: 6px;
+}
+
+QToolButton {
+background-color: transparent;
+font-family: Roboto;
+font-size:10pt;
+border: none;
+border-radius:2px
+
+}
+/* --------- QGroupBox --------- */
+QGroupBox {
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    margin-top: 15px;
+    background-color: transparent;
+    font-size: 14px;
+    color: #212121;
+	padding:8px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 10px;
+    margin-top: -4px;
+    background-color: transparent;
+    font-family: "Segoe UI", "Roboto", sans-serif;
+    font-size: 19px;
+    font-weight: bold;
+    color: #000000;
+    
+}
+
+QTableView {
+    background-color: #ffffff;
+    alternate-background-color: #f9f9f9;
+    gridline-color: #e0e0e0;
+    font-family: Segoe UI, Roboto, sans-serif;
+    font-size: 13px;
+    color: #333333;
+    selection-background-color: #cce4ff;   /* Azul bem claro na seleção */
+    selection-color: #000000;              /* Texto preto quando selecionado */
+    border: 1px solid #dcdcdc;
+}
+
+QHeaderView::section {
+    background-color: #f1f1f1;
+    padding: 4px;
+    border: 1px solid #dcdcdc;
+    font-weight: bold;
+    color: #444444;
+}
+
+QTableView::item {
+    padding: 4px;
+}
+
+QTableView::item:selected {
+    background-color: #cce4ff;
+    color: #000000;
+}
+
+QTableView QTableCornerButton::section {
+    background-color: #f1f1f1;
+    border: 1px solid #dcdcdc;
+}
+
+QTableView::item:hover {
+    background-color: #eaf4ff;}
+
+QPushButton {
+    background-color: #f5f5f5;
+    color: #000000;
+    border: 1px solid #c2c2c2;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+QPushButton:hover {
+    background-color: #e0e0e0;
+    border: 1px solid #e0e0e0;
+}
+
+QPushButton:pressed {
+    background-color: #d0d0d0;
+    border: 1px solid #888888;
+}
+
 QMessageBox {
     background-color: #ffffff;
     color: #000000;
@@ -38,7 +249,7 @@ QMenu {
     border: 1px solid #b3b3b3;
     padding: 4px;
     font-family: Roboto, sans-serif;
-    font-size: 8px;
+    font-size: 13px;
     color: #333333;
 }
 

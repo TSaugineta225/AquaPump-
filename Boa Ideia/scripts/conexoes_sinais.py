@@ -6,6 +6,7 @@ class ConexoesUI():
         self.config = configuracoes
 
         # Inicializa todas as conexões
+        self._conectar_principais_dados()
         self._conectar_configuracoes()
         self._conectar_entradas_calculo()
         self._conectar_js_e_mapa()
@@ -20,15 +21,20 @@ class ConexoesUI():
         """Restaura as configurações da sessão anterior."""
         self.parent.restaurar_configuracoes()
 
+    def _conectar_principais_dados(self):
+        """Conecta os principais dados de entrada do usuário."""
+        self.parent.Vazao.textChanged.connect(self.parent.calculo_diametro_tubulacao)
+        self.parent.Vazao_2.textChanged.connect(self.parent.calculo_diametro_tubulacao)
+    
     def _conectar_entradas_calculo(self):
         """Conecta todas as entradas do usuário que afetam os cálculos hidráulicos."""
         # Vazão e Tempo de funcionamento
         self.parent.Vazao_2.textChanged.connect(self.parent.atualizar_parametros_entrada)
         self.parent.Vazao.textChanged.connect(self.parent.atualizar_parametros_entrada)
         
-        # Sinais da UI para seleção de fórmula e material
-        self.parent.radioButton_7.toggled.connect(self.parent.recalcular_sistema_completo)
-        self.parent.radioButton_8.toggled.connect(self.parent.recalcular_sistema_completo)
+         # Sinais da UI para seleção de fórmula e material
+        self.parent.radioButton_10.toggled.connect(self.parent.recalcular_sistema_completo)
+        self.parent.radioButton_9.toggled.connect(self.parent.recalcular_sistema_completo)
         self.parent.darcy.currentIndexChanged.connect(self.parent.recalcular_sistema_completo)
         self.parent.hazen_will.currentIndexChanged.connect(self.parent.recalcular_sistema_completo)
 
@@ -112,8 +118,8 @@ class ConexoesUI():
 
     def _perda_carga_dinamica(self):
         """Recalcula as perdas de carga quando o comprimento ou acessórios mudam."""
-        self.parent.radioButton_7.toggled.connect(self.parent.mudanca_dinamica_perdas_carga)
-        self.parent.radioButton_8.toggled.connect(self.parent.mudanca_dinamica_perdas_carga)
+        self.parent.radioButton_10.toggled.connect(self.parent.mudanca_dinamica_perdas_carga)
+        self.parent.radioButton_9.toggled.connect(self.parent.mudanca_dinamica_perdas_carga)
 
     def _conectar_actualizao_graph(self):
         self.parent.actualizar_grafico.clicked.connect(self.parent.atualizar_graficos_curvas)

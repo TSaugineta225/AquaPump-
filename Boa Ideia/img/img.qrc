@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="img">
+    <file>baixo.png</file>
+    <file>cima.png</file>
     <file>refresh.png</file>
     <file>arrow_back_claro.png</file>
     <file>arrow_back_mais_claro.png</file>
@@ -26,30 +28,19 @@
     <file>right_panel_close.png</file>
     <file>right_panel_open.png</file>
     <file>novo-arquivo.png</file>
-    <file>arrow-down-1.png</file>
     <file>pesquisar.png</file>
-    <file>arrow-left_1.png</file>
-    <file>arrow-right_1.png</file>
-    <file>arrow-up.png</file>
     <file>recente.png</file>
     <file>pasta (1).png</file>
     <file>pasta.png</file>
     <file>arquivo-csv.png</file>
     <file>pdf.png</file>
-    <file>download.png</file>
     <file>avancado.png</file>
     <file>dados.png</file>
     <file>geral.png</file>
     <file>unidades.png</file>
-    <file>file-download.png</file>
-    <file>file-upload.png</file>
-    <file>info.png</file>
     <file>jpg.png</file>
-    <file>line-horizontal-3.png</file>
-    <file>save.png</file>
     <file>grafico.png</file>
     <file>janelinha.png</file>
     <file>sair.png</file>
-    <file>sidebar-left.png</file>
   </qresource>
 </RCC>

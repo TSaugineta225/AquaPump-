@@ -14,231 +14,7 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true">/* --------- QWidget (Geral) --------- */
-QWidget {
-    background-color: #ffffff;
-    font-family: &quot;Segoe UI&quot;, Roboto, sans-serif;
-    font-size: 14px;
-    color: #333333;
-}
-
-/* --------- QLineEdit --------- */
-QLineEdit {
-    background-color: #ffffff;
-    border: 2px solid #d9d9d9;
-    border-radius: 4px;
-    padding: 6px 8px;
-    font-size: 14px;
-    font-family: &quot;Segoe UI&quot;, Roboto, sans-serif;
-    color: #2b2b2b;
-}
-
-QLineEdit:focus {
-    border: 2px solid #95acff;
-    background-color: #fcfcfc;
-}
-
-QLineEdit:hover {
-    border: 2px solid #a5baff;
-    background-color: #fefefe;
-}
-
-/* --------- QComboBox --------- */
-QComboBox {
-    background-color: #fdfdfd;
-    border: 2px solid #d0d0d0;
-    border-radius: 4px;
-    padding: 6px 8px;
-    font-size: 14px;
-    font-family: &quot;Segoe UI&quot;, Roboto, sans-serif;
-    color: #2b2b2b;
-}
-
-QComboBox:hover,
-QComboBox:focus {
-    border: 2px solid #95acff;
-    background-color: #ffffff;
-}
-
-QComboBox::drop-down {
-    subcontrol-origin: padding;
-    subcontrol-position: top right;
-    width: 28px;
-    border-left: 1px solid #d0d0d0;
-    background-color: transparent;
-}
-
-QComboBox::down-arrow {
-    image: url(:/img/arrow-down-1.png);
-    width: 10px;
-    height: 10px;
-    margin-right: 5px;
-}
-
-QComboBox QAbstractItemView {
-    background-color: #ffffff;
-    border: 1px solid #cfcfcf;
-    border-radius: 4px;
-    selection-background-color: #2684ff;
-    selection-color: #ffffff;
-    font-family: &quot;Segoe UI&quot;, Roboto, sans-serif;
-}
-
-/* --------- QScrollArea --------- */
-QScrollArea {
-    background-color: #f9f9f9;
-    border: none;
-    font-family: &quot;Segoe UI&quot;, Roboto, sans-serif;
-    font-size: 14px;
-    color: #333333;
-}
-
-QScrollArea QWidget {
-    background-color: transparent;
-}
-
-/* --------- ScrollBars --------- */
-QScrollBar:vertical,
-QScrollBar:horizontal {
-    background: rgb(231, 231, 231);
-    width: 12px;
-    height: 12px;
-    margin: 10px 0 10px 0;
-    border: none;
-}
-
-QScrollBar::sub-page:vertical,
-QScrollBar::add-page:vertical,
-QScrollBar::sub-page:horizontal,
-QScrollBar::add-page:horizontal {
-    background: transparent;
-}
-
-QScrollBar::handle:vertical,
-QScrollBar::handle:horizontal {
-    background-color: #c0c0c0;
-    min-height: 30px;
-    min-width: 30px;
-    margin: 2px;
-    border-radius: 4px;
-}
-
-QScrollBar::handle:vertical:hover,
-QScrollBar::handle:horizontal:hover {
-    background-color: #a0a0a0;
-}
-
-QScrollBar::sub-line:vertical,
-QScrollBar::add-line:vertical,
-QScrollBar::sub-line:horizontal,
-QScrollBar::add-line:horizontal {
-    background: #e1e1e1;
-    height: 12px;
-    width: 12px;
-    border-radius: 6px;
-}
-
-QScrollBar::up-arrow:vertical {
-    image: url(:/img/arrow-up.png);
-    width: 8px;
-    height: 9px;
-    margin: 2px;
-}
-
-QScrollBar::down-arrow:vertical {
-    image: url(:/img/arrow-down-1.png);
-    width: 8px;
-    height: 9px;
-    margin: 2px;
-}
-
-QToolButton {
-background-color: transparent;
-font-family: Roboto;
-font-size:10pt;
-border: none;
-border-radius:2px
-
-}
-/* --------- QGroupBox --------- */
-QGroupBox {
-    border: 1px solid #dcdcdc;
-    border-radius: 6px;
-    margin-top: 15px;
-    background-color: transparent;
-    font-size: 14px;
-    color: #212121;
-	padding:8px;
-}
-
-QGroupBox::title {
-    subcontrol-origin: margin;
-    subcontrol-position: top left;
-    padding: 0 10px;
-    margin-top: -4px;
-    background-color: transparent;
-    font-family: &quot;Segoe UI&quot;, &quot;Roboto&quot;, sans-serif;
-    font-size: 19px;
-    font-weight: bold;
-    color: #000000;
-    
-}
-
-QTableView {
-    background-color: #ffffff;
-    alternate-background-color: #f9f9f9;
-    gridline-color: #e0e0e0;
-    font-family: Segoe UI, Roboto, sans-serif;
-    font-size: 13px;
-    color: #333333;
-    selection-background-color: #cce4ff;   /* Azul bem claro na seleção */
-    selection-color: #000000;              /* Texto preto quando selecionado */
-    border: 1px solid #dcdcdc;
-}
-
-QHeaderView::section {
-    background-color: #f1f1f1;
-    padding: 4px;
-    border: 1px solid #dcdcdc;
-    font-weight: bold;
-    color: #444444;
-}
-
-QTableView::item {
-    padding: 4px;
-}
-
-QTableView::item:selected {
-    background-color: #cce4ff;
-    color: #000000;
-}
-
-QTableView QTableCornerButton::section {
-    background-color: #f1f1f1;
-    border: 1px solid #dcdcdc;
-}
-
-QTableView::item:hover {
-    background-color: #eaf4ff;}
-
-QPushButton {
-    background-color: #f5f5f5;
-    color: #000000;
-    border: 1px solid #c2c2c2;
-    border-radius: 3px;
-    font-size: 14px;
-}
-
-QPushButton:hover {
-    background-color: #e0e0e0;
-    border: 1px solid #e0e0e0;
-}
-
-QPushButton:pressed {
-    background-color: #d0d0d0;
-    border: 1px solid #888888;
-}
-</string>
+   <string notr="true"/>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_8">
    <item>
@@ -1499,6 +1275,7 @@ border:none
           <property name="styleSheet">
            <string notr="true">QPushButton {
 padding-top:8px;
+padding-bottom:5px
 }</string>
           </property>
           <property name="text">
@@ -1519,9 +1296,8 @@ padding-top:8px;
         <item>
          <widget class="QPushButton" name="exportar_2">
           <property name="styleSheet">
-           <string notr="true">QPushButton {
-padding-top:6px;
-}</string>
+           <string notr="true">padding-top:5px;
+padding-bottom:5px</string>
           </property>
           <property name="text">
            <string/>
@@ -1540,6 +1316,10 @@ padding-top:6px;
         </item>
         <item>
          <widget class="QPushButton" name="relatorio_3">
+          <property name="styleSheet">
+           <string notr="true">padding-top:5px;
+padding-bottom:5px</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -1557,6 +1337,10 @@ padding-top:6px;
         </item>
         <item>
          <widget class="QPushButton" name="grafico_icon">
+          <property name="styleSheet">
+           <string notr="true">padding-top:5px;
+padding-bottom:5px</string>
+          </property>
           <property name="text">
            <string/>
           </property>
@@ -1839,35 +1623,8 @@ border-left:0px solid #d0d0d0;
                  </property>
                  <property name="styleSheet">
                   <string notr="true">QLineEdit {
-    border-top-left-radius: 4px;
-    border-bottom-left-radius: 4px;
-    border-top-right-radius: 0px;
-    border-bottom-right-radius: 0px;
-	border-right: 0px solid #d0d0d0;
+    border-radius: 4px;
 
-}
-</string>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QComboBox" name="icone">
-                 <property name="maximumSize">
-                  <size>
-                   <width>32</width>
-                   <height>16777215</height>
-                  </size>
-                 </property>
-                 <property name="styleSheet">
-                  <string notr="true">QComboBox {
-    border-top: 2px solid #d0d0d0;
-    border-top-left-radius: 0px;
-    border-bottom-left-radius: 0px;
-    border-top-right-radius: 4px;
-    border-bottom-right-radius: 4px;
-border-left:0px solid #d0d0d0;
- border-bottom: 2px solid #d0d0d0;
- border-right: 2px solid #d0d0d0;
 
 }
 </string>
@@ -2293,90 +2050,6 @@ border-left:0px solid #d0d0d0;
                 </property>
                </widget>
               </item>
-              <item>
-               <widget class="QLabel" name="pesquisar_label">
-                <property name="sizePolicy">
-                 <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-                  <horstretch>0</horstretch>
-                  <verstretch>0</verstretch>
-                 </sizepolicy>
-                </property>
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>30</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>30</width>
-                  <height>30</height>
-                 </size>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">QLabel {
-    border: 1px solig rgb(238, 238, 238);
-    border-bottom: 2px solid #ccc;
-    padding-left: 2px; 
-    height: 24px;
-    font-size: 14px;
-    color: #333;
-    background: rgb(255, 255, 255);
-    image-position: left;
-}</string>
-                </property>
-                <property name="text">
-                 <string/>
-                </property>
-                <property name="pixmap">
-                 <pixmap resource="../img/img.qrc">:/img/pesquisar.png</pixmap>
-                </property>
-                <property name="scaledContents">
-                 <bool>true</bool>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLineEdit" name="pesquisar">
-                <property name="minimumSize">
-                 <size>
-                  <width>300</width>
-                  <height>30</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>30</width>
-                  <height>16777215</height>
-                 </size>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">QLineEdit {
-    border: 1px solig rgb(238, 238, 238);
-    border-bottom: 2px solid #ccc;
-    padding-left: 2px; 
-	border-radius:0px;
-    height: 24px;
-    font-size: 14px;
-    color: #333;
-    background: rgb(255, 255, 255);
-    image-position: left;
-}
-
-QLineEdit:focus {
-    border-bottom: 2px solid #2979ff;
-    outline: none;
-}
-</string>
-                </property>
-                <property name="echoMode">
-                 <enum>QLineEdit::EchoMode::Normal</enum>
-                </property>
-                <property name="placeholderText">
-                 <string>Pesquisar</string>
-                </property>
-               </widget>
-              </item>
              </layout>
             </widget>
            </item>
@@ -2541,23 +2214,6 @@ QPushButton:checked {
                  </widget>
                 </item>
                 <item>
-                 <widget class="QPushButton" name="avancado">
-                  <property name="text">
-                   <string>Avançado </string>
-                  </property>
-                  <property name="icon">
-                   <iconset resource="../img/img.qrc">
-                    <normaloff>:/img/avancado.png</normaloff>:/img/avancado.png</iconset>
-                  </property>
-                  <property name="checkable">
-                   <bool>true</bool>
-                  </property>
-                  <property name="autoExclusive">
-                   <bool>true</bool>
-                  </property>
-                 </widget>
-                </item>
-                <item>
                  <spacer name="verticalSpacer_3">
                   <property name="orientation">
                    <enum>Qt::Orientation::Vertical</enum>
@@ -2587,10 +2243,7 @@ QPushButton:checked {
                   <number>0</number>
                  </property>
                  <widget class="QWidget" name="geral_2">
-                  <layout class="QVBoxLayout" name="verticalLayout_26">
-                   <property name="spacing">
-                    <number>30</number>
-                   </property>
+                  <layout class="QVBoxLayout" name="verticalLayout_16">
                    <item>
                     <widget class="QLabel" name="label_5">
                      <property name="styleSheet">
@@ -2664,15 +2317,15 @@ QPushButton:checked {
                     </widget>
                    </item>
                    <item>
-                    <widget class="QGroupBox" name="groupBox_7">
+                    <widget class="QGroupBox" name="groupBox_13">
                      <property name="title">
-                      <string>Modo  Gráfico</string>
+                      <string>Fórmulas Pré-definidas/ Perdas de Carga</string>
                      </property>
-                     <layout class="QVBoxLayout" name="verticalLayout_16">
+                     <layout class="QVBoxLayout" name="verticalLayout_21">
                       <item>
-                       <widget class="QRadioButton" name="radioButton_4">
+                       <widget class="QRadioButton" name="radioButton_9">
                         <property name="text">
-                         <string>Padrão </string>
+                         <string>Hazen Williams</string>
                         </property>
                         <property name="checked">
                          <bool>true</bool>
@@ -2680,16 +2333,9 @@ QPushButton:checked {
                        </widget>
                       </item>
                       <item>
-                       <widget class="QRadioButton" name="radioButton_6">
+                       <widget class="QRadioButton" name="radioButton_10">
                         <property name="text">
-                         <string>Open GL</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QRadioButton" name="radioButton_5">
-                        <property name="text">
-                         <string>DirectX</string>
+                         <string>Darcy</string>
                         </property>
                        </widget>
                       </item>
@@ -2861,106 +2507,6 @@ QPushButton:checked {
                  <widget class="QWidget" name="page_2">
                   <layout class="QVBoxLayout" name="verticalLayout_31">
                    <item>
-                    <widget class="QLabel" name="label_10">
-                     <property name="font">
-                      <font>
-                       <family>Segoe UI</family>
-                       <pointsize>-1</pointsize>
-                       <fontweight>DemiBold</fontweight>
-                      </font>
-                     </property>
-                     <property name="styleSheet">
-                      <string notr="true">QLabel {
-    font-family: &quot;Segoe UI&quot;, &quot;Roboto&quot;, sans-serif;
-    font-size: 20px;
-    font-weight: 600; /* Semi-Bold */
-    color: rgb(166, 166, 166);
-
-}</string>
-                     </property>
-                     <property name="text">
-                      <string>Avançado </string>
-                     </property>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QGroupBox" name="groupBox_10">
-                     <property name="title">
-                      <string>Fórmulas Pré-definidas/ Perdas de Carga</string>
-                     </property>
-                     <layout class="QVBoxLayout" name="verticalLayout_18">
-                      <item>
-                       <widget class="QRadioButton" name="radioButton_7">
-                        <property name="text">
-                         <string>Hazen Williams</string>
-                        </property>
-                        <property name="checked">
-                         <bool>true</bool>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <widget class="QRadioButton" name="radioButton_8">
-                        <property name="text">
-                         <string>Darcy</string>
-                        </property>
-                       </widget>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                   <item>
-                    <widget class="QGroupBox" name="groupBox_9">
-                     <property name="title">
-                      <string/>
-                     </property>
-                     <layout class="QVBoxLayout" name="verticalLayout_30">
-                      <item>
-                       <widget class="QLabel" name="label_12">
-                        <property name="text">
-                         <string>Caminho para Salvar Arquivos</string>
-                        </property>
-                       </widget>
-                      </item>
-                      <item>
-                       <layout class="QHBoxLayout" name="horizontalLayout_28">
-                        <item>
-                         <widget class="QPushButton" name="pushButton_5">
-                          <property name="styleSheet">
-                           <string notr="true">    padding: 6px 12px;</string>
-                          </property>
-                          <property name="text">
-                           <string>Escolha</string>
-                          </property>
-                         </widget>
-                        </item>
-                        <item>
-                         <widget class="QLineEdit" name="lineEdit">
-                          <property name="styleSheet">
-                           <string notr="true">QLineEdit {
-    background-color: #ffffff;
-    border: 1px solid #c2c2c2;
-    border-radius: 6px;
-    padding: 6px;
-}
-
-QLineEdit:focus {
-    border: 1px solid #0078d7;
-    background-color: #f0f8ff;
-}
-
-QLineEdit:hover {
-    border: 1px solid #0078d7;
-}</string>
-                          </property>
-                         </widget>
-                        </item>
-                       </layout>
-                      </item>
-                     </layout>
-                    </widget>
-                   </item>
-                   <item>
                     <spacer name="verticalSpacer_5">
                      <property name="orientation">
                       <enum>Qt::Orientation::Vertical</enum>
@@ -3017,7 +2563,7 @@ QLineEdit:hover {
                         <x>0</x>
                         <y>0</y>
                         <width>831</width>
-                        <height>1228</height>
+                        <height>822</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -3303,33 +2849,6 @@ Ajuste individualmente as unidades para cada parâmetro
                            </layout>
                           </item>
                           <item>
-                           <layout class="QHBoxLayout" name="horizontalLayout_18">
-                            <item>
-                             <widget class="QLabel" name="velocidade">
-                              <property name="maximumSize">
-                               <size>
-                                <width>180</width>
-                                <height>16777215</height>
-                               </size>
-                              </property>
-                              <property name="text">
-                               <string>Velocidade de Rotação</string>
-                              </property>
-                             </widget>
-                            </item>
-                            <item>
-                             <widget class="QComboBox" name="velocidade_box">
-                              <property name="maximumSize">
-                               <size>
-                                <width>500</width>
-                                <height>16777215</height>
-                               </size>
-                              </property>
-                             </widget>
-                            </item>
-                           </layout>
-                          </item>
-                          <item>
                            <layout class="QHBoxLayout" name="horizontalLayout_19">
                             <item>
                              <widget class="QLabel" name="npsh">
@@ -3346,48 +2865,6 @@ Ajuste individualmente as unidades para cada parâmetro
                             </item>
                             <item>
                              <widget class="QComboBox" name="npsh_box">
-                              <property name="maximumSize">
-                               <size>
-                                <width>500</width>
-                                <height>16777215</height>
-                               </size>
-                              </property>
-                             </widget>
-                            </item>
-                           </layout>
-                          </item>
-                         </layout>
-                        </widget>
-                       </item>
-                       <item>
-                        <widget class="QGroupBox" name="groupBox_3">
-                         <property name="title">
-                          <string>Fluido</string>
-                         </property>
-                         <layout class="QVBoxLayout" name="verticalLayout_21">
-                          <item>
-                           <layout class="QHBoxLayout" name="horizontalLayout_20">
-                            <item>
-                             <widget class="QLabel" name="densidade">
-                              <property name="maximumSize">
-                               <size>
-                                <width>180</width>
-                                <height>16777215</height>
-                               </size>
-                              </property>
-                              <property name="text">
-                               <string>Densidade</string>
-                              </property>
-                             </widget>
-                            </item>
-                            <item>
-                             <widget class="QComboBox" name="densidade_box">
-                              <property name="sizePolicy">
-                               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                               </sizepolicy>
-                              </property>
                               <property name="maximumSize">
                                <size>
                                 <width>500</width>
@@ -3473,42 +2950,9 @@ Ajuste individualmente as unidades para cada parâmetro
                        <item>
                         <widget class="QGroupBox" name="groupBox_5">
                          <property name="title">
-                          <string>Pressão e Potência </string>
+                          <string>Potência </string>
                          </property>
                          <layout class="QVBoxLayout" name="verticalLayout_23">
-                          <item>
-                           <layout class="QHBoxLayout" name="horizontalLayout_23">
-                            <item>
-                             <widget class="QLabel" name="pressao">
-                              <property name="maximumSize">
-                               <size>
-                                <width>180</width>
-                                <height>16777215</height>
-                               </size>
-                              </property>
-                              <property name="text">
-                               <string>Pressão</string>
-                              </property>
-                             </widget>
-                            </item>
-                            <item>
-                             <widget class="QComboBox" name="pressao_box">
-                              <property name="sizePolicy">
-                               <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                                <horstretch>0</horstretch>
-                                <verstretch>0</verstretch>
-                               </sizepolicy>
-                              </property>
-                              <property name="maximumSize">
-                               <size>
-                                <width>500</width>
-                                <height>16777215</height>
-                               </size>
-                              </property>
-                             </widget>
-                            </item>
-                           </layout>
-                          </item>
                           <item>
                            <layout class="QHBoxLayout" name="horizontalLayout_24">
                             <item>
@@ -3649,7 +3093,6 @@ QPushButton:pressed {
  </widget>
  <resources>
   <include location="../img/img.qrc"/>
-  <include location="../../../../../.designer/img/img.qrc"/>
  </resources>
  <connections/>
 </ui>

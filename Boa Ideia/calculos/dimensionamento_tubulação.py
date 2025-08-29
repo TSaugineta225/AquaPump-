@@ -12,6 +12,7 @@ class Tubulacao:
             self.D = 1.2 * math.sqrt(vazao)
         else:
             self.D = 1.3 * math.sqrt(vazao) * (tempo / 24) ** (1 / 4)
+        print(f"Diâmetro calculado: {self.D} m")
         return self.D
 
     def area_seccao(self):

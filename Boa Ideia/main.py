@@ -69,11 +69,10 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.menu = Menus(parent=self, arquivos=self.arquivos, config=Configuracoes())
         self.config = Configuracoes()
         self.conversor = ConversorUnidades()
-
-        #  ______________Inicializacao de Classes de Calculo _____________
         self._diametro = Tubulacao()
+        self.atualizar_parametros_entrada() 
         
-        #  _____________ Inicializacao de Classes de WebEngine _____________
+        #  ____________ Inicializacao de Classes de WebEngine _____________
         self.altura_geometrica_channel = Altura_Geometrica()
         self.comprimento_tubulacao_channel = Dimensao_Tubulacao()
         self.acessorios_channel = Acessorios_sistema()
@@ -88,6 +87,9 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self._canal.registerObject("comprimento", self.comprimento_tubulacao_channel)
         self._canal.registerObject("acessorios", self.acessorios_channel)
 
+                #  _________________ Conexões e Configurações _________________
+        self.conexoes = ConexoesUI(parent=self, menu=self.menu, animacoes=self.animações, configuracoes=self.config)
+        
         # === ComboBox ===
         self.hazen_will.addItems(Perdas.get_lista_materiais_hazen())
         self.hazen_will.setHidden(True)
@@ -121,15 +123,10 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         # =========== Initialize Graphs ==================
         self.inicializar_graficos_curvas()
         self.mudanca_dinamica_perdas_carga()
-
-        #  _________________ Conexões e Configurações _________________
-        self.conexoes = ConexoesUI(parent=self, menu=self.menu, animacoes=self.animações, configuracoes=self.config)
-        self.atualizar_parametros_entrada() 
-        
+      
     def actualizar_vazao(self):
         return self.icone_2.currentText()
 
-    @Slot()
     def atualizar_parametros_entrada(self):
         """Lê os valores de vazão e tempo e inicia a cascata de cálculos."""
         texto_vazao = self.Vazao_2.text().strip().replace(',', '.')
@@ -184,10 +181,10 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         perda_distribuida = 0.0
         if self.comprimento_tubulacao_val > 0:
             try:
-                if self.radioButton_7.isChecked():  # Darcy-Weisbach
+                if self.radioButton_10.isChecked():  # Darcy-Weisbach
                     self.perdas.definir_material_darcy(self.darcy.currentText())
                     perda_distribuida = self.perdas.calcular_perda_carga_darcy(self.comprimento_tubulacao_val)
-                elif self.radioButton_8.isChecked():  
+                elif self.radioButton_9.isChecked():  
                     self.perdas.definir_material_hazen(self.hazen_will.currentText())
                     perda_distribuida = self.perdas.calcular_perda_carga_hazen_williams(self.comprimento_tubulacao_val)
             except (ValueError, AttributeError):
@@ -201,7 +198,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         print("Altura manométrica calculada:", self.altura_manometrica)
         print(f"Altura geométrica: {self.altura_geometrica_val} m, Perdas distribuídas: {perda_distribuida} m, Perdas localizadas: {self.localizadas} m")
         print(f"Area da seção: {self._diametro.area_seccao():.6f} m²")
-        print(f"Vazão: {self.vazao} m³/s, Diâmetro: {self.diametro_tubulacao} m")
+        print(f"Vazão: {self.vazao} m³/s, Diâmetro: {self.diametro_tubulacao} m,  Velocidade: {self.perdas.calcular_velocidade()}")
         print(f"{self.darcy.currentText()} - {self.hazen_will.currentText()}")
 
         # 3. Atualizar gráficos
@@ -209,9 +206,9 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
     def inicializar_graficos_curvas(self):
         """Cria as instâncias dos gráficos uma única vez."""
-        self.grafico_altura = Grafico(tipo='altura')
-        self.grafico_potencia = Grafico(tipo='potencia')
-        self.grafico_rendimento = Grafico(tipo='rendimento')
+        self.grafico_altura = Grafico(tipo='altura', potencia=self.potencia_box.currentText(), altura=self.altura_box.currentText(), v=self.caudal_box.currentText())
+        self.grafico_potencia = Grafico(tipo='potencia', potencia=self.potencia_box.currentText(), altura=self.altura_box.currentText(), v=self.caudal_box.currentText())
+        self.grafico_rendimento = Grafico(tipo='rendimento', potencia=self.potencia_box.currentText(), altura=self.altura_box.currentText(), v=self.caudal_box.currentText())
         
         # Limpa layouts antigos se existirem
         for widget in [self.altura, self.potencia, self.rendimento]:
@@ -240,46 +237,6 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.grafico_potencia.actualizar_dados(self.altura_geometrica_val, coeficiente_perda)
         self.grafico_rendimento.actualizar_dados(self.altura_geometrica_val, coeficiente_perda)
     
-    def configurar_unidades_combobox(self):
-        """Configura as unidades disponíveis nos comboboxes"""
-        unidades_vazao = self.conversor.get_unidades_vazao()
-        self.icone_2.clear()
-        self.icone_2.addItems(unidades_vazao)
-        
-        unidades_tempo = ['s', 'min', 'h', 'day']
-        self.icone.clear()
-        self.icone.addItems(unidades_tempo)
-
-    def atualizar_parametros_entrada(self):
-        """Lê os valores de vazão e tempo e inicia a cascata de cálculos."""
-        texto_vazao = self.Vazao_2.text().strip().replace(',', '.')
-        vazao_valor = float(texto_vazao) if texto_vazao else 0.0
-        
-        unidade_vazao = self.icone_2.currentText()
-        self.vazao = self.conversor.converter_vazao(vazao_valor, unidade_vazao, 'm³/s')
-        
-        texto_tempo = self.Vazao.text().strip().replace(',', '.')
-        tempo_valor = float(texto_tempo) if texto_tempo else 0.0
-        
-        unidade_tempo = self.icone.currentText()
-        self.tempo = self.conversor.converter_comprimento(tempo_valor, unidade_tempo, 'h')
-
-        self.calculo_diametro_tubulacao()
-        self.perdas_carga()
-    
-    def converter_resultado_para_unidade_usuario(self, valor, tipo):
-        """ Converte resultados de cálculos para a unidade preferida do usuário """
-        if tipo == 'vazao':
-            unidade_alvo = self.icone_2.currentText()
-            return self.conversor.converter_vazao(valor, 'm³/s', unidade_alvo)
-        elif tipo == 'comprimento':
-            unidade_alvo = self.altura_box.currentText() if hasattr(self, 'altura_box') else 'm'
-            return self.conversor.converter_comprimento(valor, 'm', unidade_alvo)
-        elif tipo == 'potencia':
-            unidade_alvo = self.potencia_box.currentText() if hasattr(self, 'potencia_box') else 'kW'
-            return self.conversor.converter_potencia(valor, 'kW', unidade_alvo)
-        return valor
-
     def enviar_js(self):
         """Envia os dados de vazão e tempo para o JavaScript."""
         texto_vazao = self.Vazao_2.text().strip().replace(',', '.')
@@ -291,8 +248,8 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
     def mudanca_dinamica_perdas_carga(self):
         """Atualiza as perdas de carga dinamicamente ao alterar o material."""
-        darcy_visible = self.radioButton_8.isChecked()
-        hazen_visible = self.radioButton_7.isChecked()
+        darcy_visible = self.radioButton_10.isChecked()
+        hazen_visible = self.radioButton_9.isChecked()
 
         self.darcy.setVisible(darcy_visible)
         self.hazen_will.setVisible(hazen_visible)

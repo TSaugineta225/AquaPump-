@@ -39,7 +39,6 @@ class Definicoes:
         self.parent.geral.clicked.connect(lambda: self.mudanca_widget(0))
         self.parent.unidades.clicked.connect(lambda: self.mudanca_widget(3))
         self.parent.banco_dados.clicked.connect(lambda: self.mudanca_widget(1))
-        self.parent.avancado.clicked.connect(lambda: self.mudanca_widget(2))
 
     def carregar_unidades_iniciais(self):
         """Carrega as unidades métricas por padrão."""
