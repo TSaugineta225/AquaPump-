@@ -5,7 +5,7 @@ import img.img_rc
 from PySide6.QtCore import Qt
 from PySide6.QtGui import QIcon
 from PySide6.QtWidgets import QWidget
-from PySide6.QtCore import QUrl, QEvent, QSize, QPoint, QTimer, Signal, Slot, QSettings, QStringListModel
+from PySide6.QtCore import QUrl, QEvent, QSize, QPoint, QTimer, Signal, Slot, QSettings, QStringListModel, QLocale
 from PySide6.QtGui import QAction, QDoubleValidator, QSurfaceFormat
 from PySide6.QtWidgets import (
     QApplication, QLabel, QMenu, QCompleter, QToolButton,
@@ -46,6 +46,9 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.setupUi(self)
+
+        # ____________  Configuracao do Local (Exibicao de ponto Decimal) ___________#
+        QLocale.setDefault(QLocale(QLocale.English, QLocale.UnitedStates))
 
         # ___________ Expoentes ______________________
         self.ex_3 = chr(0x00B3)
@@ -129,15 +132,30 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
     def atualizar_parametros_entrada(self):
         """Lê os valores de vazão e tempo e inicia a cascata de cálculos."""
-        texto_vazao = self.Vazao_2.text().strip().replace(',', '.')
-        self.vazao = float(texto_vazao) if texto_vazao else 0.0
-        
-        texto_tempo = self.Vazao.text().strip().replace(',', '.')
-        self.tempo = float(texto_tempo) if texto_tempo else 0.0
+        try:
+            # Obter texto e unidade de vazão
+            texto_vazao = self.Vazao_2.text().strip().replace(',', '.')
+            if not texto_vazao:
+                return
+                
+            vazao_entrada = float(texto_vazao)
+            unidade_vazao = self.icone_2.currentText()
+            
+            # Converter para m³/s (unidade base para cálculos)
+            self.vazao = self.conversor.converter_vazao(vazao_entrada, unidade_vazao, 'm³/s')
+            
+            # Obter e processar tempo
+            texto_tempo = self.Vazao.text().strip().replace(',', '.')
+            self.tempo = float(texto_tempo) if texto_tempo else 0.0
 
-        self.calculo_diametro_tubulacao()
-        self.perdas_carga()
-        self.recalcular_sistema_completo()
+            self.calculo_diametro_tubulacao()
+            self.perdas_carga()
+            self.recalcular_sistema_completo()
+            
+        except ValueError as e:
+            print(f"Erro ao processar entrada: {e}")
+        except Exception as e:
+            print(f"Erro inesperado: {e}")
 
     def calculo_diametro_tubulacao(self):
         self.diametro_tubulacao = self._diametro.calcular_diametro(self.vazao, self.tempo)
@@ -206,18 +224,36 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
     def inicializar_graficos_curvas(self):
         """Cria as instâncias dos gráficos uma única vez."""
-        self.grafico_altura = Grafico(tipo='altura', potencia=self.potencia_box.currentText(), altura=self.altura_box.currentText(), v=self.caudal_box.currentText())
-        self.grafico_potencia = Grafico(tipo='potencia', potencia=self.potencia_box.currentText(), altura=self.altura_box.currentText(), v=self.caudal_box.currentText())
-        self.grafico_rendimento = Grafico(tipo='rendimento', potencia=self.potencia_box.currentText(), altura=self.altura_box.currentText(), v=self.caudal_box.currentText())
+        # Obter unidades atuais
+        unidade_vazao = self.caudal_box.currentText()
+        unidade_altura = self.altura_box.currentText()
+        unidade_potencia = self.potencia_box.currentText()
+        
+        self.grafico_altura = Grafico(tipo='altura', 
+                                    potencia=unidade_potencia, 
+                                    altura=unidade_altura, 
+                                    v=unidade_vazao)
+        
+        self.grafico_potencia = Grafico(tipo='potencia', 
+                                    potencia=unidade_potencia, 
+                                    altura=unidade_altura, 
+                                    v=unidade_vazao)
+        
+        self.grafico_rendimento = Grafico(tipo='rendimento', 
+                                        potencia=unidade_potencia, 
+                                        altura=unidade_altura, 
+                                        v=unidade_vazao)
         
         # Limpa layouts antigos se existirem
         for widget in [self.altura, self.potencia, self.rendimento]:
-            if widget.layout():
-                while widget.layout().count():
-                    child = widget.layout().takeAt(0)
+            layout = widget.layout()
+            if layout:
+                while layout.count():
+                    child = layout.takeAt(0)
                     if child.widget():
                         child.widget().deleteLater()
         
+        # Configurar novos layouts
         layout_altura = QVBoxLayout(self.altura)
         layout_altura.addWidget(self.grafico_altura)
         
@@ -236,6 +272,12 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.grafico_altura.actualizar_dados(self.altura_geometrica_val, coeficiente_perda)
         self.grafico_potencia.actualizar_dados(self.altura_geometrica_val, coeficiente_perda)
         self.grafico_rendimento.actualizar_dados(self.altura_geometrica_val, coeficiente_perda)
+
+    def atualizar_unidades_graficos(self):
+        """Atualiza os gráficos quando as unidades são alteradas"""
+        if hasattr(self, 'grafico_altura') and hasattr(self, 'grafico_potencia') and hasattr(self, 'grafico_rendimento'):
+            self.inicializar_graficos_curvas()
+            self.atualizar_graficos_curvas()
     
     def enviar_js(self):
         """Envia os dados de vazão e tempo para o JavaScript."""

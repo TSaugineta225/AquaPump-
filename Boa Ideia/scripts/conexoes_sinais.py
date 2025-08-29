@@ -16,6 +16,8 @@ class ConexoesUI():
         self._conectar_pesquisa()
         self._perda_carga_dinamica()
         self._conectar_actualizao_graph()
+        self._connectar_actualizacao_unidades()
+        self._connectar_actualizacao_unidades_graficos()
 
     def _conectar_configuracoes(self):
         """Restaura as configurações da sessão anterior."""
@@ -123,3 +125,13 @@ class ConexoesUI():
 
     def _conectar_actualizao_graph(self):
         self.parent.actualizar_grafico.clicked.connect(self.parent.atualizar_graficos_curvas)
+
+    def _connectar_actualizacao_unidades(self):
+        self.parent.icone_2.currentTextChanged.connect(self.parent.atualizar_parametros_entrada)
+        self.parent.Vazao_2.textChanged.connect(self.parent.atualizar_parametros_entrada)
+        self.parent.Vazao.textChanged.connect(self.parent.atualizar_parametros_entrada)
+
+    def _connectar_actualizacao_unidades_graficos(self):
+        self.parent.caudal_box.currentTextChanged.connect(self.parent.atualizar_unidades_graficos)
+        self.parent.altura_box.currentTextChanged.connect(self.parent.atualizar_unidades_graficos)
+        self.parent.potencia_box.currentTextChanged.connect(self.parent.atualizar_unidades_graficos)
