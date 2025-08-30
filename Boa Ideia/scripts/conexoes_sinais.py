@@ -4,7 +4,7 @@ class ConexoesUI():
         self.menu = menu
         self.animacoes = animacoes
         self.config = configuracoes
-
+        
         # Inicializa todas as conexões
         self._conectar_principais_dados()
         self._conectar_configuracoes()
@@ -18,6 +18,8 @@ class ConexoesUI():
         self._conectar_actualizao_graph()
         self._connectar_actualizacao_unidades()
         self._connectar_actualizacao_unidades_graficos()
+        self._conectar_geracao_pdf()    
+        self._conectar_ocultacoes()
 
     def _conectar_configuracoes(self):
         """Restaura as configurações da sessão anterior."""
@@ -135,3 +137,10 @@ class ConexoesUI():
         self.parent.caudal_box.currentTextChanged.connect(self.parent.atualizar_unidades_graficos)
         self.parent.altura_box.currentTextChanged.connect(self.parent.atualizar_unidades_graficos)
         self.parent.potencia_box.currentTextChanged.connect(self.parent.atualizar_unidades_graficos)
+
+    def _conectar_geracao_pdf(self):
+        self.parent.exportar_pdf.clicked.connect(self.parent.gerar_pdf)
+
+    def _conectar_ocultacoes(self):
+        """Conecta os botões para ocultar/mostrar elementos da UI."""
+        self.parent.banco_dados.setHidden(True)

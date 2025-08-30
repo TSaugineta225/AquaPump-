@@ -4,7 +4,7 @@ class Definicoes:
         self.ex_3 = chr(0x00B3)
 
         self.unidades_metricas = {
-            'caudal': [f'm{self.ex_3}/s', f'm{self.ex_3}/min', f'm{self.ex_3}/h', 'L/s'],
+            'caudal': [f'm{self.ex_3}/s', f'm{self.ex_3}/h', 'L/s'],
             'altura': ['m'],
             'comprimento': ['m'],
             'diametro': ['mm', 'm'],
@@ -13,14 +13,15 @@ class Definicoes:
         }
 
         self.unidades_imperiais = {
-            'caudal': ['GPM', 'MGD', 'GPH'],
+            'caudal': ['gal/s', 'gal/min', 'gal/h',
+            'ft³/s', 'ft³/min', 'ft³/h',],
             'altura': ['ft'],
             'comprimento': ['ft'],
             'diametro': ['in'],
             'potencia': ['hp'],
             'npsh': ['ft']
         }
-        self.sincronizando = False  # Evita loop infinito
+        self.sincronizando = False  
 
         self.parent.icone_2.currentIndexChanged.connect(self.sincronizar_com_caudal_box)
         self.parent.icone_2.currentIndexChanged.connect(self.mudanca_dinamica_Textholder)

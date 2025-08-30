@@ -1491,7 +1491,7 @@ QPushButton:pressed {
        <item>
         <widget class="QStackedWidget" name="stackedWidget">
          <property name="currentIndex">
-          <number>0</number>
+          <number>1</number>
          </property>
          <widget class="QWidget" name="page">
           <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -2122,7 +2122,7 @@ QPushButton:checked {
                  <x>0</x>
                  <y>0</y>
                  <width>185</width>
-                 <height>609</height>
+                 <height>605</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_14">

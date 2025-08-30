@@ -154,3 +154,26 @@ class ConversorUnidades:
             return quantidade1.dimensionality == quantidade2.dimensionality
         except UndefinedUnitError as e:
             raise ValueError(f"Unidade não reconhecida: {e}") from e
+
+    def converter_diametro(self, valor, de_unidade, para_unidade):
+        """
+        Converte valores de diâmetro entre diferentes unidades
+        """
+        return self.converter_comprimento(valor, de_unidade, para_unidade)
+
+    def converter_comprimento(self, valor, de_unidade, para_unidade):
+        """
+        Converte valores de comprimento entre diferentes unidades
+        """
+        try:
+            self._validar_unidades(de_unidade, para_unidade, 'comprimento')
+            quantidade = self.Q_(valor, de_unidade)
+            resultado = quantidade.to(para_unidade).magnitude
+            return resultado
+        except (DimensionalityError, UndefinedUnitError, ValueError) as e:
+            raise ValueError(f"Erro na conversão de comprimento: {e}") from e
+
+    # Atualizar a lista de unidades suportadas
+    def get_unidades_comprimento(self):
+        """Retorna lista de unidades de comprimento suportadas"""
+        return ['m', 'cm', 'mm', 'km', 'in', 'ft', 'yd', 'mi']

@@ -33,7 +33,7 @@ from scripts.web_channel import (
 )
 
 from calculos.perdas_cargas import Perdas
-from calculos.curvas_bomba import Grafico
+from calculos.curvas_bomba import GraficoPlotly 
 from calculos.unidades import ConversorUnidades
 from calculos.dimensionamento_tubulação import Tubulacao
 
@@ -49,6 +49,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
         # ____________  Configuracao do Local (Exibicao de ponto Decimal) ___________#
         QLocale.setDefault(QLocale(QLocale.English, QLocale.UnitedStates))
+        QTimer.singleShot(100, self.inicializar_graficos_curvas)
 
         # ___________ Expoentes ______________________
         self.ex_3 = chr(0x00B3)
@@ -90,7 +91,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self._canal.registerObject("comprimento", self.comprimento_tubulacao_channel)
         self._canal.registerObject("acessorios", self.acessorios_channel)
 
-                #  _________________ Conexões e Configurações _________________
+        #  _________________ Conexões e Configurações _________________
         self.conexoes = ConexoesUI(parent=self, menu=self.menu, animacoes=self.animações, configuracoes=self.config)
         
         # === ComboBox ===
@@ -143,10 +144,22 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             
             # Converter para m³/s (unidade base para cálculos)
             self.vazao = self.conversor.converter_vazao(vazao_entrada, unidade_vazao, 'm³/s')
+            # Converter diâmetro para unidade selecionada
+            unidade_diametro = self.diametro_box.currentText()
+            diametro_convertido = self.conversor.converter_comprimento(
+                self.diametro_tubulacao, 'm', unidade_diametro
+            )
+            
+            # Converter comprimento para unidade selecionada
+            unidade_comprimento = self.comprimento_box.currentText()
+            comprimento_convertido = self.conversor.converter_comprimento(
+                self.comprimento_tubulacao_val, 'm', unidade_comprimento
+        )
             
             # Obter e processar tempo
             texto_tempo = self.Vazao.text().strip().replace(',', '.')
             self.tempo = float(texto_tempo) if texto_tempo else 0.0
+
 
             self.calculo_diametro_tubulacao()
             self.perdas_carga()
@@ -163,7 +176,6 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     def perdas_carga(self):
         vazao_m3s = self.vazao 
         self.perdas = Perdas(vazao_m3s, self.diametro_tubulacao, self._diametro.area_seccao(), self.darcy.currentText(), self.hazen_will.currentText())
-
 
     @Slot(list)
     def definir_acessorios(self, lista):
@@ -223,27 +235,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.atualizar_graficos_curvas()
 
     def inicializar_graficos_curvas(self):
-        """Cria as instâncias dos gráficos uma única vez."""
-        # Obter unidades atuais
-        unidade_vazao = self.caudal_box.currentText()
-        unidade_altura = self.altura_box.currentText()
-        unidade_potencia = self.potencia_box.currentText()
-        
-        self.grafico_altura = Grafico(tipo='altura', 
-                                    potencia=unidade_potencia, 
-                                    altura=unidade_altura, 
-                                    v=unidade_vazao)
-        
-        self.grafico_potencia = Grafico(tipo='potencia', 
-                                    potencia=unidade_potencia, 
-                                    altura=unidade_altura, 
-                                    v=unidade_vazao)
-        
-        self.grafico_rendimento = Grafico(tipo='rendimento', 
-                                        potencia=unidade_potencia, 
-                                        altura=unidade_altura, 
-                                        v=unidade_vazao)
-        
+        """Cria as instâncias dos gráficos Plotly uma única vez."""
         # Limpa layouts antigos se existirem
         for widget in [self.altura, self.potencia, self.rendimento]:
             layout = widget.layout()
@@ -252,16 +244,34 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
                     child = layout.takeAt(0)
                     if child.widget():
                         child.widget().deleteLater()
+            else:
+                widget.setLayout(QVBoxLayout())
         
-        # Configurar novos layouts
-        layout_altura = QVBoxLayout(self.altura)
-        layout_altura.addWidget(self.grafico_altura)
+        # Obter unidades atuais
+        unidade_vazao = self.caudal_box.currentText()
+        unidade_altura = self.altura_box.currentText()
+        unidade_potencia = self.potencia_box.currentText()
         
-        layout_potencia = QVBoxLayout(self.potencia)
-        layout_potencia.addWidget(self.grafico_potencia)
+        # Criar novos gráficos Plotly
+        self.grafico_altura = GraficoPlotly(tipo='altura', 
+                                    potencia=unidade_potencia, 
+                                    altura=unidade_altura, 
+                                    v=unidade_vazao)
         
-        layout_rendimento = QVBoxLayout(self.rendimento)
-        layout_rendimento.addWidget(self.grafico_rendimento)
+        self.grafico_potencia = GraficoPlotly(tipo='potencia', 
+                                    potencia=unidade_potencia, 
+                                    altura=unidade_altura, 
+                                    v=unidade_vazao)
+        
+        self.grafico_rendimento = GraficoPlotly(tipo='rendimento', 
+                                        potencia=unidade_potencia, 
+                                        altura=unidade_altura, 
+                                        v=unidade_vazao)
+        
+        # Adicionar aos layouts
+        self.altura.layout().addWidget(self.grafico_altura)
+        self.potencia.layout().addWidget(self.grafico_potencia)
+        self.rendimento.layout().addWidget(self.grafico_rendimento)
 
     def atualizar_graficos_curvas(self):
         """Atualiza os gráficos com os dados mais recentes."""
@@ -319,12 +329,28 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
     def gerar_pdf(self):
         try:
-            self.relatorio_pdf.adicionar_titulos()
-            self.relatorio_pdf.adicionar_conteudo(self.dados_bomba.vazão, self.dados_bomba.tempo, self.dados_bomba.diametro)
+            material = self.darcy.currentText() if self.radioButton_10.isChecked() else self.hazen_will.currentText()
+            dados_relatorio = {
+                'Vazão': (f"{self.vazao:.4f}", 'm³/s'),
+                'Tempo de funcionamento': (f"{self.tempo:.2f}", 'horas'),
+                'Diâmetro da tubulação': (f"{self.diametro_tubulacao:.4f}", 'm'),
+                'Altura geométrica': (f"{self.altura_geometrica_val:.2f}", 'm'),
+                'Perdas totais': (f"{self.perdas_totais:.4f}", 'm'),
+                'Altura manométrica': (f"{self.altura_manometrica:.2f}", 'm'),
+                'Material da Tubulação': (material, None),
+            }
+            
+            # Configurar e gerar PDF
+            self.relatorio_pdf.adicionar_titulos("Relatório do Sistema de Bombeamento - AquaPump")
+            self.relatorio_pdf.adicionar_secao("Dados do Sistema")
+            self.relatorio_pdf.adicionar_conteudo(dados_relatorio)
+            
+            # Gerar PDF
             self.relatorio_pdf.gravar_pdf()
+            
         except Exception as e:
-            QMessageBox.critical(self, 'ERRO', f'Erro ao gerar pdf devido a {e}')
-    
+            QMessageBox.critical(self, 'ERRO', f'Erro ao gerar PDF devido a {e}')
+        
     def salvar_configuracoes(self):
         self.config.salvar_geometria_janela(self)
         self.config.salvar_estado_splitter(self.splitter_2, "splitter_principal")
