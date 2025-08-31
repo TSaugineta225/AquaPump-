@@ -140,47 +140,7 @@ class Mapa:
                 }
             }).addTo(map);
         }
-
-        function carregarCSV(conteudo) {
-            Papa.parse(conteudo, {
-                header: true,
-                dynamicTyping: true,
-                complete: function(results) {
-                    const features = results.data.map(row => {
-                        if (!row.latitude || !row.longitude) return null;
-                        return {
-                            type: "Feature",
-                            geometry: {
-                                type: "Point",
-                                coordinates: [parseFloat(row.longitude), parseFloat(row.latitude)]
-                            },
-                            properties: row
-                        };
-                    }).filter(f => f !== null);
-
-                    const geojson = {
-                        type: "FeatureCollection",
-                        features: features
-                    };
-
-                    carregarGeoJSON(JSON.stringify(geojson));
-                }
-            });
-        }
-
-        function carregarKML(conteudo) {
-            const blob = new Blob([conteudo], { type: 'application/vnd.google-earth.kml+xml' });
-            const url = URL.createObjectURL(blob);
-            omnivore.kml(url).on('ready', function() {
-                this.eachLayer(function(layer) {
-                    if (layer.feature && layer.feature.properties) {
-                        layer.bindPopup(Object.entries(layer.feature.properties).map(([k, v]) => `${k}: ${v}`).join('<br>'));
-                    }
-                });
-                this.addTo(map);
-            });
-        }
-
+  
         document.addEventListener("DOMContentLoaded", function() {
             if (typeof QWebChannel !== "undefined") {
                 new QWebChannel(qt.webChannelTransport, function (channel) {

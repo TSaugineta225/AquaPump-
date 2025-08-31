@@ -1,46 +1,52 @@
 <RCC>
   <qresource prefix="img">
-    <file>baixo.png</file>
-    <file>cima.png</file>
-    <file>refresh.png</file>
+    <file>star.png</file>
+    <file>arquivo.png</file>
+    <file>arquivo-csv.png</file>
     <file>arrow_back_claro.png</file>
     <file>arrow_back_mais_claro.png</file>
     <file>arrow_forward_claro.png</file>
     <file>arrow_forward_mais claro.png</file>
+    <file>avancado.png</file>
+    <file>baixo.png</file>
     <file>bottom.png</file>
-    <file>copy.png</file>
-    <file>left_panel_open_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</file>
-    <file>opcoes.png</file>
-    <file>zoom.png</file>
+    <file>cima.png</file>
     <file>close.png</file>
-    <file>search.png</file>
+    <file>copy.png</file>
+    <file>dados.png</file>
     <file>exportar.png</file>
-    <file>projecto.png</file>
-    <file>relatorio.png</file>
+    <file>geral.png</file>
+    <file>giti.png</file>
     <file>grafico.png</file>
-    <file>arquivo.png</file>
+    <file>img.qrc</file>
+    <file>img_rc.py</file>
+    <file>janelinha.png</file>
+    <file>jpg.png</file>
     <file>kml.png</file>
     <file>left_panel_close_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</file>
     <file>left_panel_open_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</file>
-    <file>settings_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</file>
-    <file>side_navigation_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</file>
-    <file>width_wide_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</file>
-    <file>right_panel_close.png</file>
-    <file>right_panel_open.png</file>
+    <file>linkedin.png</file>
     <file>novo-arquivo.png</file>
-    <file>pesquisar.png</file>
-    <file>recente.png</file>
+    <file>opcoes.png</file>
     <file>pasta (1).png</file>
     <file>pasta.png</file>
-    <file>arquivo-csv.png</file>
     <file>pdf.png</file>
-    <file>avancado.png</file>
-    <file>dados.png</file>
-    <file>geral.png</file>
-    <file>unidades.png</file>
-    <file>jpg.png</file>
-    <file>grafico.png</file>
-    <file>janelinha.png</file>
+    <file>pesquisar.png</file>
+    <file>projecto.png</file>
+    <file>recente.png</file>
+    <file>refresh.png</file>
+    <file>relatorio.png</file>
+    <file>right_panel_close.png</file>
+    <file>right_panel_open.png</file>
+    <file>rigth_close.png</file>
     <file>sair.png</file>
+    <file>search.png</file>
+    <file>settings_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</file>
+    <file>side_navigation_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</file>
+    <file>social.png</file>
+    <file>TS.jpg</file>
+    <file>unidades.png</file>
+    <file>width_wide_67dp_999999_FILL1_wght400_GRAD0_opsz48.png</file>
+    <file>zoom.png</file>
   </qresource>
 </RCC>

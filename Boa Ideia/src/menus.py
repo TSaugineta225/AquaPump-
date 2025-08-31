@@ -1,18 +1,21 @@
 from PySide6.QtWidgets import QMenu, QMessageBox
 from PySide6.QtGui import QAction, QIcon
 from PySide6.QtCore import Qt
-import img.img_rc 
+import webbrowser
+import img.img_rc
+
 
 class Menus:
-    def __init__(self, parent=None, arquivos=None, config=None):
+    def __init__(self, parent=None, config=None):
         self.parent = parent  
-        self.arquivos = arquivos  # objeto com métodos de carregamento de arquivos
         self.config = config  # objeto com métodos de projetos recentes
         self.menu_recentes = QMenu("Projetos Recentes", self.parent)
 
+    # ---------------- MENU PRINCIPAL ----------------
     def menu_principal(self):
         menu = QMenu(self.parent)
 
+        # --- Ações ---
         acao_novo = QAction("Novo", self.parent)
         acao_abrir = QAction("Abrir", self.parent)
         acao_salvar = QAction("Salvar", self.parent)
@@ -20,7 +23,7 @@ class Menus:
         acao_fechar = QAction("Fechar Projeto", self.parent)
         acao_sair = QAction("Sair", self.parent)
 
-        # Atalhos
+        # --- Atalhos ---
         acao_novo.setShortcut("Ctrl+N")
         acao_abrir.setShortcut("Ctrl+O")
         acao_salvar.setShortcut("Ctrl+S")
@@ -28,96 +31,134 @@ class Menus:
         acao_fechar.setShortcut("Ctrl+W")
         acao_sair.setShortcut("Ctrl+Q")
         acao_sair.setShortcutContext(Qt.ApplicationShortcut)
+        acao_abrir.setShortcutContext(Qt.ApplicationShortcut)
+        acao_salvar.setShortcutContext(Qt.ApplicationShortcut)
+        acao_novo.setShortcutContext(Qt.ApplicationShortcut)
 
-        # Sair do app
+        # --- Sinais ---
         if self.parent:
             acao_sair.triggered.connect(self.parent.close)
+            acao_abrir.triggered.connect(self.parent.carregar_historico)
+            acao_salvar.triggered.connect(self.parent.salvar_historico)
+            acao_novo.triggered.connect(self.parent.novo_projecto)
 
-        # Ações de carregamento
-        accao_coor = QAction(QIcon(":/img/kml.png"), "Carregar KML", self.parent)
-        accao_coor_1 = QAction(QIcon(":/img/arquivo.png"), "Carregar camada shapefile", self.parent)
-        accao_coor_2 = QAction(QIcon(":/img/arquivo-csv.png"), "Carregar coordenadas CSV", self.parent)
-
-        if self.arquivos:
-            accao_coor.triggered.connect(self.arquivos.carregar_kml)
-            accao_coor_1.triggered.connect(self.arquivos.carregar_shapefile)
-            accao_coor_2.triggered.connect(self.arquivos.carregar_csv)
-
-        # Menu Recentes
+        # --- Submenus ---
         self.atualizar_menu_recentes()
 
+        # --- Adição ao menu ---
         menu.addActions([
             acao_novo, acao_abrir, self.menu_recentes.menuAction(),
-            acao_salvar, acao_salvar_como, acao_fechar
+            acao_salvar
         ])
-        menu.addSeparator()
-        menu.addActions([accao_coor, accao_coor_1, accao_coor_2])
         menu.addSeparator()
         menu.addAction(acao_sair)
 
         return menu
 
+    # ---------------- MENU EDITAR ----------------
     def menu_editar(self):
         editar = QMenu("Editar", self.parent)
 
-        accao_config = QAction("Configurações", self.parent)
+        # --- Ações ---
+        acao_config = QAction("Configurações", self.parent)
         acao_parametros = QAction("Parâmetros do Projeto", self.parent)
 
-        accao_config.setShortcut("Ctrl+E")
+        # --- Atalhos ---
+        acao_config.setShortcut("Ctrl+E")
         acao_parametros.setShortcut("Ctrl+P")
-        if self.parent:
-            accao_config.triggered.connect(lambda: self.parent.stackedWidget.setCurrentIndex(1))
 
-        editar.addActions([accao_config, acao_parametros])
+        # --- Sinais ---
+        if self.parent:
+            acao_config.triggered.connect(lambda: self.parent.stackedWidget.setCurrentIndex(1))
+
+        editar.addActions([acao_config])
         return editar
 
+    # ---------------- MENU RELATÓRIOS ----------------
     def menu_relatorio(self):
         rel = QMenu("Relatórios", self.parent)
 
-        acao_relatorio = QAction("Relatório", self.parent)
+        # --- Ações principais ---
+
         acao_exportar = QAction("Exportar", self.parent)
+        
+        # --- Submenu Exportar ---
+        submenu_exportar = QMenu("Exportar", rel)
+        exportar_pdf = QAction(QIcon(":/img/pdf.png"), "Exportar para PDF", self.parent)
+        exportar_csv = QAction(QIcon(":/img/arquivo-csv.png"), "Exportar para CSV", self.parent)
 
-        acao_relatorio.setShortcut("Ctrl+R")
-        acao_exportar.setShortcut("Ctrl+E")
+        exportar_csv.setShortcut("Ctrl+Shift+C")
+        exportar_pdf.setShortcut("Ctrl+Shift+P")
+        exportar_csv.setShortcutContext(Qt.ApplicationShortcut)
+        exportar_pdf.setShortcutContext(Qt.ApplicationShortcut)
 
-        rel.addActions([acao_relatorio, acao_exportar])
+        # --- Sinais ---
+        if self.parent:
+            exportar_pdf.triggered.connect(self.parent.gerar_pdf)
+            exportar_csv.triggered.connect(self.parent.gerar_csv)
+
+        submenu_exportar.addActions([exportar_pdf, exportar_csv])
+        acao_exportar.setMenu(submenu_exportar)
+
+        # --- Adição ao menu ---
+        rel.addActions( [acao_exportar])
         return rel
 
+    # ---------------- MENU AJUDA ----------------
     def menu_ajuda(self):
         help_menu = QMenu("Ajuda", self.parent)
 
+        # --- Ações ---
         acao_manual = QAction("Manual do Usuário", self.parent)
-        acao_dicas = QAction("Dicas de Uso", self.parent)
         acao_sobre = QAction("Sobre o Programa", self.parent)
         acao_suporte = QAction("Suporte Técnico", self.parent)
 
+        # --- Atalhos ---
         acao_manual.setShortcut("Ctrl+M")
-        acao_dicas.setShortcut("Ctrl+D")
         acao_sobre.setShortcut("Ctrl+I")
         acao_suporte.setShortcut("Ctrl+T")
 
-        help_menu.addActions([acao_manual, acao_dicas, acao_sobre, acao_suporte])
+        # --- Sinais ---
+        if self.parent:
+            acao_suporte.triggered.connect(lambda: QMessageBox.information(
+                self.parent, "Suporte Técnico",
+                "Para suporte técnico, por favor contate:\nEmail: tenerifenhalicale@outlook.com\nTelefone: +258 86 843 9510"
+            ))
+
+            acao_sobre.triggered.connect(lambda: self.parent.janela_sobre.exec())
+           
+
+        help_menu.addActions([acao_manual,acao_suporte])
+        help_menu.addSeparator()
+        help_menu.addAction(acao_sobre)
         return help_menu
-    
+
+    # ---------------- MENU GRÁFICOS ----------------
     def menu_graficos(self):
         grafico_menu = QMenu(self.parent)
+
+        # --- Ações ---
         perfil = QAction("Perfil de Elevação", self.parent)
         curva = QAction("Curvas de Bombas/Associação", self.parent)
-        
-        
+
+        # --- Sinais ---
         if self.parent:
             perfil.triggered.connect(lambda: self.parent.animações.altura(self.parent.widget_2, altura=400))
             curva.triggered.connect(lambda: self.parent.animações.largura(self.parent.janel_direita, largura_alvo=500))
-         
+
         grafico_menu.addActions([curva, perfil])
         return grafico_menu
-    
+
+    # ---------------- MENU SELEÇÃO DE GRÁFICOS ----------------
     def menu_selecao_graficos(self):
         selecao = QMenu(self.parent)
-        self.principal =QAction("Curva H vs Q (Altura vs Vazão)", self.parent)
+
+        # --- Ações ---
+        self.principal = QAction("Curva H vs Q (Altura vs Vazão)", self.parent)
         self.potencia = QAction("Curva de Potência vs Vazão (P vs Q)", self.parent)
         self.rendimento = QAction("Curva de Eficiência vs Vazão (η vs Q)", self.parent)
 
+        # --- Sinais ---
         if self.parent:
             self.principal.triggered.connect(lambda: self.sub_menus_selecao(self.principal, 0))
             self.potencia.triggered.connect(lambda: self.sub_menus_selecao(self.potencia, 1))
@@ -125,7 +166,8 @@ class Menus:
 
         selecao.addActions([self.principal, self.potencia, self.rendimento])
         return selecao
-    
+
+    # ---------------- FUNÇÕES AUXILIARES ----------------
     def atualizar_menu_recentes(self):
         self.menu_recentes.clear()
 
@@ -147,7 +189,6 @@ class Menus:
             self.config.adicionar_projeto_recente(caminho)
             self.atualizar_menu_recentes()
 
-    def sub_menus_selecao(self, accao, index):
-        self.parent.label_2.setText(f"{accao.text()}")
+    def sub_menus_selecao(self, acao, index):
+        self.parent.label_2.setText(acao.text())
         self.parent.stackedWidget_3.setCurrentIndex(index)
-

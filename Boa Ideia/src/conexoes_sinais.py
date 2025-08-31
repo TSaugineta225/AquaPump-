@@ -1,3 +1,6 @@
+from PySide6.QtWidgets import QMessageBox
+from PySide6.QtCore import Qt
+
 class ConexoesUI():
     def __init__(self, parent=None, menu=None, animacoes=None, configuracoes=None):
         self.parent = parent
@@ -18,8 +21,11 @@ class ConexoesUI():
         self._conectar_actualizao_graph()
         self._connectar_actualizacao_unidades()
         self._connectar_actualizacao_unidades_graficos()
-        self._conectar_geracao_pdf()    
+        self._conectar_geracao_pdf() 
+        self._connectar_arquivo()   
         self._conectar_ocultacoes()
+        self._connectar_janelas_responsivas()
+        self._connectar_versao_pro()
 
     def _conectar_configuracoes(self):
         """Restaura as configurações da sessão anterior."""
@@ -144,3 +150,36 @@ class ConexoesUI():
     def _conectar_ocultacoes(self):
         """Conecta os botões para ocultar/mostrar elementos da UI."""
         self.parent.banco_dados.setHidden(True)
+
+    def _connectar_arquivo(self):
+        self.parent.novo_arquivo.clicked.connect(self.parent.novo_projecto)
+        self.parent.salvar_projecto.clicked.connect(self.parent.salvar_historico)
+        self.parent.abrir_arquivo.clicked.connect(self.parent.carregar_historico)
+
+    def _connectar_janelas_responsivas(self):
+        self.parent.parametros.clicked.connect(lambda: self.animacoes.altura(self.parent.exportar, altura=400))
+        self.parent.projecto_2.clicked.connect(lambda: self.animacoes.altura(self.parent.projecto, altura=100))
+    
+    def _connectar_versao_pro(self):
+
+        msg = QMessageBox(self.parent)
+        msg.setWindowTitle("Suporte Técnico")
+        msg.setIcon(QMessageBox.Information)
+
+        msg.setTextFormat(Qt.RichText)
+        msg.setText(
+            """
+
+            <h3 style="margin-bottom: 8px;">Versão Pro - Em Breve </h3>
+            <p>A versão Pro estará disponível em breve, trazendo novas funcionalidades e um suporte mais completo.</p>
+            <p><b>Entre em contacto connosco:</b></p>
+            <p>
+                <b>Email:</b> <a href="mailto:tenerifenhalicale@outlook.com">
+                tenerifenhalicale@outlook.com</a><br>
+                <b>Telefone:</b> +258 86 843 9510
+            </p>
+            """
+        )
+        msg.setStandardButtons(QMessageBox.Ok)
+   
+        self.parent.pushButton_3.clicked.connect(msg.exec)

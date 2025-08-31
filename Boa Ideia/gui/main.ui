@@ -495,8 +495,8 @@ QPushButton:checked {
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>187</width>
-             <height>452</height>
+             <width>177</width>
+             <height>405</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -617,32 +617,6 @@ QPushButton:pressed {
                 </widget>
                </item>
                <item>
-                <widget class="QPushButton" name="projectos_recentes">
-                 <property name="minimumSize">
-                  <size>
-                   <width>0</width>
-                   <height>0</height>
-                  </size>
-                 </property>
-                 <property name="toolTip">
-                  <string>Projectos Recentes</string>
-                 </property>
-                 <property name="text">
-                  <string>Projectos Recentes</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="../img/img.qrc">
-                   <normaloff>:/img/recente.png</normaloff>:/img/recente.png</iconset>
-                 </property>
-                 <property name="iconSize">
-                  <size>
-                   <width>16</width>
-                   <height>16</height>
-                  </size>
-                 </property>
-                </widget>
-               </item>
-               <item>
                 <widget class="QPushButton" name="salvar_projecto">
                  <property name="minimumSize">
                   <size>
@@ -698,39 +672,6 @@ QPushButton:pressed {
                 <widget class="Line" name="line">
                  <property name="orientation">
                   <enum>Qt::Orientation::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pushButton">
-                 <property name="text">
-                  <string>Carregar KML</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="../img/img.qrc">
-                   <normaloff>:/img/kml.png</normaloff>:/img/kml.png</iconset>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pushButton_2">
-                 <property name="text">
-                  <string>Carregar CSV</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="../img/img.qrc">
-                   <normaloff>:/img/arquivo-csv.png</normaloff>:/img/arquivo-csv.png</iconset>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="QPushButton" name="pushButton_4">
-                 <property name="text">
-                  <string>Carregar Shapefile</string>
-                 </property>
-                 <property name="icon">
-                  <iconset resource="../img/img.qrc">
-                   <normaloff>:/img/arquivo.png</normaloff>:/img/arquivo.png</iconset>
                  </property>
                 </widget>
                </item>
@@ -880,7 +821,7 @@ QPushButton:pressed {
                <string notr="true"/>
               </property>
               <property name="text">
-               <string>Relatório </string>
+               <string>Selecção de Bombas</string>
               </property>
               <property name="checkable">
                <bool>true</bool>
@@ -909,6 +850,51 @@ QPushButton:pressed {
             </item>
            </layout>
           </widget>
+         </widget>
+        </item>
+        <item>
+         <widget class="QPushButton" name="pushButton_3">
+          <property name="styleSheet">
+           <string notr="true">QPushButton {
+text-align: left;
+padding: 8px 2px;
+}
+
+QPushButton {
+    background-color: transparent;
+    color: #000000;
+    border: none;
+    border-radius: 3px;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-family: Roboto;
+	text-align: left;
+}
+
+QPushButton:hover {
+    background-color: #e0e0e0;
+    border: 1px solid #e0e0e0;
+}
+
+QPushButton:pressed {
+    background-color: #d0d0d0;
+    border: 1px solid #888888;
+}
+</string>
+          </property>
+          <property name="text">
+           <string>Actualizar (PRO)</string>
+          </property>
+          <property name="icon">
+           <iconset resource="../img/img.qrc">
+            <normaloff>:/img/star.png</normaloff>:/img/star.png</iconset>
+          </property>
+          <property name="iconSize">
+           <size>
+            <width>20</width>
+            <height>20</height>
+           </size>
+          </property>
          </widget>
         </item>
         <item>
@@ -1491,7 +1477,7 @@ QPushButton:pressed {
        <item>
         <widget class="QStackedWidget" name="stackedWidget">
          <property name="currentIndex">
-          <number>1</number>
+          <number>0</number>
          </property>
          <widget class="QWidget" name="page">
           <layout class="QVBoxLayout" name="verticalLayout_7">
@@ -2121,7 +2107,7 @@ QPushButton:checked {
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>185</width>
+                 <width>212</width>
                  <height>605</height>
                 </rect>
                </property>
@@ -2562,7 +2548,7 @@ QPushButton:checked {
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>831</width>
+                        <width>796</width>
                         <height>822</height>
                        </rect>
                       </property>

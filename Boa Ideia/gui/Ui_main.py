@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'mainnqUKhj.ui'
+## Form generated from reading UI file 'mainRpkcLI.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -354,7 +354,7 @@ class Ui_AquaPump(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 187, 452))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 177, 405))
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.projecto_2 = QPushButton(self.scrollAreaWidgetContents)
@@ -427,22 +427,12 @@ class Ui_AquaPump(object):
 
         self.verticalLayout_3.addWidget(self.novo_arquivo)
 
-        self.projectos_recentes = QPushButton(self.projecto)
-        self.projectos_recentes.setObjectName(u"projectos_recentes")
-        self.projectos_recentes.setMinimumSize(QSize(0, 0))
-        icon3 = QIcon()
-        icon3.addFile(u":/img/recente.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.projectos_recentes.setIcon(icon3)
-        self.projectos_recentes.setIconSize(QSize(16, 16))
-
-        self.verticalLayout_3.addWidget(self.projectos_recentes)
-
         self.salvar_projecto = QPushButton(self.projecto)
         self.salvar_projecto.setObjectName(u"salvar_projecto")
         self.salvar_projecto.setMinimumSize(QSize(0, 0))
-        icon4 = QIcon()
-        icon4.addFile(u":/img/pasta.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.salvar_projecto.setIcon(icon4)
+        icon3 = QIcon()
+        icon3.addFile(u":/img/pasta.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.salvar_projecto.setIcon(icon3)
         self.salvar_projecto.setIconSize(QSize(16, 16))
 
         self.verticalLayout_3.addWidget(self.salvar_projecto)
@@ -450,9 +440,9 @@ class Ui_AquaPump(object):
         self.abrir_arquivo = QPushButton(self.projecto)
         self.abrir_arquivo.setObjectName(u"abrir_arquivo")
         self.abrir_arquivo.setMinimumSize(QSize(0, 0))
-        icon5 = QIcon()
-        icon5.addFile(u":/img/pasta (1).png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.abrir_arquivo.setIcon(icon5)
+        icon4 = QIcon()
+        icon4.addFile(u":/img/pasta (1).png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.abrir_arquivo.setIcon(icon4)
         self.abrir_arquivo.setIconSize(QSize(16, 16))
 
         self.verticalLayout_3.addWidget(self.abrir_arquivo)
@@ -463,30 +453,6 @@ class Ui_AquaPump(object):
         self.line.setFrameShadow(QFrame.Shadow.Sunken)
 
         self.verticalLayout_3.addWidget(self.line)
-
-        self.pushButton = QPushButton(self.projecto)
-        self.pushButton.setObjectName(u"pushButton")
-        icon6 = QIcon()
-        icon6.addFile(u":/img/kml.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.pushButton.setIcon(icon6)
-
-        self.verticalLayout_3.addWidget(self.pushButton)
-
-        self.pushButton_2 = QPushButton(self.projecto)
-        self.pushButton_2.setObjectName(u"pushButton_2")
-        icon7 = QIcon()
-        icon7.addFile(u":/img/arquivo-csv.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.pushButton_2.setIcon(icon7)
-
-        self.verticalLayout_3.addWidget(self.pushButton_2)
-
-        self.pushButton_4 = QPushButton(self.projecto)
-        self.pushButton_4.setObjectName(u"pushButton_4")
-        icon8 = QIcon()
-        icon8.addFile(u":/img/arquivo.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.pushButton_4.setIcon(icon8)
-
-        self.verticalLayout_3.addWidget(self.pushButton_4)
 
 
         self.verticalLayout_4.addWidget(self.projecto)
@@ -547,9 +513,9 @@ class Ui_AquaPump(object):
         self.exportar_pdf = QPushButton(self.exportar)
         self.exportar_pdf.setObjectName(u"exportar_pdf")
         self.exportar_pdf.setMinimumSize(QSize(0, 36))
-        icon9 = QIcon()
-        icon9.addFile(u":/img/pdf.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.exportar_pdf.setIcon(icon9)
+        icon5 = QIcon()
+        icon5.addFile(u":/img/pdf.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.exportar_pdf.setIcon(icon5)
         self.exportar_pdf.setIconSize(QSize(16, 16))
 
         self.verticalLayout_6.addWidget(self.exportar_pdf)
@@ -557,7 +523,9 @@ class Ui_AquaPump(object):
         self.exportar_csv = QPushButton(self.exportar)
         self.exportar_csv.setObjectName(u"exportar_csv")
         self.exportar_csv.setMinimumSize(QSize(0, 36))
-        self.exportar_csv.setIcon(icon7)
+        icon6 = QIcon()
+        icon6.addFile(u":/img/arquivo-csv.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.exportar_csv.setIcon(icon6)
         self.exportar_csv.setIconSize(QSize(16, 16))
 
         self.verticalLayout_6.addWidget(self.exportar_csv)
@@ -584,6 +552,41 @@ class Ui_AquaPump(object):
         self.scrollArea.setWidget(self.scrollAreaWidgetContents)
 
         self.verticalLayout_2.addWidget(self.scrollArea)
+
+        self.pushButton_3 = QPushButton(self.frame_4)
+        self.pushButton_3.setObjectName(u"pushButton_3")
+        self.pushButton_3.setStyleSheet(u"QPushButton {\n"
+"text-align: left;\n"
+"padding: 8px 2px;\n"
+"}\n"
+"\n"
+"QPushButton {\n"
+"    background-color: transparent;\n"
+"    color: #000000;\n"
+"    border: none;\n"
+"    border-radius: 3px;\n"
+"    padding: 6px 12px;\n"
+"    font-size: 14px;\n"
+"    font-family: Roboto;\n"
+"	text-align: left;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #e0e0e0;\n"
+"    border: 1px solid #e0e0e0;\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"    background-color: #d0d0d0;\n"
+"    border: 1px solid #888888;\n"
+"}\n"
+"")
+        icon7 = QIcon()
+        icon7.addFile(u":/img/star.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.pushButton_3.setIcon(icon7)
+        self.pushButton_3.setIconSize(QSize(20, 20))
+
+        self.verticalLayout_2.addWidget(self.pushButton_3)
 
         self.configuracoes = QPushButton(self.frame_4)
         self.configuracoes.setObjectName(u"configuracoes")
@@ -616,9 +619,9 @@ class Ui_AquaPump(object):
 "    border: 1px solid #888888;\n"
 "}\n"
 "")
-        icon10 = QIcon()
-        icon10.addFile(u":/img/settings_67dp_999999_FILL1_wght400_GRAD0_opsz48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.configuracoes.setIcon(icon10)
+        icon8 = QIcon()
+        icon8.addFile(u":/img/settings_67dp_999999_FILL1_wght400_GRAD0_opsz48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.configuracoes.setIcon(icon8)
         self.configuracoes.setIconSize(QSize(20, 20))
 
         self.verticalLayout_2.addWidget(self.configuracoes)
@@ -654,9 +657,9 @@ class Ui_AquaPump(object):
 "    border: 1px solid #888888;\n"
 "}\n"
 "")
-        icon11 = QIcon()
-        icon11.addFile(u":/img/sair.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.sair_2.setIcon(icon11)
+        icon9 = QIcon()
+        icon9.addFile(u":/img/sair.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.sair_2.setIcon(icon9)
         self.sair_2.setIconSize(QSize(20, 20))
 
         self.verticalLayout_2.addWidget(self.sair_2)
@@ -806,9 +809,9 @@ class Ui_AquaPump(object):
 "}\n"
 "\n"
 "")
-        icon12 = QIcon()
-        icon12.addFile(u":/img/janelinha.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.abrir_layout_3.setIcon(icon12)
+        icon10 = QIcon()
+        icon10.addFile(u":/img/janelinha.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.abrir_layout_3.setIcon(icon10)
         self.abrir_layout_3.setIconSize(QSize(26, 26))
 
         self.horizontalLayout_9.addWidget(self.abrir_layout_3)
@@ -847,9 +850,9 @@ class Ui_AquaPump(object):
 "padding-top:8px;\n"
 "padding-bottom:5px\n"
 "}")
-        icon13 = QIcon()
-        icon13.addFile(u":/img/projecto.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.projeto.setIcon(icon13)
+        icon11 = QIcon()
+        icon11.addFile(u":/img/projecto.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.projeto.setIcon(icon11)
         self.projeto.setIconSize(QSize(24, 24))
 
         self.verticalLayout_5.addWidget(self.projeto)
@@ -858,9 +861,9 @@ class Ui_AquaPump(object):
         self.exportar_2.setObjectName(u"exportar_2")
         self.exportar_2.setStyleSheet(u"padding-top:5px;\n"
 "padding-bottom:5px")
-        icon14 = QIcon()
-        icon14.addFile(u":/img/exportar.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.exportar_2.setIcon(icon14)
+        icon12 = QIcon()
+        icon12.addFile(u":/img/exportar.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.exportar_2.setIcon(icon12)
         self.exportar_2.setIconSize(QSize(24, 24))
 
         self.verticalLayout_5.addWidget(self.exportar_2)
@@ -869,9 +872,9 @@ class Ui_AquaPump(object):
         self.relatorio_3.setObjectName(u"relatorio_3")
         self.relatorio_3.setStyleSheet(u"padding-top:5px;\n"
 "padding-bottom:5px")
-        icon15 = QIcon()
-        icon15.addFile(u":/img/relatorio.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.relatorio_3.setIcon(icon15)
+        icon13 = QIcon()
+        icon13.addFile(u":/img/relatorio.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.relatorio_3.setIcon(icon13)
         self.relatorio_3.setIconSize(QSize(24, 24))
 
         self.verticalLayout_5.addWidget(self.relatorio_3)
@@ -880,9 +883,9 @@ class Ui_AquaPump(object):
         self.grafico_icon.setObjectName(u"grafico_icon")
         self.grafico_icon.setStyleSheet(u"padding-top:5px;\n"
 "padding-bottom:5px")
-        icon16 = QIcon()
-        icon16.addFile(u":/img/grafico.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.grafico_icon.setIcon(icon16)
+        icon14 = QIcon()
+        icon14.addFile(u":/img/grafico.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.grafico_icon.setIcon(icon14)
         self.grafico_icon.setIconSize(QSize(24, 24))
 
         self.verticalLayout_5.addWidget(self.grafico_icon)
@@ -922,7 +925,7 @@ class Ui_AquaPump(object):
 "    border: 1px solid #888888;\n"
 "}\n"
 "")
-        self.configuracoes_2.setIcon(icon10)
+        self.configuracoes_2.setIcon(icon8)
         self.configuracoes_2.setIconSize(QSize(20, 20))
 
         self.verticalLayout_5.addWidget(self.configuracoes_2)
@@ -958,7 +961,7 @@ class Ui_AquaPump(object):
 "    border: 1px solid #888888;\n"
 "}\n"
 "")
-        self.sair_3.setIcon(icon11)
+        self.sair_3.setIcon(icon9)
         self.sair_3.setIconSize(QSize(20, 20))
 
         self.verticalLayout_5.addWidget(self.sair_3)
@@ -1086,9 +1089,9 @@ class Ui_AquaPump(object):
         self.horizontalLayout_13.setContentsMargins(9, -1, 9, -1)
         self.fechar_perfil = QToolButton(self.widget_2)
         self.fechar_perfil.setObjectName(u"fechar_perfil")
-        icon17 = QIcon()
-        icon17.addFile(u":/img/bottom.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.fechar_perfil.setIcon(icon17)
+        icon15 = QIcon()
+        icon15.addFile(u":/img/bottom.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.fechar_perfil.setIcon(icon15)
         self.fechar_perfil.setIconSize(QSize(24, 24))
 
         self.horizontalLayout_13.addWidget(self.fechar_perfil)
@@ -1100,18 +1103,18 @@ class Ui_AquaPump(object):
         self.opcoes_perfil = QToolButton(self.widget_2)
         self.opcoes_perfil.setObjectName(u"opcoes_perfil")
         self.opcoes_perfil.setStyleSheet(u"padding-right: 15px")
-        icon18 = QIcon()
-        icon18.addFile(u":/img/opcoes.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.opcoes_perfil.setIcon(icon18)
+        icon16 = QIcon()
+        icon16.addFile(u":/img/opcoes.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.opcoes_perfil.setIcon(icon16)
         self.opcoes_perfil.setIconSize(QSize(24, 24))
 
         self.horizontalLayout_13.addWidget(self.opcoes_perfil)
 
         self.expandir_2 = QToolButton(self.widget_2)
         self.expandir_2.setObjectName(u"expandir_2")
-        icon19 = QIcon()
-        icon19.addFile(u":/img/zoom.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.expandir_2.setIcon(icon19)
+        icon17 = QIcon()
+        icon17.addFile(u":/img/zoom.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.expandir_2.setIcon(icon17)
         self.expandir_2.setIconSize(QSize(24, 24))
 
         self.horizontalLayout_13.addWidget(self.expandir_2)
@@ -1145,9 +1148,9 @@ class Ui_AquaPump(object):
         self.horizontalLayout_12.setObjectName(u"horizontalLayout_12")
         self.fechar_lateral_2 = QToolButton(self.janel_direita)
         self.fechar_lateral_2.setObjectName(u"fechar_lateral_2")
-        icon20 = QIcon()
-        icon20.addFile(u":/img/right_panel_close.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.fechar_lateral_2.setIcon(icon20)
+        icon18 = QIcon()
+        icon18.addFile(u":/img/right_panel_close.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.fechar_lateral_2.setIcon(icon18)
         self.fechar_lateral_2.setIconSize(QSize(24, 24))
 
         self.horizontalLayout_12.addWidget(self.fechar_lateral_2)
@@ -1169,23 +1172,23 @@ class Ui_AquaPump(object):
         self.definicoes_direita_2 = QToolButton(self.janel_direita)
         self.definicoes_direita_2.setObjectName(u"definicoes_direita_2")
         self.definicoes_direita_2.setStyleSheet(u"padding-right: 15px")
-        self.definicoes_direita_2.setIcon(icon18)
+        self.definicoes_direita_2.setIcon(icon16)
         self.definicoes_direita_2.setIconSize(QSize(24, 24))
 
         self.horizontalLayout_12.addWidget(self.definicoes_direita_2)
 
         self.actualizar_grafico = QToolButton(self.janel_direita)
         self.actualizar_grafico.setObjectName(u"actualizar_grafico")
-        icon21 = QIcon()
-        icon21.addFile(u":/img/refresh.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.actualizar_grafico.setIcon(icon21)
+        icon19 = QIcon()
+        icon19.addFile(u":/img/refresh.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.actualizar_grafico.setIcon(icon19)
         self.actualizar_grafico.setIconSize(QSize(20, 20))
 
         self.horizontalLayout_12.addWidget(self.actualizar_grafico)
 
         self.expandir_3 = QToolButton(self.janel_direita)
         self.expandir_3.setObjectName(u"expandir_3")
-        self.expandir_3.setIcon(icon19)
+        self.expandir_3.setIcon(icon17)
         self.expandir_3.setIconSize(QSize(24, 24))
 
         self.horizontalLayout_12.addWidget(self.expandir_3)
@@ -1318,7 +1321,7 @@ class Ui_AquaPump(object):
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollAreaWidgetContents_3 = QWidget()
         self.scrollAreaWidgetContents_3.setObjectName(u"scrollAreaWidgetContents_3")
-        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 185, 609))
+        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 212, 605))
         self.verticalLayout_14 = QVBoxLayout(self.scrollAreaWidgetContents_3)
         self.verticalLayout_14.setSpacing(10)
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
@@ -1327,9 +1330,9 @@ class Ui_AquaPump(object):
         self.geral.setObjectName(u"geral")
         self.geral.setMinimumSize(QSize(0, 0))
         self.geral.setMaximumSize(QSize(20000, 16777215))
-        icon22 = QIcon()
-        icon22.addFile(u":/img/geral.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.geral.setIcon(icon22)
+        icon20 = QIcon()
+        icon20.addFile(u":/img/geral.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.geral.setIcon(icon20)
         self.geral.setIconSize(QSize(16, 16))
         self.geral.setCheckable(True)
         self.geral.setChecked(True)
@@ -1339,9 +1342,9 @@ class Ui_AquaPump(object):
 
         self.unidades = QPushButton(self.scrollAreaWidgetContents_3)
         self.unidades.setObjectName(u"unidades")
-        icon23 = QIcon()
-        icon23.addFile(u":/img/unidades.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.unidades.setIcon(icon23)
+        icon21 = QIcon()
+        icon21.addFile(u":/img/unidades.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.unidades.setIcon(icon21)
         self.unidades.setIconSize(QSize(16, 16))
         self.unidades.setCheckable(True)
         self.unidades.setAutoExclusive(True)
@@ -1350,9 +1353,9 @@ class Ui_AquaPump(object):
 
         self.banco_dados = QPushButton(self.scrollAreaWidgetContents_3)
         self.banco_dados.setObjectName(u"banco_dados")
-        icon24 = QIcon()
-        icon24.addFile(u":/img/dados.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.banco_dados.setIcon(icon24)
+        icon22 = QIcon()
+        icon22.addFile(u":/img/dados.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.banco_dados.setIcon(icon22)
         self.banco_dados.setCheckable(True)
         self.banco_dados.setAutoExclusive(True)
 
@@ -1585,7 +1588,7 @@ class Ui_AquaPump(object):
         self.scrollArea_4.setWidgetResizable(True)
         self.scrollAreaWidgetContents_4 = QWidget()
         self.scrollAreaWidgetContents_4.setObjectName(u"scrollAreaWidgetContents_4")
-        self.scrollAreaWidgetContents_4.setGeometry(QRect(0, 0, 831, 822))
+        self.scrollAreaWidgetContents_4.setGeometry(QRect(0, 0, 796, 822))
         self.verticalLayout_28 = QVBoxLayout(self.scrollAreaWidgetContents_4)
         self.verticalLayout_28.setSpacing(30)
         self.verticalLayout_28.setObjectName(u"verticalLayout_28")
@@ -1947,10 +1950,6 @@ class Ui_AquaPump(object):
 #endif // QT_CONFIG(tooltip)
         self.novo_arquivo.setText(QCoreApplication.translate("AquaPump", u"Novo Arquivo", None))
 #if QT_CONFIG(tooltip)
-        self.projectos_recentes.setToolTip(QCoreApplication.translate("AquaPump", u"Projectos Recentes", None))
-#endif // QT_CONFIG(tooltip)
-        self.projectos_recentes.setText(QCoreApplication.translate("AquaPump", u"Projectos Recentes", None))
-#if QT_CONFIG(tooltip)
         self.salvar_projecto.setToolTip(QCoreApplication.translate("AquaPump", u"Salvar Projecto", None))
 #endif // QT_CONFIG(tooltip)
         self.salvar_projecto.setText(QCoreApplication.translate("AquaPump", u"Salvar Projecto", None))
@@ -1958,14 +1957,12 @@ class Ui_AquaPump(object):
         self.abrir_arquivo.setToolTip(QCoreApplication.translate("AquaPump", u"Abrir Projecto", None))
 #endif // QT_CONFIG(tooltip)
         self.abrir_arquivo.setText(QCoreApplication.translate("AquaPump", u"Abrir Arquivo", None))
-        self.pushButton.setText(QCoreApplication.translate("AquaPump", u"Carregar KML", None))
-        self.pushButton_2.setText(QCoreApplication.translate("AquaPump", u"Carregar CSV", None))
-        self.pushButton_4.setText(QCoreApplication.translate("AquaPump", u"Carregar Shapefile", None))
         self.parametros.setText(QCoreApplication.translate("AquaPump", u"Exportar", None))
         self.exportar_pdf.setText(QCoreApplication.translate("AquaPump", u"Exportar em PDF", None))
         self.exportar_csv.setText(QCoreApplication.translate("AquaPump", u"Exportar em CSV", None))
-        self.rel.setText(QCoreApplication.translate("AquaPump", u"Relat\u00f3rio ", None))
+        self.rel.setText(QCoreApplication.translate("AquaPump", u"Selec\u00e7\u00e3o de Bombas", None))
         self.grafico.setText(QCoreApplication.translate("AquaPump", u"Gr\u00e1ficos ", None))
+        self.pushButton_3.setText(QCoreApplication.translate("AquaPump", u"Actualizar (PRO)", None))
         self.configuracoes.setText(QCoreApplication.translate("AquaPump", u"Configura\u00e7\u00f5es ", None))
         self.sair_2.setText(QCoreApplication.translate("AquaPump", u"Sair", None))
 #if QT_CONFIG(tooltip)
