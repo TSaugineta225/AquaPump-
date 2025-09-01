@@ -1962,7 +1962,7 @@ class Ui_AquaPump(object):
         self.exportar_csv.setText(QCoreApplication.translate("AquaPump", u"Exportar em CSV", None))
         self.rel.setText(QCoreApplication.translate("AquaPump", u"Selec\u00e7\u00e3o de Bombas", None))
         self.grafico.setText(QCoreApplication.translate("AquaPump", u"Gr\u00e1ficos ", None))
-        self.pushButton_3.setText(QCoreApplication.translate("AquaPump", u"Actualizar (PRO)", None))
+        self.pushButton_3.setText(QCoreApplication.translate("AquaPump", u"Quero ser PRO - Saber Mais", None))
         self.configuracoes.setText(QCoreApplication.translate("AquaPump", u"Configura\u00e7\u00f5es ", None))
         self.sair_2.setText(QCoreApplication.translate("AquaPump", u"Sair", None))
 #if QT_CONFIG(tooltip)

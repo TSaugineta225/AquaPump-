@@ -277,3 +277,5 @@ QMenu::separator {
     background: #dcdcdc;
     margin: 4px 8px;
 }
+
+

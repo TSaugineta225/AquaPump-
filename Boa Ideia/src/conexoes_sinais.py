@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QMessageBox
 from PySide6.QtCore import Qt
+import webbrowser
 
 class ConexoesUI():
     def __init__(self, parent=None, menu=None, animacoes=None, configuracoes=None):
@@ -161,7 +162,6 @@ class ConexoesUI():
         self.parent.projecto_2.clicked.connect(lambda: self.animacoes.altura(self.parent.projecto, altura=100))
     
     def _connectar_versao_pro(self):
-
         msg = QMessageBox(self.parent)
         msg.setWindowTitle("Suporte Técnico")
         msg.setIcon(QMessageBox.Information)
@@ -169,9 +169,9 @@ class ConexoesUI():
         msg.setTextFormat(Qt.RichText)
         msg.setText(
             """
-
-            <h3 style="margin-bottom: 8px;">Versão Pro - Em Breve </h3>
-            <p>A versão Pro estará disponível em breve, trazendo novas funcionalidades e um suporte mais completo.</p>
+            <h3 style="margin-bottom: 8px;">Versão Pro - Em Breve</h3>
+            <p>O lançamento oficial da versão Pro está agendado para breve. 
+            Clique abaixo para se registar na lista de espera e receber um desconto de lançamento.</p>
             <p><b>Entre em contacto connosco:</b></p>
             <p>
                 <b>Email:</b> <a href="mailto:tenerifenhalicale@outlook.com">
@@ -180,6 +180,12 @@ class ConexoesUI():
             </p>
             """
         )
-        msg.setStandardButtons(QMessageBox.Ok)
+
+        btn_pro = msg.addButton("Quero ser PRO", QMessageBox.ActionRole)
+        msg.addButton(QMessageBox.Close)
+
+        if msg.clickedButton() == btn_pro:
+            webbrowser.open("https://forms.gle/teu_link_lista_de_espera")
+            msg.setStandardButtons(QMessageBox.Ok)
    
         self.parent.pushButton_3.clicked.connect(msg.exec)
