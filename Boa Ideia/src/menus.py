@@ -85,7 +85,7 @@ class Menus:
         # --- Submenu Exportar ---
         submenu_exportar = QMenu("Exportar", rel)
         exportar_pdf = QAction(QIcon(":/img/pdf.png"), "Exportar para PDF", self.parent)
-        exportar_csv = QAction(QIcon(":/img/arquivo-csv.png"), "Exportar para CSV", self.parent)
+        exportar_csv = QAction(QIcon(":/img/arquivo-csv.png"), "Exportar para XLSX", self.parent)
 
         exportar_csv.setShortcut("Ctrl+Shift+C")
         exportar_pdf.setShortcut("Ctrl+Shift+P")
@@ -157,14 +157,26 @@ class Menus:
         self.principal = QAction("Curva H vs Q (Altura vs Vazão)", self.parent)
         self.potencia = QAction("Curva de Potência vs Vazão (P vs Q)", self.parent)
         self.rendimento = QAction("Curva de Eficiência vs Vazão (η vs Q)", self.parent)
+        self.associacao = QAction("Associação de Bombas Iguais", self.parent)
+        self.principal.setCheckable(True)
+        self.potencia.setCheckable(True)
+        self.rendimento.setCheckable(True)
+        self.principal.setChecked(True)
 
+        sub_menu_associacao = QMenu("Tipo de Associação", self.parent)
+        self.associacao_paralelo = QAction("Associação em Paralelo", self.parent)
+        self.associacao_serie = QAction("Associação em Série", self.parent)
         # --- Sinais ---
         if self.parent:
             self.principal.triggered.connect(lambda: self.sub_menus_selecao(self.principal, 0))
             self.potencia.triggered.connect(lambda: self.sub_menus_selecao(self.potencia, 1))
             self.rendimento.triggered.connect(lambda: self.sub_menus_selecao(self.rendimento, 2))
 
+        sub_menu_associacao.addActions([self.associacao_paralelo, self.associacao_serie])
+        self.associacao.setMenu(sub_menu_associacao)
         selecao.addActions([self.principal, self.potencia, self.rendimento])
+        selecao.addSeparator()
+        selecao.addAction(self.associacao)
         return selecao
 
     # ---------------- FUNÇÕES AUXILIARES ----------------

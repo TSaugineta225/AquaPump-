@@ -19,7 +19,7 @@ from reportlab.lib.pagesizes import A4
 from reportlab.pdfgen import canvas
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfbase import pdfmetrics
-from PySide6.QtWidgets import QMessageBox
+from PySide6.QtWidgets import QMessageBox, QFileDialog
 import matplotlib.pyplot as plt
 
 class PDF():
@@ -29,7 +29,7 @@ class PDF():
         self.configuracao_dos_styles()
         self.Relatorio = []
         try:
-            pdfmetrics.registerFont(TTFont('GastrolinaSignature', r'scripts\GastrolineSignature_PERSONAL_USE_ONLY.ttf'))
+            pdfmetrics.registerFont(TTFont('GastrolinaSignature', r'src\GastrolineSignature_PERSONAL_USE_ONLY.ttf'))
         except:
             pass  # Usar fonte padrão se a personalizada não estiver disponível
 
@@ -152,10 +152,25 @@ class PDF():
     def gravar_pdf(self, caminho=None):
         try:
             if caminho is None:
-                caminho = 'doc.pdf'
+                caminho, _ = QFileDialog.getSaveFileName(
+                    None, "Salvar como PDF", "Relatório.pdf", "Arquivos PDF (*.pdf)"
+                )
+                if not caminho:
+                    return False
             
-            self.doc.build(self.Relatorio, onLaterPages=self.rodape, onFirstPage=self.rodape)
+            if not caminho.endswith('.pdf'):
+                caminho += '.pdf'
 
+            # Cria o documento com o caminho especificado
+            doc = SimpleDocTemplate(caminho, pagesize=A4)
+
+            doc.build(
+                self.Relatorio,
+                onFirstPage=self.rodape,
+                onLaterPages=self.rodape
+            )
+
+            # Abre o PDF após gerar
             caminho_absoluto = os.path.abspath(caminho)
             webbrowser.open_new(f"file://{caminho_absoluto}")
             

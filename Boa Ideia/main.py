@@ -6,10 +6,10 @@ import img.img_rc
 # ================== Qt Imports ==================
 from PySide6.QtCore import (
     Qt, QUrl, QEvent, QSize, QPoint, QTimer, Signal, Slot, QSettings, QStringListModel,
-    QPropertyAnimation, QEasingCurve
+    QPropertyAnimation, QEasingCurve, 
 )
 from PySide6.QtGui import (
-    QIcon, QAction, QDoubleValidator, QSurfaceFormat
+    QIcon, QAction, QDoubleValidator, QSurfaceFormat, QColor
 )
 from PySide6.QtWidgets import (
     QApplication, QWidget, QLabel, QMenu, QCompleter, QToolButton,
@@ -53,6 +53,9 @@ os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = ("--disable-gpu-vsync --disable-frame
 # ==========================================================
 #                       MAIN WINDOW
 # ==========================================================
+
+from qframelesswindow import FramelessWindow, TitleBar, StandardTitleBar
+
 class MainWindow(FramelessWindow, Ui_AquaPump):
 
     def __init__(self, parent=None):
@@ -60,6 +63,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.setupUi(self)
 
         # ---------- Configurações da Janela ----------
+        #self.setTitleBar(CustomTitleBar(self))
         self.setWindowTitle("AquaPump")
         self.ex_3 = chr(0x00B3)   # Expoente para m³
 
@@ -258,6 +262,9 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             v=self.caudal_box.currentText()
         )
 
+        self.grafico_associacao = Grafico(tipo='associacao', modo_associacao='serie')
+        self.grafico_associacao_2 = Grafico(tipo='associacao', modo_associacao='paralelo')
+
         # Remove layouts antigos antes de adicionar novos
         for widget in [self.altura, self.potencia, self.rendimento]:
             if widget.layout():
@@ -342,12 +349,12 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         try:
             material = self.darcy.currentText() if self.radioButton_10.isChecked() else self.hazen_will.currentText()
             dados_relatorio = {
-                'Vazão': (f"{self.vazao:.4f}", 'm³/s'),
+                'Vazão': (f"{self.vazao:.4f}", f'{self.icone_2.currentText()}'),
                 'Tempo de funcionamento': (f"{self.tempo:.2f}", 'horas'),
-                'Diâmetro da tubulação': (f"{self.diametro_tubulacao:.4f}", 'm'),
-                'Altura geométrica': (f"{self.altura_geometrica_val:.2f}", 'm'),
-                'Perdas totais': (f"{self.perdas_totais:.4f}", 'm'),
-                'Altura manométrica': (f"{self.altura_manometrica:.2f}", 'm'),
+                'Diâmetro da tubulação': (f"{self.diametro_tubulacao:.4f}", f'{self.diametro_box.currentText()}'),
+                'Altura geométrica': (f"{self.altura_geometrica_val:.2f}", f'{self.altura_box.currentText()}'),
+                'Perdas totais': (f"{self.perdas_totais:.4f}", f'{self.altura_box.currentText()}'),
+                'Altura manométrica': (f"{self.altura_manometrica:.2f}", f'{self.altura_box.currentText()}'),
                 'Material da Tubulação': (material, None),
             }
             
@@ -358,6 +365,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             
             # Gerar PDF
             self.relatorio_pdf.gravar_pdf()
+            QMessageBox.information(self, "Sucesso", "Relatório PDF gerado com sucesso!")
             
         except Exception as e:
             QMessageBox.critical(self, 'ERRO', f'Erro ao gerar PDF devido a {e}')
@@ -368,12 +376,12 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             
             # Coletar os mesmos dados que seriam usados no PDF
             dados_relatorio = {
-                'Vazão': (f"{self.vazao:.4f}", 'm³/s'),
+                'Vazão': (f"{self.vazao:.4f}", f'{self.icone_2.currentText()}'),
                 'Tempo de funcionamento': (f"{self.tempo:.2f}", 'horas'),
-                'Diâmetro da tubulação': (f"{self.diametro_tubulacao:.4f}", 'm'),
-                'Altura geométrica': (f"{self.altura_geometrica_val:.2f}", 'm'),
-                'Perdas totais': (f"{self.perdas_totais:.4f}", 'm'),
-                'Altura manométrica': (f"{self.altura_manometrica:.2f}", 'm'),
+                'Diâmetro da tubulação': (f"{self.diametro_tubulacao:.4f}", f'{self.diametro_box.currentText()}'),
+                'Altura geométrica': (f"{self.altura_geometrica_val:.2f}", f'{self.altura_box.currentText()}'),
+                'Perdas totais': (f"{self.perdas_totais:.4f}", f'{self.altura_box.currentText()}'),
+                'Altura manométrica': (f"{self.altura_manometrica:.2f}", f'{self.altura_box.currentText()}'),
                 'Material da Tubulação': (material, None),
             }
             
@@ -394,17 +402,17 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             csv_exporter.adicionar_conjunto_dados(dados_relatorio, "Cálculos do Sistema")
             
             # Gerar CSV
-            sucesso = csv_exporter.exportar("relatorio_bombeamento.csv")
+            sucesso = csv_exporter.exportar("relatorio")
             
             if sucesso:
-                QMessageBox.information(self, "Sucesso", "Relatório CSV gerado com sucesso!")
+                QMessageBox.information(self, "Sucesso", "Relatório Excel gerado com sucesso!")
             else:
-                QMessageBox.warning(self, "Aviso", "Não foi possível gerar o relatório CSV.")
+                QMessageBox.warning(self, "Aviso", "Não foi possível gerar o relatório Excel.")
                 
             return sucesso
             
         except Exception as e:
-            QMessageBox.warning(self, "Erro", f"Ocorreu um erro ao gerar o CSV: {str(e)}")
+            QMessageBox.warning(self, "Erro", f"Ocorreu um erro ao gerar o relatório: {str(e)}")
             return False
         
     # =========================================================
@@ -547,7 +555,6 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    # Apply stylesheet if it exists
     try:
         with open(r"estilos\estilos.qss", "r") as f:
             app.setStyleSheet(f.read())
