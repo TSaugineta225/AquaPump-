@@ -36,6 +36,7 @@ from src.configurações import Configuracoes
 from src.JavaScript import Mapa
 from src.animações import Animações
 from src.historico import HistoricoManager
+from src.gestor_database import GestorDatabase
 from src.web_channel import (
     Dados, Altura_Geometrica, Dimensao_Tubulacao, Acessorios_sistema
 )
