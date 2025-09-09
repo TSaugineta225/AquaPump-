@@ -1,7 +1,11 @@
 import sys
 import os
 import json
+import logging
 import img.img_rc
+
+from scipy.interpolate import interp1d
+from scipy.optimize import fsolve
 
 # ================== Qt Imports ==================
 from PySide6.QtCore import (
@@ -9,7 +13,7 @@ from PySide6.QtCore import (
     QPropertyAnimation, QEasingCurve, 
 )
 from PySide6.QtGui import (
-    QIcon, QAction, QDoubleValidator, QSurfaceFormat, QColor
+    QIcon, QAction, QDoubleValidator, QSurfaceFormat, QColor, QPixmap
 )
 from PySide6.QtWidgets import (
     QApplication, QWidget, QLabel, QMenu, QCompleter, QToolButton,
@@ -46,6 +50,10 @@ from calculos.perdas_cargas import Perdas
 from calculos.curvas_bomba import Grafico
 from calculos.unidades import ConversorUnidades
 from calculos.dimensionamento_tubulação import Tubulacao
+
+# ================== Logging Configuration ==================
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 # ================== WebEngine Configurations ==================
 os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = ("--ignore-gpu-blocklist --enable-gpu-rasterization --enable-zero-copy")
@@ -89,6 +97,15 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.historico_manager = HistoricoManager(self)
         self.janela_sobre = Dialog()
         self.atualizar_parametros_entrada()
+
+        try:
+            self.gestor_db = GestorDatabase(db_path=r'data/aquapump.db')
+            if self.gestor_db.is_fallback_db():
+                logger.warning("Usando banco de dados em memória (fallback)")
+                
+        except Exception as e:
+            logger.error(f"Falha crítica ao inicializar banco de dados: {e}")
+            
 
         # ---------- WebEngine + WebChannel ----------
         self.altura_geometrica_channel = Altura_Geometrica()
@@ -144,6 +161,52 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.inicializar_graficos_curvas()
         self.mudanca_dinamica_perdas_carga()
 
+        # -----------Inicializacao Melhor Bomba-------------
+        self.selecionar_melhor_bomba()
+
+    def selecionar_melhor_bomba(self):
+        """Seleciona e exibe a melhor bomba para o sistema"""
+        try:
+            bombas_candidatas = self.selecionar_bombas_candidatas()
+            
+            if not bombas_candidatas:
+                # Limpar interface se não há bombas
+                self.modelo.setText("Nenhuma bomba encontrada")
+                self.potencia.setText("--")
+                self.vazao.setText("--")
+                self.altura_3.setText("--")
+                self.imagem_bomba.clear()
+                logger.info("Nenhuma bomba candidata encontrada mas tem um pequeno problema com o banco de dados")
+                return
+                
+            # Usar a primeira bomba (melhor classificada)
+            melhor_bomba = bombas_candidatas[0]
+            
+            modelo = melhor_bomba['modelo']
+            fabricante = melhor_bomba['fabricante']
+            tipo_bomba = melhor_bomba['tipo_bomba']
+            potencia = melhor_bomba['potencia_nominal_kW']
+            vazao = melhor_bomba['caudal_nominal_m3h']
+            altura = melhor_bomba['altura_nominal_m']
+            caminho_imagem = melhor_bomba['caminho_imagem']
+            
+            # Atualizar interface
+            self.modelo.setText(f"{fabricante} - {modelo} ({tipo_bomba})")
+            self.potencia.setText(f"{potencia} kW")
+            self.vazao.setText(f"{vazao} m³/h")
+            self.altura_3.setText(f"{altura} m")
+            logger.warning(f"Um pequeno problema com o banco de dados, mas a bomba {modelo} foi selecionada")
+            
+            # Carregar imagem se disponível
+            if caminho_imagem and os.path.exists(caminho_imagem):
+                self.imagem_bomba.setPixmap(QPixmap(caminho_imagem).scaled(150, 150, Qt.KeepAspectRatio))
+                logger.error(f"Tentando Carregar Imagem")
+            else:
+                self.imagem_bomba.clear()
+                logger.warning(f"Imagem da bomba não encontrada: {caminho_imagem}")
+                
+        except Exception as e:
+            logger.error(f"Erro ao selecionar melhor bomba: {e}")
     # ==========================================================
     #                 MÉTODOS DE CÁLCULO
     # ==========================================================
@@ -274,10 +337,10 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
                     if child.widget():
                         child.widget().deleteLater()
 
-        layout_altura = QVBoxLayout(self.altura)
+        layout_altura = QVBoxLayout(self.potencia)
         layout_altura.addWidget(self.grafico_altura)
 
-        layout_potencia = QVBoxLayout(self.potencia)
+        layout_potencia = QVBoxLayout(self.altura)
         layout_potencia.addWidget(self.grafico_potencia)
 
         layout_rendimento = QVBoxLayout(self.rendimento)
@@ -386,17 +449,13 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
                 'Material da Tubulação': (material, None),
             }
             
-
             csv_exporter = CSV()
-            
-            # Adicionar metadados
             csv_exporter.adicionar_metadados(
                 "Relatório do Sistema de Bombeamento - AquaPump",
                 "1.0",
                 "Relatório gerado automaticamente pelo sistema AquaPump"
             )
-            
-            # Adicionar seção principal
+
             csv_exporter.adicionar_secao("DADOS DO SISTEMA")
             
             # Adicionar todos os dados do relatório
@@ -404,7 +463,6 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             
             # Gerar CSV
             sucesso = csv_exporter.exportar("relatorio")
-            
             if sucesso:
                 QMessageBox.information(self, "Sucesso", "Relatório Excel gerado com sucesso!")
             else:
@@ -521,6 +579,179 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         except Exception as e:
             QMessageBox.critical(self, "Erro", f"Erro ao criar novo projeto: {str(e)}")
     # ==========================================================
+    #               SELECIONAR O MELHOR
+    # ==========================================================
+    def selecionar_bombas_candidatas(self):
+        """
+        Seleciona e retorna todas as bombas candidatas ordenadas por score,
+        permitindo acesso individual a cada bomba.
+        """
+        try:
+            if not hasattr(self, 'vazao') or not hasattr(self, 'altura_manometrica'):
+                logger.warning("Parâmetros de cálculo não disponíveis")
+                return []
+                
+            if self.vazao <= 0 or self.altura_manometrica <= 0:
+                logger.warning("Vazão ou altura manométrica com valores inválidos")
+                return []
+            vazao_necessaria_m3h = self.vazao
+            altura_necessaria_m = self.altura_manometrica
+
+            if not hasattr(self, 'gestor_db') or not self.gestor_db.verificar_conexao():
+                logger.error("Conexão com banco de dados não disponível")
+                QMessageBox.warning(self, "Erro de Conexão", "Não foi possível conectar ao banco de dados de bombas.")
+                return []
+
+            bombas_candidatas = self.gestor_db.pesquisar_bombas_candidatas(vazao_necessaria_m3h, altura_necessaria_m)
+
+            if not bombas_candidatas:
+                QMessageBox.information(self, "Nenhuma Bomba Encontrada", 
+                                    "Não encontramos bombas com essas características. "
+                                    "Tente ajustar os parâmetros do sistema.")
+                return []
+
+            #Processar resultados
+            resultados_finais = []
+            
+            for bomba in bombas_candidatas:
+                try:
+                    # Extrair dados da bomba
+                    id_bomba = bomba['id']
+                    modelo = bomba['modelo']
+                    fabricante = bomba['fabricante']
+                    tipo_bomba = bomba['tipo_bomba']
+                    caudal_nominal_m3h = bomba['caudal_nominal_m3h']
+                    altura_nominal_m = bomba['altura_nominal_m']
+                    potencia_nominal_kW = bomba['potencia_nominal_kW']
+                    velocidade_rpm = bomba['velocidade_rpm']
+                    material_corpo = bomba['material_corpo']
+                    pressao_max_bar = bomba['pressao_max_bar']
+                    caminho_imagem = bomba['caminho_imagem']
+                    fator_vazao = bomba['fator_vazao']
+                    fator_altura = bomba['fator_altura']
+                    score_adequacao = bomba['score_adequacao']
+
+                    if any([valor is None for valor in [modelo, fabricante, caudal_nominal_m3h, altura_nominal_m]]):
+                        logger.warning(f"Dados incompletos para bomba {id_bomba}, ignorando")
+                        continue
+                        
+                    # Calcular fatores de operação
+                    fator_carga = altura_necessaria_m / altura_nominal_m if altura_nominal_m > 0 else float('inf')
+                    fator_vazao_operacao = vazao_necessaria_m3h / caudal_nominal_m3h if caudal_nominal_m3h > 0 else float('inf')
+                    
+                    # Pular bombas com fatores extremamente fora da faixa
+                    if fator_carga > 2.0 or fator_vazao_operacao > 2.0 or fator_carga < 0.5 or fator_vazao_operacao < 0.5:
+                        continue
+                        
+                    # Estimativa de rendimento (aproximação)
+                    diferenca_ideal = abs(1 - fator_carga) + abs(1 - fator_vazao_operacao)
+                    rendimento_estimado = max(0.4, 0.8 - (diferenca_ideal * 0.3))  # Mínimo de 40%, máximo de 80%
+                    
+                    # Calcular potência estimada
+                    # Densidade da água assumida como 1000 kg/m³
+                    potencia_hidraulica = (1000 * 9.81 * vazao_necessaria_m3h * altura_necessaria_m) / 3600
+                    potencia_eletrica_estimada = potencia_hidraulica / rendimento_estimado if rendimento_estimado > 0 else 0
+                    
+                    # Verificar se a potência nominal é suficiente
+                    potencia_suficiente = potencia_nominal_kW >= potencia_eletrica_estimada * 1.2  # Margem de 20%
+                    
+                    # Score de adequação baseado em múltiplos fatores
+                    score_final = self.calcular_score_adequacao_simplificado(
+                        rendimento_estimado,
+                        fator_vazao_operacao,
+                        fator_carga,
+                        potencia_suficiente,
+                        potencia_nominal_kW,
+                        potencia_eletrica_estimada
+                    )
+                    
+                    # Organizar todos os dados em um dicionário estruturado
+                    dados_bomba = {
+                        # Identificação
+                        "id_bomba": id_bomba,
+                        "modelo": modelo,
+                        "fabricante": fabricante,
+                        "tipo_bomba": tipo_bomba,
+                        
+                        # Especificações nominais
+                        "caudal_nominal_m3h": caudal_nominal_m3h,
+                        "altura_nominal_m": altura_nominal_m,
+                        "potencia_nominal_kW": potencia_nominal_kW,
+                        "velocidade_rpm": velocidade_rpm,
+                        "material_corpo": material_corpo,
+                        "pressao_max_bar": pressao_max_bar,
+                        "caminho_imagem": caminho_imagem,
+                        
+                        # Fatores de adequação
+                        "fator_vazao": fator_vazao,
+                        "fator_altura": fator_altura,
+                        "score_adequacao_db": score_adequacao,
+                        
+                        # Análise de operação
+                        "fator_carga_operacao": fator_carga,
+                        "fator_vazao_operacao": fator_vazao_operacao,
+                        "rendimento_estimado": rendimento_estimado,
+                        "potencia_hidraulica_kW": potencia_hidraulica,
+                        "potencia_eletrica_estimada_kW": potencia_eletrica_estimada,
+                        "potencia_suficiente": potencia_suficiente,
+                        "score_final": score_final,
+                        
+                        # Posição/classificação (será preenchida após ordenação)
+                        "posicao_classificacao": 0
+                    }
+                    
+                    resultados_finais.append(dados_bomba)
+                    
+                except Exception as e:
+                    logger.error(f"Erro processando bomba {bomba.get('id_bomba', 'N/A')}: {e}")
+                    continue
+
+            # 6. Ordenar resultados
+            if not resultados_finais:
+                return []
+                
+            resultados_ordenados = sorted(resultados_finais, key=lambda x: x['score_final'], reverse=True)
+            
+            # 7. Atribuir posições
+            for i, bomba in enumerate(resultados_ordenados):
+                bomba['posicao_classificacao'] = i + 1
+
+            return resultados_ordenados
+
+        except Exception as e:
+            logger.error(f"Erro inesperado na seleção de bombas: {e}")
+            # Não mostrar mensagem de erro ao usuário para não interromper o fluxo
+            return []
+
+    def calcular_score_adequacao_simplificado(self, rendimento, fator_vazao, fator_altura, 
+                                        potencia_suficiente, potencia_nominal, potencia_estimada):
+        """
+        Calcula um score de adequação simplificado para classificar as bombas.
+        """
+        # Fatores de ponderação
+        PESO_RENDIMENTO = 0.30
+        PESO_PROXIMIDADE = 0.40  # Proximidade aos valores nominais
+        PESO_POTENCIA = 0.30
+        fator_rendimento = rendimento
+        
+        # Proximidade ideal é quando ambos os fatores estão próximos de 1
+        fator_proximidade = 1 - (abs(1 - fator_vazao) + abs(1 - fator_altura)) / 2
+        
+        # Fator de potência (penaliza se não for suficiente, recompensa se for eficiente)
+        if not potencia_suficiente:
+            fator_potencia = 0.1  
+        else:
+            # Quanto mais próxima a potência nominal da estimada (sem excesso), melhor
+            excesso_potencia = (potencia_nominal - potencia_estimada) / potencia_estimada
+            fator_potencia = 1.0 if excesso_potencia <= 0.3 else 1.0 - (excesso_potencia - 0.3) / 2
+        
+        # Calcular score final
+        score = (PESO_RENDIMENTO * fator_rendimento +
+                PESO_PROXIMIDADE * fator_proximidade +
+                PESO_POTENCIA * fator_potencia)
+        
+        return score
+    # ==========================================================
     #                 CONFIGURAÇÕES
     # ==========================================================
     def salvar_configuracoes(self):
@@ -549,18 +780,14 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     #                 EVENTOS
     # ==========================================================
     def closeEvent(self, event):
-        """Salva configurações antes de fechar a janela."""
+        """Salva configurações e fecha conexão com o banco antes de fechar a janela"""
         self.salvar_configuracoes()
+        if hasattr(self, 'gestor_db'):
+            self.gestor_db.fechar_conexao()
         super().closeEvent(event)
-
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    try:
-        with open(r"estilos\estilos.qss", "r") as f:
-            app.setStyleSheet(f.read())
-    except FileNotFoundError:
-        print("Stylesheet not found.")
     window = MainWindow()
     window.show()
     sys.exit(app.exec())

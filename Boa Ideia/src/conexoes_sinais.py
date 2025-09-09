@@ -26,6 +26,7 @@ class ConexoesUI():
         self._connectar_arquivo()   
         self._conectar_ocultacoes()
         self._connectar_janelas_responsivas()
+        self._connectar_janela_relatorio()
         self._connectar_versao_pro()
 
     def _conectar_configuracoes(self):
@@ -161,7 +162,13 @@ class ConexoesUI():
         self.parent.parametros.clicked.connect(lambda: self.animacoes.altura(self.parent.exportar, altura=400))
         self.parent.projecto_2.clicked.connect(lambda: self.animacoes.altura(self.parent.projecto, altura=100))
     
+    def _connectar_janela_relatorio(self):
+        self.parent.relatorio_3.clicked.connect(lambda: self.parent.stackedWidget.setCurrentIndex(2))
+        self.parent.relatorio_3.clicked.connect(self.parent.selecionar_melhor_bomba)
+        self.parent.Vazao_2.textChanged.connect(self.parent.selecionar_melhor_bomba)
+  
     def _connectar_versao_pro(self):
+
         msg = QMessageBox(self.parent)
         msg.setWindowTitle("Suporte Técnico")
         msg.setIcon(QMessageBox.Information)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'mainRpkcLI.ui'
+## Form generated from reading UI file 'mainZIorDL.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -28,8 +28,294 @@ class Ui_AquaPump(object):
         if not AquaPump.objectName():
             AquaPump.setObjectName(u"AquaPump")
         AquaPump.resize(1165, 749)
-        self.view = QWebEngineView(self)
-        AquaPump.setStyleSheet(u"")
+        AquaPump.setStyleSheet(u"/* --------- QWidget (Geral) --------- */\n"
+"QWidget {\n"
+"    background-color: #ffffff;\n"
+"    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
+"    font-size: 14px;\n"
+"    color: #333333;\n"
+"}\n"
+"\n"
+"/* --------- QLineEdit --------- */\n"
+"QLineEdit {\n"
+"    background-color: #ffffff;\n"
+"    border: 2px solid #d9d9d9;\n"
+"    border-radius: 4px;\n"
+"    padding: 6px 8px;\n"
+"    font-size: 14px;\n"
+"    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
+"    color: #2b2b2b;\n"
+"}\n"
+"\n"
+"QLineEdit:focus {\n"
+"    border: 2px solid #95acff;\n"
+"    background-color: #fcfcfc;\n"
+"}\n"
+"\n"
+"QLineEdit:hover {\n"
+"    border: 2px solid #a5baff;\n"
+"    background-color: #fefefe;\n"
+"}\n"
+"\n"
+"/* --------- QComboBox --------- */\n"
+"QComboBox {\n"
+"    background-color: #fdfdfd;\n"
+"    border: 2px solid #d0d0d0;\n"
+"    border-radius: 4px;\n"
+"    padding: 6px 8px;\n"
+"    font-size: 14px;\n"
+"    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
+"    color: #2b2b2b;\n"
+"}\n"
+"\n"
+"QComboBox:hover,\n"
+""
+                        "QComboBox:focus {\n"
+"    border: 2px solid #95acff;\n"
+"    background-color: #ffffff;\n"
+"}\n"
+"\n"
+"QComboBox::drop-down {\n"
+"    subcontrol-origin: padding;\n"
+"    subcontrol-position: top right;\n"
+"    width: 28px;\n"
+"    border-left: 1px solid #d0d0d0;\n"
+"    background-color: transparent;\n"
+"}\n"
+"\n"
+"QComboBox::down-arrow {\n"
+"    image: url(:/img/baixo.png);\n"
+"    width: 10px;\n"
+"    height: 10px;\n"
+"    margin-right: 5px;\n"
+"}\n"
+"\n"
+"QComboBox QAbstractItemView {\n"
+"    background-color: #ffffff;\n"
+"    border: 1px solid #cfcfcf;\n"
+"    border-radius: 4px;\n"
+"    selection-background-color: #2684ff;\n"
+"    selection-color: #ffffff;\n"
+"    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
+"}\n"
+"\n"
+"/* --------- QScrollArea --------- */\n"
+"QScrollArea {\n"
+"    background-color: #f9f9f9;\n"
+"    border: none;\n"
+"    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
+"    font-size: 14px;\n"
+"    color: #333333;\n"
+"}\n"
+"\n"
+"QScrollArea QWidget {\n"
+"    background-color: trans"
+                        "parent;\n"
+"}\n"
+"\n"
+"/* --------- ScrollBars --------- */\n"
+"QScrollBar:vertical,\n"
+"QScrollBar:horizontal {\n"
+"    background: rgb(231, 231, 231);\n"
+"    width: 12px;\n"
+"    height: 12px;\n"
+"    margin: 10px 0 10px 0;\n"
+"    border: none;\n"
+"}\n"
+"\n"
+"QScrollBar::sub-page:vertical,\n"
+"QScrollBar::add-page:vertical,\n"
+"QScrollBar::sub-page:horizontal,\n"
+"QScrollBar::add-page:horizontal {\n"
+"    background: transparent;\n"
+"}\n"
+"\n"
+"QScrollBar::handle:vertical,\n"
+"QScrollBar::handle:horizontal {\n"
+"    background-color: #c0c0c0;\n"
+"    min-height: 30px;\n"
+"    min-width: 30px;\n"
+"    margin: 2px;\n"
+"    border-radius: 4px;\n"
+"}\n"
+"\n"
+"QScrollBar::handle:vertical:hover,\n"
+"QScrollBar::handle:horizontal:hover {\n"
+"    background-color: #a0a0a0;\n"
+"}\n"
+"\n"
+"QScrollBar::sub-line:vertical,\n"
+"QScrollBar::add-line:vertical,\n"
+"QScrollBar::sub-line:horizontal,\n"
+"QScrollBar::add-line:horizontal {\n"
+"    background: #e1e1e1;\n"
+"    height: 12px;\n"
+"    width: 12px;\n"
+"    border-ra"
+                        "dius: 6px;\n"
+"}\n"
+"\n"
+"QToolButton {\n"
+"background-color: transparent;\n"
+"font-family: Roboto;\n"
+"font-size:10pt;\n"
+"border: none;\n"
+"border-radius:2px\n"
+"\n"
+"}\n"
+"/* --------- QGroupBox --------- */\n"
+"QGroupBox {\n"
+"    border: 1px solid #dcdcdc;\n"
+"    border-radius: 6px;\n"
+"    margin-top: 15px;\n"
+"    background-color: transparent;\n"
+"    font-size: 14px;\n"
+"    color: #212121;\n"
+"	padding:8px;\n"
+"}\n"
+"\n"
+"QGroupBox::title {\n"
+"    subcontrol-origin: margin;\n"
+"    subcontrol-position: top left;\n"
+"    padding: 0 10px;\n"
+"    margin-top: -4px;\n"
+"    background-color: transparent;\n"
+"    font-family: \"Segoe UI\", \"Roboto\", sans-serif;\n"
+"    font-size: 19px;\n"
+"    font-weight: bold;\n"
+"    color: #000000;\n"
+"    \n"
+"}\n"
+"\n"
+"QTableView {\n"
+"    background-color: #ffffff;\n"
+"    alternate-background-color: #f9f9f9;\n"
+"    gridline-color: #e0e0e0;\n"
+"    font-family: Segoe UI, Roboto, sans-serif;\n"
+"    font-size: 13px;\n"
+"    color: #333333;\n"
+"    selection-ba"
+                        "ckground-color: #cce4ff;   /* Azul bem claro na sele\u00e7\u00e3o */\n"
+"    selection-color: #000000;              /* Texto preto quando selecionado */\n"
+"    border: 1px solid #dcdcdc;\n"
+"}\n"
+"\n"
+"QHeaderView::section {\n"
+"    background-color: #f1f1f1;\n"
+"    padding: 4px;\n"
+"    border: 1px solid #dcdcdc;\n"
+"    font-weight: bold;\n"
+"    color: #444444;\n"
+"}\n"
+"\n"
+"QTableView::item {\n"
+"    padding: 4px;\n"
+"}\n"
+"\n"
+"QTableView::item:selected {\n"
+"    background-color: #cce4ff;\n"
+"    color: #000000;\n"
+"}\n"
+"\n"
+"QTableView QTableCornerButton::section {\n"
+"    background-color: #f1f1f1;\n"
+"    border: 1px solid #dcdcdc;\n"
+"}\n"
+"\n"
+"QTableView::item:hover {\n"
+"    background-color: #eaf4ff;}\n"
+"\n"
+"QPushButton {\n"
+"    background-color: #f5f5f5;\n"
+"    color: #000000;\n"
+"    border: 1px solid #c2c2c2;\n"
+"    border-radius: 3px;\n"
+"    font-size: 14px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #e0e0e0;\n"
+"    border: 1px solid #e0e0e0;\n"
+"}\n"
+"\n"
+"QPushB"
+                        "utton:pressed {\n"
+"    background-color: #d0d0d0;\n"
+"    border: 1px solid #888888;\n"
+"}\n"
+"\n"
+"QMessageBox {\n"
+"    background-color: #ffffff;\n"
+"    color: #000000;\n"
+"    font-family: Roboto;\n"
+"    font-size: 14px;\n"
+"    border: none;\n"
+"    padding: 8px;\n"
+"}\n"
+"\n"
+"QLabel {\n"
+"    color: #000000;\n"
+"    font-family: Roboto;\n"
+"    font-size: 14px;\n"
+"}\n"
+"\n"
+"QPushButton {\n"
+"    background-color: #f5f5f5;\n"
+"    color: #000000;\n"
+"    border: 1px solid #c2c2c2;\n"
+"    border-radius: 3px;\n"
+"    padding: 6px 12px;\n"
+"    font-size: 14px;\n"
+"    font-family: Roboto;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #e0e0e0;\n"
+"    border: 1px solid #e0e0e0;\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"    background-color: #d0d0d0;\n"
+"    border: 1px solid #888888;\n"
+"}\n"
+"\n"
+"QMenu {\n"
+"    background-color: #ffffff;\n"
+"    border: 1px solid #b3b3b3;\n"
+"    padding: 4px;\n"
+"    font-family: Roboto, sans-serif;\n"
+"    font-size: 13px;\n"
+"    color: #333333;\n"
+""
+                        "}\n"
+"\n"
+"QMenu::item {\n"
+"    padding: 6px 20px;\n"
+"    background-color: transparent;\n"
+"    color: #333333;\n"
+"}\n"
+"\n"
+"QMenu::item:selected {\n"
+"    background-color: #0078d7;\n"
+"    color: #ffffff;\n"
+"    border-radius: 4px;\n"
+"}\n"
+"\n"
+"QMenu::item:disabled {\n"
+"    color: #aaaaaa; /* cinza claro */\n"
+"    background-color: transparent;\n"
+"    font-style:italic\n"
+"}\n"
+"\n"
+"/* Separador */\n"
+"QMenu::separator {\n"
+"    height: 1px;\n"
+"    background: #dcdcdc;\n"
+"    margin: 4px 8px;\n"
+"}\n"
+"\n"
+"\n"
+"")
         self.layoutWidget = QWidget(AquaPump)
         self.layoutWidget.setObjectName(u"layoutWidget")
         self.layoutWidget.setGeometry(QRect(0, 0, 100, 30))
@@ -354,7 +640,7 @@ class Ui_AquaPump(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 177, 405))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 177, 393))
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.projecto_2 = QPushButton(self.scrollAreaWidgetContents)
@@ -1070,6 +1356,7 @@ class Ui_AquaPump(object):
         self.splitter = QSplitter(self.splitter_2)
         self.splitter.setObjectName(u"splitter")
         self.splitter.setOrientation(Qt.Orientation.Vertical)
+        self.view = QWebEngineView(self.splitter)
         self.splitter.addWidget(self.view)
         self.widget_2 = QWidget(self.splitter)
         self.widget_2.setObjectName(u"widget_2")
@@ -1321,7 +1608,7 @@ class Ui_AquaPump(object):
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollAreaWidgetContents_3 = QWidget()
         self.scrollAreaWidgetContents_3.setObjectName(u"scrollAreaWidgetContents_3")
-        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 212, 605))
+        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 185, 609))
         self.verticalLayout_14 = QVBoxLayout(self.scrollAreaWidgetContents_3)
         self.verticalLayout_14.setSpacing(10)
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
@@ -1588,7 +1875,7 @@ class Ui_AquaPump(object):
         self.scrollArea_4.setWidgetResizable(True)
         self.scrollAreaWidgetContents_4 = QWidget()
         self.scrollAreaWidgetContents_4.setObjectName(u"scrollAreaWidgetContents_4")
-        self.scrollAreaWidgetContents_4.setGeometry(QRect(0, 0, 796, 822))
+        self.scrollAreaWidgetContents_4.setGeometry(QRect(0, 0, 831, 1018))
         self.verticalLayout_28 = QVBoxLayout(self.scrollAreaWidgetContents_4)
         self.verticalLayout_28.setSpacing(30)
         self.verticalLayout_28.setObjectName(u"verticalLayout_28")
@@ -1911,6 +2198,199 @@ class Ui_AquaPump(object):
         self.verticalLayout_32.addWidget(self.splitter_3)
 
         self.stackedWidget.addWidget(self.definicoes_2)
+        self.page_6 = QWidget()
+        self.page_6.setObjectName(u"page_6")
+        self.verticalLayout_34 = QVBoxLayout(self.page_6)
+        self.verticalLayout_34.setObjectName(u"verticalLayout_34")
+        self.horizontalLayout_29 = QHBoxLayout()
+        self.horizontalLayout_29.setObjectName(u"horizontalLayout_29")
+        self.frame_10 = QFrame(self.page_6)
+        self.frame_10.setObjectName(u"frame_10")
+        self.frame_10.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_10.setFrameShadow(QFrame.Shadow.Raised)
+        self.verticalLayout_26 = QVBoxLayout(self.frame_10)
+        self.verticalLayout_26.setObjectName(u"verticalLayout_26")
+        self.label_12 = QLabel(self.frame_10)
+        self.label_12.setObjectName(u"label_12")
+        self.label_12.setStyleSheet(u"QLabel {\n"
+"    font-size: 18px;\n"
+"    font-weight: 600; /* Semi-Bold */\n"
+"    color: rgb(166, 166, 166);\n"
+"\n"
+"}")
+
+        self.verticalLayout_26.addWidget(self.label_12)
+
+        self.horizontalLayout_20 = QHBoxLayout()
+        self.horizontalLayout_20.setObjectName(u"horizontalLayout_20")
+        self.label_10 = QLabel(self.frame_10)
+        self.label_10.setObjectName(u"label_10")
+        sizePolicy1.setHeightForWidth(self.label_10.sizePolicy().hasHeightForWidth())
+        self.label_10.setSizePolicy(sizePolicy1)
+
+        self.horizontalLayout_20.addWidget(self.label_10)
+
+        self.frame_9 = QFrame(self.frame_10)
+        self.frame_9.setObjectName(u"frame_9")
+        self.frame_9.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_9.setFrameShadow(QFrame.Shadow.Raised)
+        self.verticalLayout_18 = QVBoxLayout(self.frame_9)
+        self.verticalLayout_18.setSpacing(30)
+        self.verticalLayout_18.setObjectName(u"verticalLayout_18")
+        self.modelo = QLabel(self.frame_9)
+        self.modelo.setObjectName(u"modelo")
+
+        self.verticalLayout_18.addWidget(self.modelo)
+
+        self.vazao = QLabel(self.frame_9)
+        self.vazao.setObjectName(u"vazao")
+
+        self.verticalLayout_18.addWidget(self.vazao)
+
+        self.altura_3 = QLabel(self.frame_9)
+        self.altura_3.setObjectName(u"altura_3")
+
+        self.verticalLayout_18.addWidget(self.altura_3)
+
+        self.potencia_3 = QLabel(self.frame_9)
+        self.potencia_3.setObjectName(u"potencia_3")
+
+        self.verticalLayout_18.addWidget(self.potencia_3)
+
+        self.material = QLabel(self.frame_9)
+        self.material.setObjectName(u"material")
+
+        self.verticalLayout_18.addWidget(self.material)
+
+        self.fornecedor_local = QPushButton(self.frame_9)
+        self.fornecedor_local.setObjectName(u"fornecedor_local")
+
+        self.verticalLayout_18.addWidget(self.fornecedor_local)
+
+        self.verticalSpacer_6 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout_18.addItem(self.verticalSpacer_6)
+
+
+        self.horizontalLayout_20.addWidget(self.frame_9)
+
+
+        self.verticalLayout_26.addLayout(self.horizontalLayout_20)
+
+
+        self.horizontalLayout_29.addWidget(self.frame_10)
+
+        self.stackedWidget_2 = QStackedWidget(self.page_6)
+        self.stackedWidget_2.setObjectName(u"stackedWidget_2")
+        self.page_7 = QWidget()
+        self.page_7.setObjectName(u"page_7")
+        self.verticalLayout_33 = QVBoxLayout(self.page_7)
+        self.verticalLayout_33.setObjectName(u"verticalLayout_33")
+        self.horizontalLayout_23 = QHBoxLayout()
+        self.horizontalLayout_23.setObjectName(u"horizontalLayout_23")
+        self.label_13 = QLabel(self.page_7)
+        self.label_13.setObjectName(u"label_13")
+        self.label_13.setStyleSheet(u"QLabel {\n"
+"    font-size: 18px;\n"
+"    font-weight: 600; /* Semi-Bold */\n"
+"    color: rgb(166, 166, 166);\n"
+"\n"
+"}")
+
+        self.horizontalLayout_23.addWidget(self.label_13)
+
+        self.toolButton = QToolButton(self.page_7)
+        self.toolButton.setObjectName(u"toolButton")
+        self.toolButton.setIcon(icon16)
+
+        self.horizontalLayout_23.addWidget(self.toolButton)
+
+
+        self.verticalLayout_33.addLayout(self.horizontalLayout_23)
+
+        self.horizontalLayout_28 = QHBoxLayout()
+        self.horizontalLayout_28.setObjectName(u"horizontalLayout_28")
+        self.frame_11 = QFrame(self.page_7)
+        self.frame_11.setObjectName(u"frame_11")
+        self.frame_11.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame_11.setFrameShadow(QFrame.Shadow.Raised)
+        self.verticalLayout_30 = QVBoxLayout(self.frame_11)
+        self.verticalLayout_30.setSpacing(30)
+        self.verticalLayout_30.setObjectName(u"verticalLayout_30")
+        self.label_14 = QLabel(self.frame_11)
+        self.label_14.setObjectName(u"label_14")
+
+        self.verticalLayout_30.addWidget(self.label_14)
+
+        self.label_15 = QLabel(self.frame_11)
+        self.label_15.setObjectName(u"label_15")
+
+        self.verticalLayout_30.addWidget(self.label_15)
+
+        self.label_16 = QLabel(self.frame_11)
+        self.label_16.setObjectName(u"label_16")
+
+        self.verticalLayout_30.addWidget(self.label_16)
+
+        self.label_17 = QLabel(self.frame_11)
+        self.label_17.setObjectName(u"label_17")
+
+        self.verticalLayout_30.addWidget(self.label_17)
+
+        self.verticalSpacer_7 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout_30.addItem(self.verticalSpacer_7)
+
+
+        self.horizontalLayout_28.addWidget(self.frame_11)
+
+        self.widget = QWidget(self.page_7)
+        self.widget.setObjectName(u"widget")
+        sizePolicy6.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
+        self.widget.setSizePolicy(sizePolicy6)
+        self.widget.setStyleSheet(u"background-color: rgb(0, 255, 255);")
+
+        self.horizontalLayout_28.addWidget(self.widget)
+
+
+        self.verticalLayout_33.addLayout(self.horizontalLayout_28)
+
+        self.stackedWidget_2.addWidget(self.page_7)
+        self.page_8 = QWidget()
+        self.page_8.setObjectName(u"page_8")
+        self.stackedWidget_2.addWidget(self.page_8)
+
+        self.horizontalLayout_29.addWidget(self.stackedWidget_2)
+
+
+        self.verticalLayout_34.addLayout(self.horizontalLayout_29)
+
+        self.horizontalLayout_18 = QHBoxLayout()
+        self.horizontalLayout_18.setObjectName(u"horizontalLayout_18")
+        self.pushButton = QPushButton(self.page_6)
+        self.pushButton.setObjectName(u"pushButton")
+
+        self.horizontalLayout_18.addWidget(self.pushButton)
+
+        self.pushButton_4 = QPushButton(self.page_6)
+        self.pushButton_4.setObjectName(u"pushButton_4")
+
+        self.horizontalLayout_18.addWidget(self.pushButton_4)
+
+        self.pushButton_2 = QPushButton(self.page_6)
+        self.pushButton_2.setObjectName(u"pushButton_2")
+
+        self.horizontalLayout_18.addWidget(self.pushButton_2)
+
+        self.pushButton_5 = QPushButton(self.page_6)
+        self.pushButton_5.setObjectName(u"pushButton_5")
+
+        self.horizontalLayout_18.addWidget(self.pushButton_5)
+
+
+        self.verticalLayout_34.addLayout(self.horizontalLayout_18)
+
+        self.stackedWidget.addWidget(self.page_6)
 
         self.verticalLayout.addWidget(self.stackedWidget)
 
@@ -1927,6 +2407,7 @@ class Ui_AquaPump(object):
         self.stackedWidget.setCurrentIndex(0)
         self.stackedWidget_3.setCurrentIndex(1)
         self.janela_definicoes.setCurrentIndex(0)
+        self.stackedWidget_2.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(AquaPump)
@@ -1962,7 +2443,7 @@ class Ui_AquaPump(object):
         self.exportar_csv.setText(QCoreApplication.translate("AquaPump", u"Exportar em CSV", None))
         self.rel.setText(QCoreApplication.translate("AquaPump", u"Selec\u00e7\u00e3o de Bombas", None))
         self.grafico.setText(QCoreApplication.translate("AquaPump", u"Gr\u00e1ficos ", None))
-        self.pushButton_3.setText(QCoreApplication.translate("AquaPump", u"Quero ser PRO - Saber Mais", None))
+        self.pushButton_3.setText(QCoreApplication.translate("AquaPump", u"Actualizar (PRO)", None))
         self.configuracoes.setText(QCoreApplication.translate("AquaPump", u"Configura\u00e7\u00f5es ", None))
         self.sair_2.setText(QCoreApplication.translate("AquaPump", u"Sair", None))
 #if QT_CONFIG(tooltip)
@@ -2055,5 +2536,23 @@ class Ui_AquaPump(object):
         self.voltar.setText(QCoreApplication.translate("AquaPump", u"Voltar", None))
         self.cancelar.setText(QCoreApplication.translate("AquaPump", u"Cancelar", None))
         self.aplicar.setText(QCoreApplication.translate("AquaPump", u"Aplicar", None))
+        self.label_12.setText(QCoreApplication.translate("AquaPump", u"Sugest\u00f5es", None))
+        self.label_10.setText(QCoreApplication.translate("AquaPump", u"imagem bomba", None))
+        self.modelo.setText(QCoreApplication.translate("AquaPump", u"Modelo", None))
+        self.vazao.setText(QCoreApplication.translate("AquaPump", u"Vazao", None))
+        self.altura_3.setText(QCoreApplication.translate("AquaPump", u"Altura Manometrica", None))
+        self.potencia_3.setText(QCoreApplication.translate("AquaPump", u"Potencia", None))
+        self.material.setText(QCoreApplication.translate("AquaPump", u"Material", None))
+        self.fornecedor_local.setText(QCoreApplication.translate("AquaPump", u"Fornecedor Local", None))
+        self.label_13.setText(QCoreApplication.translate("AquaPump", u"Bomba Dimensionada", None))
+        self.toolButton.setText("")
+        self.label_14.setText(QCoreApplication.translate("AquaPump", u"Vazao", None))
+        self.label_15.setText(QCoreApplication.translate("AquaPump", u"Altura Manometrica", None))
+        self.label_16.setText(QCoreApplication.translate("AquaPump", u"Tempo de Funcionamento", None))
+        self.label_17.setText(QCoreApplication.translate("AquaPump", u"Potencia", None))
+        self.pushButton.setText(QCoreApplication.translate("AquaPump", u"Seleccionar", None))
+        self.pushButton_4.setText(QCoreApplication.translate("AquaPump", u"Anterior", None))
+        self.pushButton_2.setText(QCoreApplication.translate("AquaPump", u"Pr\u00f3xima ", None))
+        self.pushButton_5.setText(QCoreApplication.translate("AquaPump", u"Comparar", None))
     # retranslateUi
 

@@ -14,7 +14,288 @@
    <string>Form</string>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">/* --------- QWidget (Geral) --------- */
+QWidget {
+    background-color: #ffffff;
+    font-family: &quot;Segoe UI&quot;, Roboto, sans-serif;
+    font-size: 14px;
+    color: #333333;
+}
+
+/* --------- QLineEdit --------- */
+QLineEdit {
+    background-color: #ffffff;
+    border: 2px solid #d9d9d9;
+    border-radius: 4px;
+    padding: 6px 8px;
+    font-size: 14px;
+    font-family: &quot;Segoe UI&quot;, Roboto, sans-serif;
+    color: #2b2b2b;
+}
+
+QLineEdit:focus {
+    border: 2px solid #95acff;
+    background-color: #fcfcfc;
+}
+
+QLineEdit:hover {
+    border: 2px solid #a5baff;
+    background-color: #fefefe;
+}
+
+/* --------- QComboBox --------- */
+QComboBox {
+    background-color: #fdfdfd;
+    border: 2px solid #d0d0d0;
+    border-radius: 4px;
+    padding: 6px 8px;
+    font-size: 14px;
+    font-family: &quot;Segoe UI&quot;, Roboto, sans-serif;
+    color: #2b2b2b;
+}
+
+QComboBox:hover,
+QComboBox:focus {
+    border: 2px solid #95acff;
+    background-color: #ffffff;
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 28px;
+    border-left: 1px solid #d0d0d0;
+    background-color: transparent;
+}
+
+QComboBox::down-arrow {
+    image: url(:/img/baixo.png);
+    width: 10px;
+    height: 10px;
+    margin-right: 5px;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #ffffff;
+    border: 1px solid #cfcfcf;
+    border-radius: 4px;
+    selection-background-color: #2684ff;
+    selection-color: #ffffff;
+    font-family: &quot;Segoe UI&quot;, Roboto, sans-serif;
+}
+
+/* --------- QScrollArea --------- */
+QScrollArea {
+    background-color: #f9f9f9;
+    border: none;
+    font-family: &quot;Segoe UI&quot;, Roboto, sans-serif;
+    font-size: 14px;
+    color: #333333;
+}
+
+QScrollArea QWidget {
+    background-color: transparent;
+}
+
+/* --------- ScrollBars --------- */
+QScrollBar:vertical,
+QScrollBar:horizontal {
+    background: rgb(231, 231, 231);
+    width: 12px;
+    height: 12px;
+    margin: 10px 0 10px 0;
+    border: none;
+}
+
+QScrollBar::sub-page:vertical,
+QScrollBar::add-page:vertical,
+QScrollBar::sub-page:horizontal,
+QScrollBar::add-page:horizontal {
+    background: transparent;
+}
+
+QScrollBar::handle:vertical,
+QScrollBar::handle:horizontal {
+    background-color: #c0c0c0;
+    min-height: 30px;
+    min-width: 30px;
+    margin: 2px;
+    border-radius: 4px;
+}
+
+QScrollBar::handle:vertical:hover,
+QScrollBar::handle:horizontal:hover {
+    background-color: #a0a0a0;
+}
+
+QScrollBar::sub-line:vertical,
+QScrollBar::add-line:vertical,
+QScrollBar::sub-line:horizontal,
+QScrollBar::add-line:horizontal {
+    background: #e1e1e1;
+    height: 12px;
+    width: 12px;
+    border-radius: 6px;
+}
+
+QToolButton {
+background-color: transparent;
+font-family: Roboto;
+font-size:10pt;
+border: none;
+border-radius:2px
+
+}
+/* --------- QGroupBox --------- */
+QGroupBox {
+    border: 1px solid #dcdcdc;
+    border-radius: 6px;
+    margin-top: 15px;
+    background-color: transparent;
+    font-size: 14px;
+    color: #212121;
+	padding:8px;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top left;
+    padding: 0 10px;
+    margin-top: -4px;
+    background-color: transparent;
+    font-family: &quot;Segoe UI&quot;, &quot;Roboto&quot;, sans-serif;
+    font-size: 19px;
+    font-weight: bold;
+    color: #000000;
+    
+}
+
+QTableView {
+    background-color: #ffffff;
+    alternate-background-color: #f9f9f9;
+    gridline-color: #e0e0e0;
+    font-family: Segoe UI, Roboto, sans-serif;
+    font-size: 13px;
+    color: #333333;
+    selection-background-color: #cce4ff;   /* Azul bem claro na seleção */
+    selection-color: #000000;              /* Texto preto quando selecionado */
+    border: 1px solid #dcdcdc;
+}
+
+QHeaderView::section {
+    background-color: #f1f1f1;
+    padding: 4px;
+    border: 1px solid #dcdcdc;
+    font-weight: bold;
+    color: #444444;
+}
+
+QTableView::item {
+    padding: 4px;
+}
+
+QTableView::item:selected {
+    background-color: #cce4ff;
+    color: #000000;
+}
+
+QTableView QTableCornerButton::section {
+    background-color: #f1f1f1;
+    border: 1px solid #dcdcdc;
+}
+
+QTableView::item:hover {
+    background-color: #eaf4ff;}
+
+QPushButton {
+    background-color: #f5f5f5;
+    color: #000000;
+    border: 1px solid #c2c2c2;
+    border-radius: 3px;
+    font-size: 14px;
+}
+
+QPushButton:hover {
+    background-color: #e0e0e0;
+    border: 1px solid #e0e0e0;
+}
+
+QPushButton:pressed {
+    background-color: #d0d0d0;
+    border: 1px solid #888888;
+}
+
+QMessageBox {
+    background-color: #ffffff;
+    color: #000000;
+    font-family: Roboto;
+    font-size: 14px;
+    border: none;
+    padding: 8px;
+}
+
+QLabel {
+    color: #000000;
+    font-family: Roboto;
+    font-size: 14px;
+}
+
+QPushButton {
+    background-color: #f5f5f5;
+    color: #000000;
+    border: 1px solid #c2c2c2;
+    border-radius: 3px;
+    padding: 6px 12px;
+    font-size: 14px;
+    font-family: Roboto;
+}
+
+QPushButton:hover {
+    background-color: #e0e0e0;
+    border: 1px solid #e0e0e0;
+}
+
+QPushButton:pressed {
+    background-color: #d0d0d0;
+    border: 1px solid #888888;
+}
+
+QMenu {
+    background-color: #ffffff;
+    border: 1px solid #b3b3b3;
+    padding: 4px;
+    font-family: Roboto, sans-serif;
+    font-size: 13px;
+    color: #333333;
+}
+
+QMenu::item {
+    padding: 6px 20px;
+    background-color: transparent;
+    color: #333333;
+}
+
+QMenu::item:selected {
+    background-color: #0078d7;
+    color: #ffffff;
+    border-radius: 4px;
+}
+
+QMenu::item:disabled {
+    color: #aaaaaa; /* cinza claro */
+    background-color: transparent;
+    font-style:italic
+}
+
+/* Separador */
+QMenu::separator {
+    height: 1px;
+    background: #dcdcdc;
+    margin: 4px 8px;
+}
+
+
+</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_8">
    <item>
@@ -496,7 +777,7 @@ QPushButton:checked {
              <x>0</x>
              <y>0</y>
              <width>177</width>
-             <height>405</height>
+             <height>393</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -2107,8 +2388,8 @@ QPushButton:checked {
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>212</width>
-                 <height>605</height>
+                 <width>185</width>
+                 <height>609</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_14">
@@ -2548,8 +2829,8 @@ QPushButton:checked {
                        <rect>
                         <x>0</x>
                         <y>0</y>
-                        <width>796</width>
-                        <height>822</height>
+                        <width>831</width>
+                        <height>1018</height>
                        </rect>
                       </property>
                       <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -3055,6 +3336,275 @@ QPushButton:pressed {
               </layout>
              </widget>
             </widget>
+           </item>
+          </layout>
+         </widget>
+         <widget class="QWidget" name="page_6">
+          <layout class="QVBoxLayout" name="verticalLayout_34">
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_29">
+             <item>
+              <widget class="QFrame" name="frame_10">
+               <property name="frameShape">
+                <enum>QFrame::Shape::StyledPanel</enum>
+               </property>
+               <property name="frameShadow">
+                <enum>QFrame::Shadow::Raised</enum>
+               </property>
+               <layout class="QVBoxLayout" name="verticalLayout_26">
+                <item>
+                 <widget class="QLabel" name="label_12">
+                  <property name="styleSheet">
+                   <string notr="true">QLabel {
+    font-size: 18px;
+    font-weight: 600; /* Semi-Bold */
+    color: rgb(166, 166, 166);
+
+}</string>
+                  </property>
+                  <property name="text">
+                   <string>Sugestões</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
+                 <layout class="QHBoxLayout" name="horizontalLayout_20">
+                  <item>
+                   <widget class="QLabel" name="label_10">
+                    <property name="sizePolicy">
+                     <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+                      <horstretch>0</horstretch>
+                      <verstretch>0</verstretch>
+                     </sizepolicy>
+                    </property>
+                    <property name="text">
+                     <string>imagem bomba</string>
+                    </property>
+                   </widget>
+                  </item>
+                  <item>
+                   <widget class="QFrame" name="frame_9">
+                    <property name="frameShape">
+                     <enum>QFrame::Shape::StyledPanel</enum>
+                    </property>
+                    <property name="frameShadow">
+                     <enum>QFrame::Shadow::Raised</enum>
+                    </property>
+                    <layout class="QVBoxLayout" name="verticalLayout_18">
+                     <property name="spacing">
+                      <number>30</number>
+                     </property>
+                     <item>
+                      <widget class="QLabel" name="modelo">
+                       <property name="text">
+                        <string>Modelo</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="vazao">
+                       <property name="text">
+                        <string>Vazao</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="altura_3">
+                       <property name="text">
+                        <string>Altura Manometrica</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="potencia_3">
+                       <property name="text">
+                        <string>Potencia</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QLabel" name="material">
+                       <property name="text">
+                        <string>Material</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <widget class="QPushButton" name="fornecedor_local">
+                       <property name="text">
+                        <string>Fornecedor Local</string>
+                       </property>
+                      </widget>
+                     </item>
+                     <item>
+                      <spacer name="verticalSpacer_6">
+                       <property name="orientation">
+                        <enum>Qt::Orientation::Vertical</enum>
+                       </property>
+                       <property name="sizeHint" stdset="0">
+                        <size>
+                         <width>20</width>
+                         <height>40</height>
+                        </size>
+                       </property>
+                      </spacer>
+                     </item>
+                    </layout>
+                   </widget>
+                  </item>
+                 </layout>
+                </item>
+               </layout>
+              </widget>
+             </item>
+             <item>
+              <widget class="QStackedWidget" name="stackedWidget_2">
+               <property name="currentIndex">
+                <number>0</number>
+               </property>
+               <widget class="QWidget" name="page_7">
+                <layout class="QVBoxLayout" name="verticalLayout_33">
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_23">
+                   <item>
+                    <widget class="QLabel" name="label_13">
+                     <property name="styleSheet">
+                      <string notr="true">QLabel {
+    font-size: 18px;
+    font-weight: 600; /* Semi-Bold */
+    color: rgb(166, 166, 166);
+
+}</string>
+                     </property>
+                     <property name="text">
+                      <string>Bomba Dimensionada</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QToolButton" name="toolButton">
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="icon">
+                      <iconset resource="../img/img.qrc">
+                       <normaloff>:/img/opcoes.png</normaloff>:/img/opcoes.png</iconset>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_28">
+                   <item>
+                    <widget class="QFrame" name="frame_11">
+                     <property name="frameShape">
+                      <enum>QFrame::Shape::StyledPanel</enum>
+                     </property>
+                     <property name="frameShadow">
+                      <enum>QFrame::Shadow::Raised</enum>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_30">
+                      <property name="spacing">
+                       <number>30</number>
+                      </property>
+                      <item>
+                       <widget class="QLabel" name="label_14">
+                        <property name="text">
+                         <string>Vazao</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="label_15">
+                        <property name="text">
+                         <string>Altura Manometrica</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="label_16">
+                        <property name="text">
+                         <string>Tempo de Funcionamento</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <widget class="QLabel" name="label_17">
+                        <property name="text">
+                         <string>Potencia</string>
+                        </property>
+                       </widget>
+                      </item>
+                      <item>
+                       <spacer name="verticalSpacer_7">
+                        <property name="orientation">
+                         <enum>Qt::Orientation::Vertical</enum>
+                        </property>
+                        <property name="sizeHint" stdset="0">
+                         <size>
+                          <width>20</width>
+                          <height>40</height>
+                         </size>
+                        </property>
+                       </spacer>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QWidget" name="widget" native="true">
+                     <property name="sizePolicy">
+                      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+                       <horstretch>0</horstretch>
+                       <verstretch>0</verstretch>
+                      </sizepolicy>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">background-color: rgb(0, 255, 255);</string>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
+                </layout>
+               </widget>
+               <widget class="QWidget" name="page_8"/>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_18">
+             <item>
+              <widget class="QPushButton" name="pushButton">
+               <property name="text">
+                <string>Seleccionar</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_4">
+               <property name="text">
+                <string>Anterior</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_2">
+               <property name="text">
+                <string>Próxima </string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QPushButton" name="pushButton_5">
+               <property name="text">
+                <string>Comparar</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
            </item>
           </layout>
          </widget>
