@@ -25,15 +25,15 @@ class Definicoes:
 
         self.parent.icone_2.currentIndexChanged.connect(self.sincronizar_com_caudal_box)
         self.parent.icone_2.currentIndexChanged.connect(self.mudanca_dinamica_Textholder)
-        self.parent.caudal_box.currentIndexChanged.connect(self.sincronizar_com_icone_2)
+        self.parent.caudal_box_2.currentIndexChanged.connect(self.sincronizar_com_icone_2)
 
         self.conectar_sinais()
         self.carregar_unidades_iniciais()
 
     def conectar_sinais(self):
         """Conecta os botões aos métodos correspondentes."""
-        self.parent.radioButton.toggled.connect(self.actualizar_unidades)
-        self.parent.radioButton_2.toggled.connect(self.actualizar_unidades)
+        self.parent.radioButton_7.toggled.connect(self.actualizar_unidades)
+        self.parent.radioButton_8.toggled.connect(self.actualizar_unidades)
         self.parent.configuracoes.clicked.connect(self.mostrar_janela_definicoes)
         self.parent.configuracoes_2.clicked.connect(self.mostrar_janela_definicoes)
         self.parent.voltar.clicked.connect(self.voltar_a_menu_principal)
@@ -47,21 +47,21 @@ class Definicoes:
 
     def adicionar_unidades(self, unidades):
         """Adiciona as unidades aos respetivos comboboxes."""
-        self.parent.caudal_box.clear()
-        self.parent.altura_box.clear()
-        self.parent.comprimento_box.clear()
-        self.parent.diametro_box.clear()
-        self.parent.potencia_box.clear()
-        self.parent.npsh_box.clear()
+        self.parent.caudal_box_2.clear()
+        self.parent.altura_box_2.clear()
+        self.parent.comprimento_box_2.clear()
+        self.parent.diametro_box_2.clear()
+        self.parent.potencia_box_2.clear()
+        self.parent.npsh_box_2.clear()
         self.parent.icone_2.clear()
 
-        self.parent.caudal_box.addItems(unidades['caudal'])
+        self.parent.caudal_box_2.addItems(unidades['caudal'])
         self.parent.icone_2.addItems(unidades['caudal'])
-        self.parent.altura_box.addItems(unidades['altura'])
-        self.parent.comprimento_box.addItems(unidades['comprimento'])
-        self.parent.diametro_box.addItems(unidades['diametro'])
-        self.parent.potencia_box.addItems(unidades['potencia'])
-        self.parent.npsh_box.addItems(unidades['npsh'])
+        self.parent.altura_box_2.addItems(unidades['altura'])
+        self.parent.comprimento_box_2.addItems(unidades['comprimento'])
+        self.parent.diametro_box_2.addItems(unidades['diametro'])
+        self.parent.potencia_box_2.addItems(unidades['potencia'])
+        self.parent.npsh_box_2.addItems(unidades['npsh'])
 
     def actualizar_unidades(self):
         """Atualiza as unidades com base no botão selecionado."""
@@ -86,13 +86,13 @@ class Definicoes:
 
     
     def mudanca_widget(self, index=int):
-        self.parent.janela_definicoes.setCurrentIndex(index)
+        self.parent.stackedWidget_2.setCurrentIndex(index)
 
     def sincronizar_com_caudal_box(self, index):
         if self.sincronizando:
             return
         self.sincronizando = True
-        self.parent.caudal_box.setCurrentIndex(index)
+        self.parent.caudal_box_2.setCurrentIndex(index)
         self.sincronizando = False
 
     def sincronizar_com_icone_2(self, index):

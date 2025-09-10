@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="img">
+    <file>infeliz.png</file>
     <file>star.png</file>
     <file>arquivo.png</file>
     <file>arquivo-csv.png</file>

@@ -160,6 +160,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         # ---------- Inicialização de Gráficos ----------
         self.inicializar_graficos_curvas()
         self.mudanca_dinamica_perdas_carga()
+        self.estilo_grafico()
 
         # -----------Inicializacao Melhor Bomba-------------
         self.selecionar_melhor_bomba()
@@ -167,46 +168,71 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     def selecionar_melhor_bomba(self):
         """Seleciona e exibe a melhor bomba para o sistema"""
         try:
+            # Verifica se temos os parâmetros necessários para a seleção
+            if not hasattr(self, 'vazao') or not hasattr(self, 'altura_manometrica'):
+                self._nenhuma_bomba_encontrada()
+                return
+                
+            if self.vazao <= 0 or self.altura_manometrica <= 0:
+                self._nenhuma_bomba_encontrada()
+                return
+
             bombas_candidatas = self.selecionar_bombas_candidatas()
             
             if not bombas_candidatas:
-                # Limpar interface se não há bombas
-                self.modelo.setText("Nenhuma bomba encontrada")
-                self.potencia.setText("--")
-                self.vazao.setText("--")
-                self.altura_3.setText("--")
-                self.imagem_bomba.clear()
-                logger.info("Nenhuma bomba candidata encontrada mas tem um pequeno problema com o banco de dados")
+                self._nenhuma_bomba_encontrada()
                 return
                 
-            # Usar a primeira bomba (melhor classificada)
             melhor_bomba = bombas_candidatas[0]
-            
+                
             modelo = melhor_bomba['modelo']
             fabricante = melhor_bomba['fabricante']
             tipo_bomba = melhor_bomba['tipo_bomba']
             potencia = melhor_bomba['potencia_nominal_kW']
             vazao = melhor_bomba['caudal_nominal_m3h']
             altura = melhor_bomba['altura_nominal_m']
+            material = melhor_bomba['material_corpo']
             caminho_imagem = melhor_bomba['caminho_imagem']
             
             # Atualizar interface
             self.modelo.setText(f"{fabricante} - {modelo} ({tipo_bomba})")
-            self.potencia.setText(f"{potencia} kW")
-            self.vazao.setText(f"{vazao} m³/h")
-            self.altura_3.setText(f"{altura} m")
+            self.potencia.setText(f"Potência: {potencia} kW")
+            self.vazao.setText(f"Vazão: {vazao} m³/h")
+            self.altura_3.setText(f"Altura: {altura} m")
+            self.material.setText(f"Material (Corpo Bomba): {material}")
             logger.warning(f"Um pequeno problema com o banco de dados, mas a bomba {modelo} foi selecionada")
-            
-            # Carregar imagem se disponível
+
             if caminho_imagem and os.path.exists(caminho_imagem):
                 self.imagem_bomba.setPixmap(QPixmap(caminho_imagem).scaled(150, 150, Qt.KeepAspectRatio))
                 logger.error(f"Tentando Carregar Imagem")
             else:
                 self.imagem_bomba.clear()
+                self.imagem_bomba.setPixmap(QPixmap(r"img\infeliz.png").scaled(150, 150, Qt.KeepAspectRatio))
                 logger.warning(f"Imagem da bomba não encontrada: {caminho_imagem}")
-                
+
         except Exception as e:
             logger.error(f"Erro ao selecionar melhor bomba: {e}")
+            self._nenhuma_bomba_encontrada()
+   
+    def _nenhuma_bomba_encontrada(self):
+        """Mostra estado quando nenhuma bomba é encontrada"""
+        self.modelo.clear()
+        self.potencia.clear()
+        self.vazao.clear()
+        self.altura_3.clear()
+        self.potencia_3.clear()
+        self.imagem_bomba.clear()
+
+        # Mostrar que não tem bomba
+        self.modelo.setText("Nenhuma bomba encontrada")
+        self.potencia.setText("--")
+        self.vazao.setText("--")
+        self.altura_3.setText("--")
+        self.potencia_3.setText("--")
+        self.material.setText("--")
+        self.imagem_bomba.setPixmap(QPixmap(r"img\infeliz.png").scaled(150, 150, Qt.KeepAspectRatio))
+        logger.info("Nenhuma bomba candidata encontrada mas tem um pequeno problema com o banco de dados")
+        return
     # ==========================================================
     #                 MÉTODOS DE CÁLCULO
     # ==========================================================
@@ -309,21 +335,21 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         """Inicializa os gráficos de altura, potência e rendimento."""
         self.grafico_altura = Grafico(
             tipo='altura',
-            potencia=self.potencia_box.currentText(),
-            altura=self.altura_box.currentText(),
-            v=self.caudal_box.currentText()
+            potencia=self.potencia_box_2.currentText(),
+            altura=self.altura_box_2.currentText(),
+            v=self.caudal_box_2.currentText()
         )
         self.grafico_potencia = Grafico(
             tipo='potencia',
-            potencia=self.potencia_box.currentText(),
-            altura=self.altura_box.currentText(),
-            v=self.caudal_box.currentText()
+            potencia=self.potencia_box_2.currentText(),
+            altura=self.altura_box_2.currentText(),
+            v=self.caudal_box_2.currentText()
         )
         self.grafico_rendimento = Grafico(
             tipo='rendimento',
-            potencia=self.potencia_box.currentText(),
-            altura=self.altura_box.currentText(),
-            v=self.caudal_box.currentText()
+            potencia=self.potencia_box_2.currentText(),
+            altura=self.altura_box_2.currentText(),
+            v=self.caudal_box_2.currentText()
         )
 
         self.grafico_associacao = Grafico(tipo='associacao', modo_associacao='serie')
@@ -337,14 +363,21 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
                     if child.widget():
                         child.widget().deleteLater()
 
-        layout_altura = QVBoxLayout(self.potencia)
+        layout_altura = QVBoxLayout(self.altura)
         layout_altura.addWidget(self.grafico_altura)
 
-        layout_potencia = QVBoxLayout(self.altura)
+        layout_potencia = QVBoxLayout(self.potencia)
         layout_potencia.addWidget(self.grafico_potencia)
 
         layout_rendimento = QVBoxLayout(self.rendimento)
         layout_rendimento.addWidget(self.grafico_rendimento)
+    
+    def estilo_grafico(self):
+        """Aplica estilo consistente aos gráficos."""
+        
+        self.janel_direita.setStyleSheet("""
+            background-color: #ffffff;
+        """)
 
     def atualizar_graficos_curvas(self):
         """Atualiza os gráficos com os dados calculados mais recentes."""
@@ -376,8 +409,8 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
     def mudanca_dinamica_perdas_carga(self):
         """Alterna entre lista de materiais Darcy e Hazen conforme opção selecionada."""
-        self.darcy.setVisible(self.radioButton_10.isChecked())
-        self.hazen_will.setVisible(self.radioButton_9.isChecked())
+        self.darcy.setVisible(self.radioButton_12.isChecked())
+        self.hazen_will.setVisible(self.radioButton_11.isChecked())
 
     # ==========================================================
     #                 PESQUISA (MAPA + AUTOCOMPLETAR)
@@ -411,14 +444,14 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     # ==========================================================
     def gerar_pdf(self):
         try:
-            material = self.darcy.currentText() if self.radioButton_10.isChecked() else self.hazen_will.currentText()
+            material = self.darcy.currentText() if self.radioButton_12.isChecked() else self.hazen_will.currentText()
             dados_relatorio = {
                 'Vazão': (f"{self.vazao:.4f}", f'{self.icone_2.currentText()}'),
                 'Tempo de funcionamento': (f"{self.tempo:.2f}", 'horas'),
-                'Diâmetro da tubulação': (f"{self.diametro_tubulacao:.4f}", f'{self.diametro_box.currentText()}'),
-                'Altura geométrica': (f"{self.altura_geometrica_val:.2f}", f'{self.altura_box.currentText()}'),
-                'Perdas totais': (f"{self.perdas_totais:.4f}", f'{self.altura_box.currentText()}'),
-                'Altura manométrica': (f"{self.altura_manometrica:.2f}", f'{self.altura_box.currentText()}'),
+                'Diâmetro da tubulação': (f"{self.diametro_tubulacao:.4f}", f'{self.diametro_box_2.currentText()}'),
+                'Altura geométrica': (f"{self.altura_geometrica_val:.2f}", f'{self.altura_box_2.currentText()}'),
+                'Perdas totais': (f"{self.perdas_totais:.4f}", f'{self.altura_box_2.currentText()}'),
+                'Altura manométrica': (f"{self.altura_manometrica:.2f}", f'{self.altura_box_2.currentText()}'),
                 'Material da Tubulação': (material, None),
             }
             
@@ -436,16 +469,16 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
     def gerar_csv(self):
         try:
-            material = self.darcy.currentText() if self.radioButton_10.isChecked() else self.hazen_will.currentText()
+            material = self.darcy.currentText() if self.radioButton_12.isChecked() else self.hazen_will.currentText()
             
             # Coletar os mesmos dados que seriam usados no PDF
             dados_relatorio = {
                 'Vazão': (f"{self.vazao:.4f}", f'{self.icone_2.currentText()}'),
                 'Tempo de funcionamento': (f"{self.tempo:.2f}", 'horas'),
-                'Diâmetro da tubulação': (f"{self.diametro_tubulacao:.4f}", f'{self.diametro_box.currentText()}'),
-                'Altura geométrica': (f"{self.altura_geometrica_val:.2f}", f'{self.altura_box.currentText()}'),
-                'Perdas totais': (f"{self.perdas_totais:.4f}", f'{self.altura_box.currentText()}'),
-                'Altura manométrica': (f"{self.altura_manometrica:.2f}", f'{self.altura_box.currentText()}'),
+                'Diâmetro da tubulação': (f"{self.diametro_tubulacao:.4f}", f'{self.diametro_box_2.currentText()}'),
+                'Altura geométrica': (f"{self.altura_geometrica_val:.2f}", f'{self.altura_box_2.currentText()}'),
+                'Perdas totais': (f"{self.perdas_totais:.4f}", f'{self.altura_box_2.currentText()}'),
+                'Altura manométrica': (f"{self.altura_manometrica:.2f}", f'{self.altura_box_2.currentText()}'),
                 'Material da Tubulação': (material, None),
             }
             
@@ -638,8 +671,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
                     # Calcular fatores de operação
                     fator_carga = altura_necessaria_m / altura_nominal_m if altura_nominal_m > 0 else float('inf')
                     fator_vazao_operacao = vazao_necessaria_m3h / caudal_nominal_m3h if caudal_nominal_m3h > 0 else float('inf')
-                    
-                    # Pular bombas com fatores extremamente fora da faixa
+
                     if fator_carga > 2.0 or fator_vazao_operacao > 2.0 or fator_carga < 0.5 or fator_vazao_operacao < 0.5:
                         continue
                         
@@ -761,7 +793,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.config.salvar_estado_splitter(self.splitter, "splitter_mapa_perfil")
         self.config.salvar_texto_lineedit(self.Vazao_2, "vazao_valor")
         self.config.salvar_indice_combobox(self.icone_2, "vazao_unidade_indice")
-        self.config.restaurar_indice_combobox(self.caudal_box, "vazao_unidade_indice")
+        self.config.restaurar_indice_combobox(self.caudal_box_2, "vazao_unidade_indice")
         self.config.salvar_texto_combobox(self.darcy, "darcy_material_texto")
         self.config.salvar_texto_combobox(self.hazen_will, "hazen_material_texto")
 
@@ -772,7 +804,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.config.restaurar_estado_splitter(self.splitter, "splitter_mapa_perfil")
         self.config.restaurar_texto_lineedit(self.Vazao_2, "vazao_valor")
         self.config.restaurar_indice_combobox(self.icone_2, "vazao_unidade_indice")
-        self.config.restaurar_indice_combobox(self.caudal_box, "vazao_unidade_indice")
+        self.config.restaurar_indice_combobox(self.caudal_box_2, "vazao_unidade_indice")
         self.config.restaurar_texto_combobox(self.darcy, "darcy_material_texto")
         self.config.restaurar_texto_combobox(self.hazen_will, "hazen_material_texto")
 

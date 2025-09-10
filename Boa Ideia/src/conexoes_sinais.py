@@ -45,8 +45,8 @@ class ConexoesUI():
         self.parent.Vazao.textChanged.connect(self.parent.atualizar_parametros_entrada)
         
          # Sinais da UI para seleção de fórmula e material
-        self.parent.radioButton_10.toggled.connect(self.parent.recalcular_sistema_completo)
-        self.parent.radioButton_9.toggled.connect(self.parent.recalcular_sistema_completo)
+        self.parent.radioButton_11.toggled.connect(self.parent.recalcular_sistema_completo)
+        self.parent.radioButton_12.toggled.connect(self.parent.recalcular_sistema_completo)
         self.parent.darcy.currentIndexChanged.connect(self.parent.recalcular_sistema_completo)
         self.parent.hazen_will.currentIndexChanged.connect(self.parent.recalcular_sistema_completo)
 
@@ -100,7 +100,7 @@ class ConexoesUI():
     def _conectar_abas_frames(self):
         """Conecta os botões para animações de painéis laterais."""
         self.parent.fechar_lateral_2.clicked.connect(
-            lambda: self.animacoes.largura(self.parent.frame_4, largura_alvo=300)
+            lambda: self.animacoes.largura(self.parent.janel_direita, largura_alvo=300)
         )
         self.parent.abrir_layout_3.clicked.connect(
             lambda: self.animacoes.largura(self.parent.frame_4, self.parent.frame_6, largura_alvo=300)
@@ -130,8 +130,8 @@ class ConexoesUI():
 
     def _perda_carga_dinamica(self):
         """Recalcula as perdas de carga quando o comprimento ou acessórios mudam."""
-        self.parent.radioButton_10.toggled.connect(self.parent.mudanca_dinamica_perdas_carga)
-        self.parent.radioButton_9.toggled.connect(self.parent.mudanca_dinamica_perdas_carga)
+        self.parent.radioButton_11.toggled.connect(self.parent.mudanca_dinamica_perdas_carga)
+        self.parent.radioButton_12.toggled.connect(self.parent.mudanca_dinamica_perdas_carga)
 
     def _conectar_actualizao_graph(self):
         self.parent.actualizar_grafico.clicked.connect(self.parent.atualizar_graficos_curvas)
@@ -142,9 +142,9 @@ class ConexoesUI():
         self.parent.Vazao.textChanged.connect(self.parent.atualizar_parametros_entrada)
 
     def _connectar_actualizacao_unidades_graficos(self):
-        self.parent.caudal_box.currentTextChanged.connect(self.parent.atualizar_unidades_graficos)
-        self.parent.altura_box.currentTextChanged.connect(self.parent.atualizar_unidades_graficos)
-        self.parent.potencia_box.currentTextChanged.connect(self.parent.atualizar_unidades_graficos)
+        self.parent.caudal_box_2.currentTextChanged.connect(self.parent.atualizar_unidades_graficos)
+        self.parent.altura_box_2.currentTextChanged.connect(self.parent.atualizar_unidades_graficos)
+        self.parent.potencia_box_2.currentTextChanged.connect(self.parent.atualizar_unidades_graficos)
 
     def _conectar_geracao_pdf(self):
         self.parent.exportar_pdf.clicked.connect(self.parent.gerar_pdf)
@@ -166,7 +166,7 @@ class ConexoesUI():
         self.parent.relatorio_3.clicked.connect(lambda: self.parent.stackedWidget.setCurrentIndex(2))
         self.parent.relatorio_3.clicked.connect(self.parent.selecionar_melhor_bomba)
         self.parent.Vazao_2.textChanged.connect(self.parent.selecionar_melhor_bomba)
-  
+
     def _connectar_versao_pro(self):
 
         msg = QMessageBox(self.parent)
