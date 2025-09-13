@@ -113,11 +113,8 @@ class PDF():
             self.Relatorio.append(Spacer(1, 12))
 
         except Exception as e:
-            print(f"Erro ao adicionar três gráficos: {e}")
-
-        except Exception as e:
-            print(f"Erro ao salvar imagem temporária: {e}")
-            return None        
+            print(f"Erro ao adicionar três gráficos: {e}") 
+    
 
     def adicionar_conteudo(self, dados):
         tabela_dados = []
@@ -146,8 +143,44 @@ class PDF():
         
         tabela.setStyle(estilo_tabela)
         self.Relatorio.append(tabela)
-        self.Relatorio.append(Spacer(1, 15))
+        self.Relatorio.append(Spacer(1, 20))
+    
+    def adicionar_bomba_selecionada(self, dados):
+        tabela_dados = []
+        cabecalho = ['Parâmetro']
+        tabela_dados.append(cabecalho)
+        
+        for param, _ in dados.items():
+            tabela_dados.append([param])
 
+        tabela = Table(tabela_dados, colWidths=[3*inch])
+        estilo_tabela = TableStyle([
+            ('BACKGROUND', (0, 0), (-1, 0), colors.ghostwhite),
+            ('TEXTCOLOR', (0, 0), (-1, 0), colors.black),
+            ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+            ('FONTNAME', (0, 0), (-1, 0), 'Courier-Bold'),
+            ('BOTTOMPADDING', (0, 0), (-1, 0), 12),
+            ('FONTNAME',  (0, 1), (-1, -1), 'Courier'),
+            ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+            ('GRID', (0, 0), (-1, -1), 1, colors.black),
+        ])
+        
+        for i in range(1, len(tabela_dados)):
+            if i % 2 == 0:
+                estilo_tabela.add('BACKGROUND', (0, i), (-1, i), colors.HexColor('#d6dbdf'))
+
+        tabela_principal = Table([[img[0], tabela]], colWidths=[largura, largura])
+      
+        tabela.setStyle(estilo_tabela)
+        self.Relatorio.append(tabela_principal)
+        self.Relatorio.append(Spacer(1, 20))
+    
+    def adicionar_observacoes(self, texto):
+        """Adiciona uma seção de observações ao relatório"""
+  
+        self.Relatorio.append(Paragraph(texto, self.corpo))
+        self.Relatorio.append(Spacer(1, 12))
+        
     def rodape(self, canvas, doc):
         canvas.saveState()
         largura, altura = A4
@@ -162,16 +195,18 @@ class PDF():
         canvas.setFont('GastrolinaSignature', 10)
         canvas.setFillColor(colors.HexColor('#7f8c8d'))
         canvas.drawRightString(largura - 50, 30, 'Relatório gerado pelo AquaPump')
+        
         tempo = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         canvas.setFont('Courier', 6)
         canvas.drawString(largura - 130, 30 - 12, tempo)
-        
+
+        canvas.setFont('Courier', 6)
+        canvas.drawRightString(140, 30-12, u"© 2025 Tenerife da Saugineta")
         # Adicionar linha decorativa
         canvas.setStrokeColor(colors.HexColor('#3498db'))
         canvas.setLineWidth(0.5)
         canvas.line(35, 45, largura - 35, 45)
-        
-        # Adicionar número da página
+
         canvas.setFont('Courier', 6)
         pagina = f"Página {doc.page}"
         canvas.drawCentredString(largura / 2, 20, pagina)
