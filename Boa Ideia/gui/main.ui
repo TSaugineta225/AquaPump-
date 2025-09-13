@@ -2503,7 +2503,7 @@ QPushButton:checked {
              <item>
               <widget class="QStackedWidget" name="stackedWidget_2">
                <property name="currentIndex">
-                <number>0</number>
+                <number>1</number>
                </property>
                <widget class="QWidget" name="page_2">
                 <layout class="QVBoxLayout" name="verticalLayout_36">
@@ -3308,7 +3308,7 @@ border-radius: 4px;</string>
                         </widget>
                        </item>
                        <item>
-                        <widget class="QLabel" name="vazao">
+                        <widget class="QLabel" name="vazao_label">
                          <property name="styleSheet">
                           <string notr="true">border: None</string>
                          </property>

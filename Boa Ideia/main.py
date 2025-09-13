@@ -72,8 +72,9 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.setupUi(self)
 
         # ---------- Configurações da Janela ----------
-        #self.setTitleBar(CustomTitleBar(self))
+        self.setResizeEnabled(True)  
         self.setWindowTitle("AquaPump")
+        self.setWindowIcon(QIcon(r"img\logo_principal.png"))
         self.ex_3 = chr(0x00B3)   # Expoente para m³
 
         # ---------- Atributos de Cálculo do Sistema ----------
@@ -161,6 +162,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.inicializar_graficos_curvas()
         self.mudanca_dinamica_perdas_carga()
         self.estilo_grafico()
+        self.groupBox_10.setVisible(False)
 
         # -----------Inicializacao Melhor Bomba-------------
         self.selecionar_melhor_bomba()
@@ -196,18 +198,18 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             
             # Atualizar interface
             self.modelo.setText(f"{fabricante} - {modelo} ({tipo_bomba})")
-            self.potencia.setText(f"Potência: {potencia} kW")
-            self.vazao.setText(f"Vazão: {vazao} m³/h")
+            self.potencia_3.setText(f"Potência: {potencia} kW")
+            self.vazao_label.setText(f"Vazão: {vazao} m³/h")
             self.altura_3.setText(f"Altura: {altura} m")
             self.material.setText(f"Material (Corpo Bomba): {material}")
             logger.warning(f"Um pequeno problema com o banco de dados, mas a bomba {modelo} foi selecionada")
 
             if caminho_imagem and os.path.exists(caminho_imagem):
-                self.imagem_bomba.setPixmap(QPixmap(caminho_imagem).scaled(150, 150, Qt.KeepAspectRatio))
+                self.label_10.setPixmap(QPixmap(caminho_imagem).scaled(150, 150, Qt.KeepAspectRatio))
                 logger.error(f"Tentando Carregar Imagem")
             else:
-                self.imagem_bomba.clear()
-                self.imagem_bomba.setPixmap(QPixmap(r"img\infeliz.png").scaled(150, 150, Qt.KeepAspectRatio))
+                self.label_10.clear()
+                self.label_10.setPixmap(QPixmap(r"img\infeliz.png").scaled(150, 150, Qt.KeepAspectRatio))
                 logger.warning(f"Imagem da bomba não encontrada: {caminho_imagem}")
 
         except Exception as e:
@@ -217,20 +219,18 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     def _nenhuma_bomba_encontrada(self):
         """Mostra estado quando nenhuma bomba é encontrada"""
         self.modelo.clear()
-        self.potencia.clear()
-        self.vazao.clear()
+        self.material.clear()
+        self.vazao_label.clear()
         self.altura_3.clear()
         self.potencia_3.clear()
-        self.imagem_bomba.clear()
+        self.label_10.clear()
 
-        # Mostrar que não tem bomba
         self.modelo.setText("Nenhuma bomba encontrada")
-        self.potencia.setText("--")
-        self.vazao.setText("--")
+        self.vazao_label.setText("--")
         self.altura_3.setText("--")
         self.potencia_3.setText("--")
         self.material.setText("--")
-        self.imagem_bomba.setPixmap(QPixmap(r"img\infeliz.png").scaled(150, 150, Qt.KeepAspectRatio))
+        self.label_10.setPixmap(QPixmap(r"img\infeliz.png").scaled(150, 150, Qt.KeepAspectRatio))
         logger.info("Nenhuma bomba candidata encontrada mas tem um pequeno problema com o banco de dados")
         return
     # ==========================================================
@@ -442,6 +442,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     # ==========================================================
     #                EXPORTAÇÃO PARA PDF
     # ==========================================================
+
     def gerar_pdf(self):
         try:
             material = self.darcy.currentText() if self.radioButton_12.isChecked() else self.hazen_will.currentText()
@@ -454,13 +455,18 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
                 'Altura manométrica': (f"{self.altura_manometrica:.2f}", f'{self.altura_box_2.currentText()}'),
                 'Material da Tubulação': (material, None),
             }
-            
+
+            #self.atualizar_graficos_curvas()
+
             # Configurar e gerar PDF
-            self.relatorio_pdf.adicionar_titulos("Relatório do Sistema de Bombeamento - AquaPump")
-            self.relatorio_pdf.adicionar_secao("Dados do Sistema")
+            self.relatorio_pdf.adicionar_titulos("Relatório do Sistema de Bombeamento")
+            self.relatorio_pdf.adicionar_secao("Dados do Dimensionamento")
             self.relatorio_pdf.adicionar_conteudo(dados_relatorio)
             
-            # Gerar PDF
+            # Adicionar gráficos
+            self.relatorio_pdf.adicionar_secao("Gráficos de Curvas da Bomba - Simulação")
+            self.relatorio_pdf.adicionar_grafico(self.grafico_rendimento.figure, self.grafico_potencia.figure, self.grafico_altura.figure)
+
             self.relatorio_pdf.gravar_pdf()
             QMessageBox.information(self, "Sucesso", "Relatório PDF gerado com sucesso!")
             

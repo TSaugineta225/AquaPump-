@@ -1,5 +1,6 @@
 import os
 import webbrowser
+from datetime import datetime
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, Image
 from reportlab.lib.pagesizes import A4
@@ -24,6 +25,8 @@ import matplotlib.pyplot as plt
 
 class PDF():
     def __init__(self):
+
+        self.temp_files = []
         self.doc = SimpleDocTemplate('doc.pdf', pagesize=A4)
         self.styles = getSampleStyleSheet()
         self.configuracao_dos_styles()
@@ -69,11 +72,52 @@ class PDF():
         )
 
     def adicionar_titulos(self, titulo_principal="Relatório do Sistema de Bombeamento"):
-        self.Relatorio.append(Paragraph(titulo_principal, self.titulo))
-        self.Relatorio.append(Spacer(1, 12))
+        img = Image("img/logo.png", width=80, height=70)
+        titulo = Paragraph(titulo_principal, self.titulo)
+        tabela = Table([[titulo, img]], colWidths=[400, 80])
+        tabela.setStyle(TableStyle([
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),  
+            ("ALIGN", (1, 0), (1, 0), "RIGHT"),    
+            ("BOX", (0,0), (-1,-1), 0, colors.white),
+        ]))
+
+        self.Relatorio.append(tabela)
+        self.Relatorio.append(Spacer(1, 22))   
 
     def adicionar_secao(self, titulo):
         self.Relatorio.append(Paragraph(titulo, self.subtitulo))
+
+    def adicionar_grafico(self, fig1, fig2, fig3, largura=3*inch, altura=3*inch):
+        try:
+            tmp_paths = []
+
+            for fig in [fig1, fig2, fig3]:
+                with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:
+                    fig.savefig(tmp.name, dpi=300, bbox_inches='tight', transparent=False, facecolor='#f8f9fa')
+                    tmp_paths.append(tmp.name)
+                    self.temp_files.append(tmp.name)
+
+            imgs = [Image(path, width=largura, height=altura) for path in tmp_paths]
+
+            tabela = Table([[imgs[0], imgs[1]],
+                            [imgs[2], '']],  
+                        colWidths=[largura, largura])
+
+            tabela.setStyle(TableStyle([
+                ("VALIGN", (0,0), (-1,-1), "MIDDLE"),
+                ("ALIGN", (0,0), (-1,-1), "CENTER"),
+                ("BOX", (0,0), (-1,-1), 0, colors.white)
+            ]))
+
+            self.Relatorio.append(tabela)
+            self.Relatorio.append(Spacer(1, 12))
+
+        except Exception as e:
+            print(f"Erro ao adicionar três gráficos: {e}")
+
+        except Exception as e:
+            print(f"Erro ao salvar imagem temporária: {e}")
+            return None        
 
     def adicionar_conteudo(self, dados):
         tabela_dados = []
@@ -104,24 +148,6 @@ class PDF():
         self.Relatorio.append(tabela)
         self.Relatorio.append(Spacer(1, 15))
 
-    def adicionar_grafico(self, figura_matplotlib, largura=6*inch, altura=4*inch):
-        """Adiciona um gráfico matplotlib ao PDF"""
-        try:
-            # Salvar figura temporariamente
-            with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as tmp:
-                figura_matplotlib.savefig(tmp.name, dpi=300, bbox_inches='tight', facecolor='#f8f9fa')
-                tmp_path = tmp.name
-            
-            # Adicionar ao PDF
-            img = Image(tmp_path, width=largura, height=altura)
-            self.Relatorio.append(img)
-            self.Relatorio.append(Spacer(1, 12))
-            
-            # Limpar arquivo temporário
-            os.unlink(tmp_path)
-        except Exception as e:
-            print(f"Erro ao adicionar gráfico: {e}")
-
     def rodape(self, canvas, doc):
         canvas.saveState()
         largura, altura = A4
@@ -136,6 +162,9 @@ class PDF():
         canvas.setFont('GastrolinaSignature', 10)
         canvas.setFillColor(colors.HexColor('#7f8c8d'))
         canvas.drawRightString(largura - 50, 30, 'Relatório gerado pelo AquaPump')
+        tempo = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        canvas.setFont('Courier', 6)
+        canvas.drawString(largura - 130, 30 - 12, tempo)
         
         # Adicionar linha decorativa
         canvas.setStrokeColor(colors.HexColor('#3498db'))
@@ -143,7 +172,7 @@ class PDF():
         canvas.line(35, 45, largura - 35, 45)
         
         # Adicionar número da página
-        canvas.setFont('Helvetica', 9)
+        canvas.setFont('Courier', 6)
         pagina = f"Página {doc.page}"
         canvas.drawCentredString(largura / 2, 20, pagina)
         
@@ -170,11 +199,23 @@ class PDF():
                 onLaterPages=self.rodape
             )
 
-            # Abre o PDF após gerar
+            for temp_file in self.temp_files:
+                try:
+                    os.unlink(temp_file)
+                except:
+                    pass
+            self.temp_files = []  # Limpar a lista
+
             caminho_absoluto = os.path.abspath(caminho)
             webbrowser.open_new(f"file://{caminho_absoluto}")
             
             return True
         except Exception as e:
+            for temp_file in self.temp_files:
+                try:
+                    os.unlink(temp_file)
+                except:
+                    pass
+            self.temp_files = []
             QMessageBox.warning(None, "Aviso", f"Erro ao gerar PDF: {str(e)}")
             return False

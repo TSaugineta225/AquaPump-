@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'mainpuUDmQ.ui'
+## Form generated from reading UI file 'mainGmvGEp.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -30,7 +30,7 @@ class Ui_AquaPump(object):
         AquaPump.resize(917, 593)
         AquaPump.setStyleSheet(u"/* --------- QWidget (Geral) --------- */\n"
 "QWidget {\n"
-
+"    background-color: #ffffff;\n"
 "    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
 "    font-size: 14px;\n"
 "    color: #333333;\n"
@@ -1056,14 +1056,12 @@ class Ui_AquaPump(object):
 "}\n"
 "\n"
 "QScrollBar::up-arrow {\n"
-"    image: url(:/img/arrow-up.png);\n"
 "    width: 8px;\n"
 "    height: 8px;\n"
 "}\n"
 "\n"
 "\n"
 " QScrollBar::down-arrow {\n"
-"    image: url(:/img/arrow-down-1.png);\n"
 "    width: 8px;\n"
 "    height: 8px;\n"
 "}\n"
@@ -1371,7 +1369,7 @@ class Ui_AquaPump(object):
         self.verticalLayout_11 = QVBoxLayout(self.widget_2)
         self.verticalLayout_11.setSpacing(0)
         self.verticalLayout_11.setObjectName(u"verticalLayout_11")
-        self.verticalLayout_11.setContentsMargins(0, 0, 0, 0)
+        self.verticalLayout_11.setContentsMargins(1, 1, 1, 1)
         self.horizontalLayout_13 = QHBoxLayout()
         self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
         self.horizontalLayout_13.setContentsMargins(9, -1, 9, -1)
@@ -2150,11 +2148,11 @@ class Ui_AquaPump(object):
 
         self.verticalLayout_26.addWidget(self.modelo)
 
-        self.vazao = QLabel(self.frame_11)
-        self.vazao.setObjectName(u"vazao")
-        self.vazao.setStyleSheet(u"border: None")
+        self.vazao_label = QLabel(self.frame_11)
+        self.vazao_label.setObjectName(u"vazao_label")
+        self.vazao_label.setStyleSheet(u"border: None")
 
-        self.verticalLayout_26.addWidget(self.vazao)
+        self.verticalLayout_26.addWidget(self.vazao_label)
 
         self.altura_3 = QLabel(self.frame_11)
         self.altura_3.setObjectName(u"altura_3")
@@ -2252,7 +2250,7 @@ class Ui_AquaPump(object):
         self.projecto_2.setDefault(True)
         self.stackedWidget.setCurrentIndex(0)
         self.stackedWidget_3.setCurrentIndex(0)
-        self.stackedWidget_2.setCurrentIndex(0)
+        self.stackedWidget_2.setCurrentIndex(1)
 
 
         QMetaObject.connectSlotsByName(AquaPump)
@@ -2369,7 +2367,7 @@ class Ui_AquaPump(object):
         self.label_12.setText(QCoreApplication.translate("AquaPump", u"Sugest\u00f5es", None))
         self.label_10.setText(QCoreApplication.translate("AquaPump", u"imagem bomba", None))
         self.modelo.setText(QCoreApplication.translate("AquaPump", u"Modelo", None))
-        self.vazao.setText(QCoreApplication.translate("AquaPump", u"Vazao", None))
+        self.vazao_label.setText(QCoreApplication.translate("AquaPump", u"Vazao", None))
         self.altura_3.setText(QCoreApplication.translate("AquaPump", u"Altura Manometrica", None))
         self.potencia_3.setText(QCoreApplication.translate("AquaPump", u"Potencia", None))
         self.material.setText(QCoreApplication.translate("AquaPump", u"Material", None))

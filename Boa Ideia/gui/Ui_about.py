@@ -79,7 +79,7 @@ class Ui_Dialog(object):
         self.label = QLabel(self.frame_2)
         self.label.setObjectName(u"label")
         self.label.setMaximumSize(QSize(16777215, 40))
-        self.label.setPixmap(QPixmap(u":/img/TS.jpg"))
+        self.label.setPixmap(QPixmap(u":/img/logo_principal.png"))
         self.label.setScaledContents(True)
 
         self.verticalLayout_2.addWidget(self.label)

@@ -25,6 +25,7 @@ class ConexoesUI():
         self._conectar_geracao_pdf() 
         self._connectar_arquivo()   
         self._conectar_ocultacoes()
+        self._connectar_voltar_menu_principal()
         self._connectar_janelas_responsivas()
         self._connectar_janela_relatorio()
         self._connectar_versao_pro()
@@ -152,6 +153,9 @@ class ConexoesUI():
     def _conectar_ocultacoes(self):
         """Conecta os botões para ocultar/mostrar elementos da UI."""
         self.parent.banco_dados.setHidden(True)
+
+    def _connectar_voltar_menu_principal(self):
+        self.parent.voltar_2.clicked.connect(lambda: self.parent.stackedWidget.setCurrentIndex(0))
 
     def _connectar_arquivo(self):
         self.parent.novo_arquivo.clicked.connect(self.parent.novo_projecto)
