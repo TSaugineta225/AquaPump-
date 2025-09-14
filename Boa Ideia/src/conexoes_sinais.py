@@ -25,10 +25,11 @@ class ConexoesUI():
         self._conectar_geracao_pdf() 
         self._connectar_arquivo()   
         self._conectar_ocultacoes()
-        self._connectar_voltar_menu_principal()
         self._connectar_janelas_responsivas()
-        self._connectar_janela_relatorio()
         self._connectar_versao_pro()
+        self._connectar_selecao_bombas()
+        self._connectar_abrir_graph()
+        self._connectar_widgets_desativadas()
 
     def _conectar_configuracoes(self):
         """Restaura as configurações da sessão anterior."""
@@ -46,8 +47,8 @@ class ConexoesUI():
         self.parent.Vazao.textChanged.connect(self.parent.atualizar_parametros_entrada)
         
          # Sinais da UI para seleção de fórmula e material
-        self.parent.radioButton_11.toggled.connect(self.parent.recalcular_sistema_completo)
-        self.parent.radioButton_12.toggled.connect(self.parent.recalcular_sistema_completo)
+        self.parent.radioButton_10.toggled.connect(self.parent.recalcular_sistema_completo)
+        self.parent.radioButton_9.toggled.connect(self.parent.recalcular_sistema_completo)
         self.parent.darcy.currentIndexChanged.connect(self.parent.recalcular_sistema_completo)
         self.parent.hazen_will.currentIndexChanged.connect(self.parent.recalcular_sistema_completo)
 
@@ -67,11 +68,7 @@ class ConexoesUI():
 
     def _conectar_menus(self):
         """Conecta os botões da barra de título aos seus respectivos menus."""
-        self.parent.grafico_icon.clicked.connect(
-            lambda: self.menu.menu_graficos().popup(
-                self.parent.grafico_icon.mapToGlobal(self.parent.grafico_icon.rect().topRight())
-            )
-        )
+
         self.parent.definicoes_direita_2.clicked.connect(
             lambda: self.menu.menu_selecao_graficos().popup(
                 self.parent.definicoes_direita_2.mapToGlobal(self.parent.definicoes_direita_2.rect().bottomRight())
@@ -101,7 +98,7 @@ class ConexoesUI():
     def _conectar_abas_frames(self):
         """Conecta os botões para animações de painéis laterais."""
         self.parent.fechar_lateral_2.clicked.connect(
-            lambda: self.animacoes.largura(self.parent.janel_direita, largura_alvo=300)
+            lambda: self.animacoes.largura(self.parent.frame_4, largura_alvo=300)
         )
         self.parent.abrir_layout_3.clicked.connect(
             lambda: self.animacoes.largura(self.parent.frame_4, self.parent.frame_6, largura_alvo=300)
@@ -131,11 +128,22 @@ class ConexoesUI():
 
     def _perda_carga_dinamica(self):
         """Recalcula as perdas de carga quando o comprimento ou acessórios mudam."""
-        self.parent.radioButton_11.toggled.connect(self.parent.mudanca_dinamica_perdas_carga)
-        self.parent.radioButton_12.toggled.connect(self.parent.mudanca_dinamica_perdas_carga)
+        self.parent.radioButton_10.toggled.connect(self.parent.mudanca_dinamica_perdas_carga)
+        self.parent.radioButton_9.toggled.connect(self.parent.mudanca_dinamica_perdas_carga)
 
     def _conectar_actualizao_graph(self):
         self.parent.actualizar_grafico.clicked.connect(self.parent.atualizar_graficos_curvas)
+
+    def _connectar_selecao_bombas(self):
+        self.parent.rel.clicked.connect(lambda: self.parent.stackedWidget.setCurrentIndex(2))
+        self.parent.relatorio_3.clicked.connect(lambda: self.parent.stackedWidget.setCurrentIndex(2))
+        self.parent.rel.clicked.connect(self.parent.selecionar_melhor_bomba)
+        self.parent.relatorio_3.clicked.connect(self.parent.selecionar_melhor_bomba)
+        self.parent.voltar_2.clicked.connect(lambda: self.parent.stackedWidget.setCurrentIndex(0))
+
+    def _connectar_abrir_graph(self):
+        self.parent.grafico_icon.clicked.connect(lambda: self.animacoes.largura(self.parent.janel_direita, largura_alvo=500))
+        self.parent.grafico.clicked.connect(lambda: self.animacoes.largura(self.parent.janel_direita, largura_alvo=500))
 
     def _connectar_actualizacao_unidades(self):
         self.parent.icone_2.currentTextChanged.connect(self.parent.atualizar_parametros_entrada)
@@ -143,9 +151,9 @@ class ConexoesUI():
         self.parent.Vazao.textChanged.connect(self.parent.atualizar_parametros_entrada)
 
     def _connectar_actualizacao_unidades_graficos(self):
-        self.parent.caudal_box_2.currentTextChanged.connect(self.parent.atualizar_unidades_graficos)
-        self.parent.altura_box_2.currentTextChanged.connect(self.parent.atualizar_unidades_graficos)
-        self.parent.potencia_box_2.currentTextChanged.connect(self.parent.atualizar_unidades_graficos)
+        self.parent.caudal_box.currentTextChanged.connect(self.parent.atualizar_unidades_graficos)
+        self.parent.altura_box.currentTextChanged.connect(self.parent.atualizar_unidades_graficos)
+        self.parent.potencia_box.currentTextChanged.connect(self.parent.atualizar_unidades_graficos)
 
     def _conectar_geracao_pdf(self):
         self.parent.exportar_pdf.clicked.connect(self.parent.gerar_pdf)
@@ -153,9 +161,6 @@ class ConexoesUI():
     def _conectar_ocultacoes(self):
         """Conecta os botões para ocultar/mostrar elementos da UI."""
         self.parent.banco_dados.setHidden(True)
-
-    def _connectar_voltar_menu_principal(self):
-        self.parent.voltar_2.clicked.connect(lambda: self.parent.stackedWidget.setCurrentIndex(0))
 
     def _connectar_arquivo(self):
         self.parent.novo_arquivo.clicked.connect(self.parent.novo_projecto)
@@ -165,14 +170,13 @@ class ConexoesUI():
     def _connectar_janelas_responsivas(self):
         self.parent.parametros.clicked.connect(lambda: self.animacoes.altura(self.parent.exportar, altura=400))
         self.parent.projecto_2.clicked.connect(lambda: self.animacoes.altura(self.parent.projecto, altura=100))
+
+    def _connectar_widgets_desativadas(self):
+        self.parent.groupBox_2.setVisible(False)
+        self.parent.npsh.setVisible(False)
+        self.parent.npsh_box.setVisible(False)
     
-    def _connectar_janela_relatorio(self):
-        self.parent.relatorio_3.clicked.connect(lambda: self.parent.stackedWidget.setCurrentIndex(2))
-        self.parent.relatorio_3.clicked.connect(self.parent.selecionar_melhor_bomba)
-        self.parent.Vazao_2.textChanged.connect(self.parent.selecionar_melhor_bomba)
-
     def _connectar_versao_pro(self):
-
         msg = QMessageBox(self.parent)
         msg.setWindowTitle("Suporte Técnico")
         msg.setIcon(QMessageBox.Information)

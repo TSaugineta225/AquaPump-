@@ -72,9 +72,9 @@ class PDF():
         )
 
     def adicionar_titulos(self, titulo_principal="Relatório do Sistema de Bombeamento"):
-        img = Image("img/logo.png", width=80, height=70)
+        img = Image("img/logo.png", width=100, height=70)
         titulo = Paragraph(titulo_principal, self.titulo)
-        tabela = Table([[titulo, img]], colWidths=[400, 80])
+        tabela = Table([[titulo, img]], colWidths=[350, 100])
         tabela.setStyle(TableStyle([
             ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),  
             ("ALIGN", (1, 0), (1, 0), "RIGHT"),    
@@ -101,7 +101,7 @@ class PDF():
 
             tabela = Table([[imgs[0], imgs[1]],
                             [imgs[2], '']],  
-                        colWidths=[largura, largura])
+                        colWidths=[largura-1, largura])
 
             tabela.setStyle(TableStyle([
                 ("VALIGN", (0,0), (-1,-1), "MIDDLE"),

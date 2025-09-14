@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'mainGmvGEp.ui'
+## Form generated from reading UI file 'mainWeDpun.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -16,10 +16,11 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractScrollArea, QApplication, QComboBox, QFrame,
-    QGroupBox, QHBoxLayout, QLabel, QLineEdit,
-    QPushButton, QRadioButton, QScrollArea, QSizePolicy,
-    QSpacerItem, QSplitter, QStackedWidget, QTextEdit,
-    QToolButton, QVBoxLayout, QWidget)
+    QGroupBox, QHBoxLayout, QHeaderView, QLabel,
+    QLineEdit, QPushButton, QRadioButton, QScrollArea,
+    QSizePolicy, QSpacerItem, QSplitter, QStackedWidget,
+    QTableView, QTextEdit, QToolButton, QVBoxLayout,
+    QWidget)
 from PySide6.QtWebEngineWidgets import QWebEngineView
 import img.img_rc
 
@@ -27,10 +28,9 @@ class Ui_AquaPump(object):
     def setupUi(self, AquaPump):
         if not AquaPump.objectName():
             AquaPump.setObjectName(u"AquaPump")
-        AquaPump.resize(917, 593)
+        AquaPump.resize(1165, 749)
         AquaPump.setStyleSheet(u"/* --------- QWidget (Geral) --------- */\n"
 "QWidget {\n"
-"    background-color: #ffffff;\n"
 "    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
 "    font-size: 14px;\n"
 "    color: #333333;\n"
@@ -69,9 +69,9 @@ class Ui_AquaPump(object):
 "}\n"
 "\n"
 "QComboBox:hover,\n"
-""
-                        "QComboBox:focus {\n"
-"    border: 2px solid #95acff;\n"
+"QComboBox:focus {\n"
+"    border:"
+                        " 2px solid #95acff;\n"
 "    background-color: #ffffff;\n"
 "}\n"
 "\n"
@@ -99,62 +99,6 @@ class Ui_AquaPump(object):
 "    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
 "}\n"
 "\n"
-"/* --------- QScrollArea --------- */\n"
-"QScrollArea {\n"
-"    background-color: #f9f9f9;\n"
-"    border: none;\n"
-"    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
-"    font-size: 14px;\n"
-"    color: #333333;\n"
-"}\n"
-"\n"
-"QScrollArea QWidget {\n"
-"    background-color: trans"
-                        "parent;\n"
-"}\n"
-"\n"
-"/* --------- ScrollBars --------- */\n"
-"QScrollBar:vertical,\n"
-"QScrollBar:horizontal {\n"
-"    background: rgb(231, 231, 231);\n"
-"    width: 12px;\n"
-"    height: 12px;\n"
-"    margin: 10px 0 10px 0;\n"
-"    border: none;\n"
-"}\n"
-"\n"
-"QScrollBar::sub-page:vertical,\n"
-"QScrollBar::add-page:vertical,\n"
-"QScrollBar::sub-page:horizontal,\n"
-"QScrollBar::add-page:horizontal {\n"
-"    background: transparent;\n"
-"}\n"
-"\n"
-"QScrollBar::handle:vertical,\n"
-"QScrollBar::handle:horizontal {\n"
-"    background-color: #c0c0c0;\n"
-"    min-height: 30px;\n"
-"    min-width: 30px;\n"
-"    margin: 2px;\n"
-"    border-radius: 4px;\n"
-"}\n"
-"\n"
-"QScrollBar::handle:vertical:hover,\n"
-"QScrollBar::handle:horizontal:hover {\n"
-"    background-color: #a0a0a0;\n"
-"}\n"
-"\n"
-"QScrollBar::sub-line:vertical,\n"
-"QScrollBar::add-line:vertical,\n"
-"QScrollBar::sub-line:horizontal,\n"
-"QScrollBar::add-line:horizontal {\n"
-"    background: #e1e1e1;\n"
-"    height: 12px;\n"
-"    width: 12px;\n"
-"    border-ra"
-                        "dius: 6px;\n"
-"}\n"
-"\n"
 "QToolButton {\n"
 "background-color: transparent;\n"
 "font-family: Roboto;\n"
@@ -168,7 +112,8 @@ class Ui_AquaPump(object):
 "    border: 1px solid #dcdcdc;\n"
 "    border-radius: 6px;\n"
 "    margin-top: 15px;\n"
-"    background-color: transparent;\n"
+"    background-color: tr"
+                        "ansparent;\n"
 "    font-size: 14px;\n"
 "    color: #212121;\n"
 "	padding:8px;\n"
@@ -187,44 +132,6 @@ class Ui_AquaPump(object):
 "    \n"
 "}\n"
 "\n"
-"QTableView {\n"
-"    background-color: #ffffff;\n"
-"    alternate-background-color: #f9f9f9;\n"
-"    gridline-color: #e0e0e0;\n"
-"    font-family: Segoe UI, Roboto, sans-serif;\n"
-"    font-size: 13px;\n"
-"    color: #333333;\n"
-"    selection-ba"
-                        "ckground-color: #cce4ff;   /* Azul bem claro na sele\u00e7\u00e3o */\n"
-"    selection-color: #000000;              /* Texto preto quando selecionado */\n"
-"    border: 1px solid #dcdcdc;\n"
-"}\n"
-"\n"
-"QHeaderView::section {\n"
-"    background-color: #f1f1f1;\n"
-"    padding: 4px;\n"
-"    border: 1px solid #dcdcdc;\n"
-"    font-weight: bold;\n"
-"    color: #444444;\n"
-"}\n"
-"\n"
-"QTableView::item {\n"
-"    padding: 4px;\n"
-"}\n"
-"\n"
-"QTableView::item:selected {\n"
-"    background-color: #cce4ff;\n"
-"    color: #000000;\n"
-"}\n"
-"\n"
-"QTableView QTableCornerButton::section {\n"
-"    background-color: #f1f1f1;\n"
-"    border: 1px solid #dcdcdc;\n"
-"}\n"
-"\n"
-"QTableView::item:hover {\n"
-"    background-color: #eaf4ff;}\n"
-"\n"
 "QPushButton {\n"
 "    background-color: #f5f5f5;\n"
 "    color: #000000;\n"
@@ -238,19 +145,9 @@ class Ui_AquaPump(object):
 "    border: 1px solid #e0e0e0;\n"
 "}\n"
 "\n"
-"QPushB"
-                        "utton:pressed {\n"
+"QPushButton:pressed {\n"
 "    background-color: #d0d0d0;\n"
 "    border: 1px solid #888888;\n"
-"}\n"
-"\n"
-"QMessageBox {\n"
-"    background-color: #ffffff;\n"
-"    color: #000000;\n"
-"    font-family: Roboto;\n"
-"    font-size: 14px;\n"
-"    border: none;\n"
-"    padding: 8px;\n"
 "}\n"
 "\n"
 "QLabel {\n"
@@ -262,7 +159,8 @@ class Ui_AquaPump(object):
 "QPushButton {\n"
 "    background-color: #f5f5f5;\n"
 "    color: #000000;\n"
-"    border: 1px solid #c2c2c2;\n"
+"    border: 1px solid #"
+                        "c2c2c2;\n"
 "    border-radius: 3px;\n"
 "    padding: 6px 12px;\n"
 "    font-size: 14px;\n"
@@ -286,8 +184,7 @@ class Ui_AquaPump(object):
 "    font-family: Roboto, sans-serif;\n"
 "    font-size: 13px;\n"
 "    color: #333333;\n"
-""
-                        "}\n"
+"}\n"
 "\n"
 "QMenu::item {\n"
 "    padding: 6px 20px;\n"
@@ -310,7 +207,8 @@ class Ui_AquaPump(object):
 "/* Separador */\n"
 "QMenu::separator {\n"
 "    height: 1px;\n"
-"    background: #dcdcdc;\n"
+"    background: #dcdcdc"
+                        ";\n"
 "    margin: 4px 8px;\n"
 "}\n"
 "\n"
@@ -640,7 +538,7 @@ class Ui_AquaPump(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 177, 251))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 177, 393))
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.projecto_2 = QPushButton(self.scrollAreaWidgetContents)
@@ -1056,12 +954,14 @@ class Ui_AquaPump(object):
 "}\n"
 "\n"
 "QScrollBar::up-arrow {\n"
+"    image: url(:/img/arrow-up.png);\n"
 "    width: 8px;\n"
 "    height: 8px;\n"
 "}\n"
 "\n"
 "\n"
 " QScrollBar::down-arrow {\n"
+"    image: url(:/img/arrow-down-1.png);\n"
 "    width: 8px;\n"
 "    height: 8px;\n"
 "}\n"
@@ -1257,7 +1157,6 @@ class Ui_AquaPump(object):
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.stackedWidget = QStackedWidget(AquaPump)
         self.stackedWidget.setObjectName(u"stackedWidget")
-        self.stackedWidget.setStyleSheet(u"")
         self.page = QWidget()
         self.page.setObjectName(u"page")
         self.verticalLayout_7 = QVBoxLayout(self.page)
@@ -1369,7 +1268,7 @@ class Ui_AquaPump(object):
         self.verticalLayout_11 = QVBoxLayout(self.widget_2)
         self.verticalLayout_11.setSpacing(0)
         self.verticalLayout_11.setObjectName(u"verticalLayout_11")
-        self.verticalLayout_11.setContentsMargins(1, 1, 1, 1)
+        self.verticalLayout_11.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_13 = QHBoxLayout()
         self.horizontalLayout_13.setObjectName(u"horizontalLayout_13")
         self.horizontalLayout_13.setContentsMargins(9, -1, 9, -1)
@@ -1530,15 +1429,44 @@ class Ui_AquaPump(object):
         self.stackedWidget.addWidget(self.page)
         self.definicoes_2 = QWidget()
         self.definicoes_2.setObjectName(u"definicoes_2")
-        self.definicoes_2.setStyleSheet(u"")
-        self.horizontalLayout_16 = QHBoxLayout(self.definicoes_2)
-        self.horizontalLayout_16.setObjectName(u"horizontalLayout_16")
-        self.horizontalLayout_16.setContentsMargins(0, 0, 0, 0)
-        self.scrollArea_3 = QScrollArea(self.definicoes_2)
+        self.verticalLayout_32 = QVBoxLayout(self.definicoes_2)
+        self.verticalLayout_32.setObjectName(u"verticalLayout_32")
+        self.verticalLayout_32.setContentsMargins(-1, 0, -1, -1)
+        self.frame = QFrame(self.definicoes_2)
+        self.frame.setObjectName(u"frame")
+        sizePolicy.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
+        self.frame.setSizePolicy(sizePolicy)
+        self.frame.setMaximumSize(QSize(16777215, 28))
+        self.frame.setStyleSheet(u"padding:0px")
+        self.frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.frame.setFrameShadow(QFrame.Shadow.Raised)
+        self.horizontalLayout_27 = QHBoxLayout(self.frame)
+        self.horizontalLayout_27.setSpacing(0)
+        self.horizontalLayout_27.setObjectName(u"horizontalLayout_27")
+        self.horizontalLayout_27.setContentsMargins(-1, 0, -1, 0)
+        self.label_11 = QLabel(self.frame)
+        self.label_11.setObjectName(u"label_11")
+        self.label_11.setStyleSheet(u"QLabel {\n"
+"    font-family: \"Segoe UI\", \"Roboto\", sans-serif;\n"
+"    font-size: 19px;\n"
+"    font-weight: 600; /* Semi-Bold */\n"
+"    color: rgb(166, 166, 166);\n"
+"padding:0px;\n"
+"\n"
+"}")
+
+        self.horizontalLayout_27.addWidget(self.label_11)
+
+
+        self.verticalLayout_32.addWidget(self.frame)
+
+        self.splitter_3 = QSplitter(self.definicoes_2)
+        self.splitter_3.setObjectName(u"splitter_3")
+        self.splitter_3.setOrientation(Qt.Orientation.Horizontal)
+        self.scrollArea_3 = QScrollArea(self.splitter_3)
         self.scrollArea_3.setObjectName(u"scrollArea_3")
         sizePolicy2.setHeightForWidth(self.scrollArea_3.sizePolicy().hasHeightForWidth())
         self.scrollArea_3.setSizePolicy(sizePolicy2)
-        self.scrollArea_3.setMinimumSize(QSize(250, 0))
         self.scrollArea_3.setMaximumSize(QSize(350, 16777215))
         self.scrollArea_3.setStyleSheet(u"QFrame {\n"
 "    background-color: #F9F9F9;\n"
@@ -1583,16 +1511,14 @@ class Ui_AquaPump(object):
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollAreaWidgetContents_3 = QWidget()
         self.scrollAreaWidgetContents_3.setObjectName(u"scrollAreaWidgetContents_3")
-        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 244, 518))
+        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 234, 631))
         self.verticalLayout_14 = QVBoxLayout(self.scrollAreaWidgetContents_3)
         self.verticalLayout_14.setSpacing(10)
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
         self.verticalLayout_14.setContentsMargins(12, -1, 12, -1)
         self.geral = QPushButton(self.scrollAreaWidgetContents_3)
         self.geral.setObjectName(u"geral")
-        sizePolicy2.setHeightForWidth(self.geral.sizePolicy().hasHeightForWidth())
-        self.geral.setSizePolicy(sizePolicy2)
-        self.geral.setMinimumSize(QSize(150, 0))
+        self.geral.setMinimumSize(QSize(0, 0))
         self.geral.setMaximumSize(QSize(20000, 16777215))
         icon20 = QIcon()
         icon20.addFile(u":/img/geral.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
@@ -1606,8 +1532,6 @@ class Ui_AquaPump(object):
 
         self.unidades = QPushButton(self.scrollAreaWidgetContents_3)
         self.unidades.setObjectName(u"unidades")
-        sizePolicy2.setHeightForWidth(self.unidades.sizePolicy().hasHeightForWidth())
-        self.unidades.setSizePolicy(sizePolicy2)
         icon21 = QIcon()
         icon21.addFile(u":/img/unidades.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.unidades.setIcon(icon21)
@@ -1619,8 +1543,6 @@ class Ui_AquaPump(object):
 
         self.banco_dados = QPushButton(self.scrollAreaWidgetContents_3)
         self.banco_dados.setObjectName(u"banco_dados")
-        sizePolicy2.setHeightForWidth(self.banco_dados.sizePolicy().hasHeightForWidth())
-        self.banco_dados.setSizePolicy(sizePolicy2)
         icon22 = QIcon()
         icon22.addFile(u":/img/dados.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.banco_dados.setIcon(icon22)
@@ -1634,77 +1556,195 @@ class Ui_AquaPump(object):
         self.verticalLayout_14.addItem(self.verticalSpacer_3)
 
         self.scrollArea_3.setWidget(self.scrollAreaWidgetContents_3)
+        self.splitter_3.addWidget(self.scrollArea_3)
+        self.layoutWidget1 = QWidget(self.splitter_3)
+        self.layoutWidget1.setObjectName(u"layoutWidget1")
+        self.verticalLayout_27 = QVBoxLayout(self.layoutWidget1)
+        self.verticalLayout_27.setObjectName(u"verticalLayout_27")
+        self.verticalLayout_27.setContentsMargins(0, 0, 0, 0)
+        self.janela_definicoes = QStackedWidget(self.layoutWidget1)
+        self.janela_definicoes.setObjectName(u"janela_definicoes")
+        sizePolicy5.setHeightForWidth(self.janela_definicoes.sizePolicy().hasHeightForWidth())
+        self.janela_definicoes.setSizePolicy(sizePolicy5)
+        self.geral_2 = QWidget()
+        self.geral_2.setObjectName(u"geral_2")
+        self.verticalLayout_16 = QVBoxLayout(self.geral_2)
+        self.verticalLayout_16.setObjectName(u"verticalLayout_16")
+        self.verticalLayout_16.setContentsMargins(-1, 0, -1, -1)
+        self.groupBox_8 = QGroupBox(self.geral_2)
+        self.groupBox_8.setObjectName(u"groupBox_8")
+        self.verticalLayout_15 = QVBoxLayout(self.groupBox_8)
+        self.verticalLayout_15.setObjectName(u"verticalLayout_15")
+        self.label_6 = QLabel(self.groupBox_8)
+        self.label_6.setObjectName(u"label_6")
 
-        self.horizontalLayout_16.addWidget(self.scrollArea_3)
+        self.verticalLayout_15.addWidget(self.label_6)
 
-        self.verticalLayout_13 = QVBoxLayout()
-        self.verticalLayout_13.setObjectName(u"verticalLayout_13")
-        self.stackedWidget_2 = QStackedWidget(self.definicoes_2)
-        self.stackedWidget_2.setObjectName(u"stackedWidget_2")
-        self.page_2 = QWidget()
-        self.page_2.setObjectName(u"page_2")
-        self.verticalLayout_36 = QVBoxLayout(self.page_2)
-        self.verticalLayout_36.setObjectName(u"verticalLayout_36")
-        self.groupBox_7 = QGroupBox(self.page_2)
-        self.groupBox_7.setObjectName(u"groupBox_7")
-        self.verticalLayout_37 = QVBoxLayout(self.groupBox_7)
-        self.verticalLayout_37.setObjectName(u"verticalLayout_37")
-        self.comboBox_5 = QComboBox(self.groupBox_7)
+        self.comboBox_5 = QComboBox(self.groupBox_8)
         self.comboBox_5.addItem("")
         self.comboBox_5.addItem("")
         self.comboBox_5.addItem("")
         self.comboBox_5.setObjectName(u"comboBox_5")
 
-        self.verticalLayout_37.addWidget(self.comboBox_5)
+        self.verticalLayout_15.addWidget(self.comboBox_5)
 
+        self.label_9 = QLabel(self.groupBox_8)
+        self.label_9.setObjectName(u"label_9")
 
-        self.verticalLayout_36.addWidget(self.groupBox_7)
+        self.verticalLayout_15.addWidget(self.label_9)
 
-        self.groupBox_9 = QGroupBox(self.page_2)
-        self.groupBox_9.setObjectName(u"groupBox_9")
-        self.verticalLayout_38 = QVBoxLayout(self.groupBox_9)
-        self.verticalLayout_38.setObjectName(u"verticalLayout_38")
-        self.comboBox_6 = QComboBox(self.groupBox_9)
+        self.comboBox_6 = QComboBox(self.groupBox_8)
         self.comboBox_6.addItem("")
         self.comboBox_6.addItem("")
         self.comboBox_6.setObjectName(u"comboBox_6")
 
-        self.verticalLayout_38.addWidget(self.comboBox_6)
+        self.verticalLayout_15.addWidget(self.comboBox_6)
 
 
-        self.verticalLayout_36.addWidget(self.groupBox_9)
+        self.verticalLayout_16.addWidget(self.groupBox_8)
 
-        self.groupBox_13 = QGroupBox(self.page_2)
+        self.groupBox_13 = QGroupBox(self.geral_2)
         self.groupBox_13.setObjectName(u"groupBox_13")
-        self.verticalLayout_32 = QVBoxLayout(self.groupBox_13)
-        self.verticalLayout_32.setObjectName(u"verticalLayout_32")
-        self.radioButton_11 = QRadioButton(self.groupBox_13)
-        self.radioButton_11.setObjectName(u"radioButton_11")
-        self.radioButton_11.setChecked(True)
+        self.verticalLayout_21 = QVBoxLayout(self.groupBox_13)
+        self.verticalLayout_21.setObjectName(u"verticalLayout_21")
+        self.radioButton_9 = QRadioButton(self.groupBox_13)
+        self.radioButton_9.setObjectName(u"radioButton_9")
+        self.radioButton_9.setChecked(True)
 
-        self.verticalLayout_32.addWidget(self.radioButton_11)
+        self.verticalLayout_21.addWidget(self.radioButton_9)
 
-        self.radioButton_12 = QRadioButton(self.groupBox_13)
-        self.radioButton_12.setObjectName(u"radioButton_12")
+        self.radioButton_10 = QRadioButton(self.groupBox_13)
+        self.radioButton_10.setObjectName(u"radioButton_10")
 
-        self.verticalLayout_32.addWidget(self.radioButton_12)
+        self.verticalLayout_21.addWidget(self.radioButton_10)
 
 
-        self.verticalLayout_36.addWidget(self.groupBox_13)
+        self.verticalLayout_16.addWidget(self.groupBox_13)
 
         self.verticalSpacer_4 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
 
-        self.verticalLayout_36.addItem(self.verticalSpacer_4)
+        self.verticalLayout_16.addItem(self.verticalSpacer_4)
 
-        self.stackedWidget_2.addWidget(self.page_2)
-        self.page_6 = QWidget()
-        self.page_6.setObjectName(u"page_6")
-        self.verticalLayout_39 = QVBoxLayout(self.page_6)
-        self.verticalLayout_39.setObjectName(u"verticalLayout_39")
-        self.verticalLayout_39.setContentsMargins(0, 0, 0, 0)
-        self.scrollArea_5 = QScrollArea(self.page_6)
-        self.scrollArea_5.setObjectName(u"scrollArea_5")
-        self.scrollArea_5.setStyleSheet(u"QFrame {\n"
+        self.janela_definicoes.addWidget(self.geral_2)
+        self.Banco = QWidget()
+        self.Banco.setObjectName(u"Banco")
+        self.verticalLayout_29 = QVBoxLayout(self.Banco)
+        self.verticalLayout_29.setSpacing(9)
+        self.verticalLayout_29.setObjectName(u"verticalLayout_29")
+        self.Banco_dados = QLabel(self.Banco)
+        self.Banco_dados.setObjectName(u"Banco_dados")
+        self.Banco_dados.setStyleSheet(u"QLabel {\n"
+"    font-family: \"Segoe UI\", \"Roboto\", sans-serif;\n"
+"    font-size: 20px;\n"
+"    font-weight: 600; /* Semi-Bold */\n"
+"    color: rgb(166, 166, 166);\n"
+"\n"
+"}")
+
+        self.verticalLayout_29.addWidget(self.Banco_dados)
+
+        self.groupBox_11 = QGroupBox(self.Banco)
+        self.groupBox_11.setObjectName(u"groupBox_11")
+        self.verticalLayout_24 = QVBoxLayout(self.groupBox_11)
+        self.verticalLayout_24.setObjectName(u"verticalLayout_24")
+        self.verticalLayout_24.setContentsMargins(-1, 0, -1, 0)
+        self.gerente_material = QTableView(self.groupBox_11)
+        self.gerente_material.setObjectName(u"gerente_material")
+
+        self.verticalLayout_24.addWidget(self.gerente_material)
+
+        self.horizontalLayout_25 = QHBoxLayout()
+        self.horizontalLayout_25.setObjectName(u"horizontalLayout_25")
+        self.adicionar_2 = QPushButton(self.groupBox_11)
+        self.adicionar_2.setObjectName(u"adicionar_2")
+        self.adicionar_2.setStyleSheet(u"    padding: 6px 12px;")
+
+        self.horizontalLayout_25.addWidget(self.adicionar_2)
+
+        self.remover_2 = QPushButton(self.groupBox_11)
+        self.remover_2.setObjectName(u"remover_2")
+        self.remover_2.setStyleSheet(u"    padding: 6px 12px;")
+
+        self.horizontalLayout_25.addWidget(self.remover_2)
+
+        self.editar_2 = QPushButton(self.groupBox_11)
+        self.editar_2.setObjectName(u"editar_2")
+        self.editar_2.setStyleSheet(u"    padding: 6px 12px;")
+
+        self.horizontalLayout_25.addWidget(self.editar_2)
+
+        self.salvar_2 = QPushButton(self.groupBox_11)
+        self.salvar_2.setObjectName(u"salvar_2")
+        self.salvar_2.setStyleSheet(u"    padding: 6px 12px;")
+
+        self.horizontalLayout_25.addWidget(self.salvar_2)
+
+
+        self.verticalLayout_24.addLayout(self.horizontalLayout_25)
+
+
+        self.verticalLayout_29.addWidget(self.groupBox_11)
+
+        self.groupBox_12 = QGroupBox(self.Banco)
+        self.groupBox_12.setObjectName(u"groupBox_12")
+        self.verticalLayout_25 = QVBoxLayout(self.groupBox_12)
+        self.verticalLayout_25.setObjectName(u"verticalLayout_25")
+        self.verticalLayout_25.setContentsMargins(-1, 0, -1, 0)
+        self.gerente_acessorio = QTableView(self.groupBox_12)
+        self.gerente_acessorio.setObjectName(u"gerente_acessorio")
+
+        self.verticalLayout_25.addWidget(self.gerente_acessorio)
+
+        self.horizontalLayout_26 = QHBoxLayout()
+        self.horizontalLayout_26.setObjectName(u"horizontalLayout_26")
+        self.adicionar = QPushButton(self.groupBox_12)
+        self.adicionar.setObjectName(u"adicionar")
+        self.adicionar.setStyleSheet(u"    padding: 6px 12px;")
+
+        self.horizontalLayout_26.addWidget(self.adicionar)
+
+        self.remover = QPushButton(self.groupBox_12)
+        self.remover.setObjectName(u"remover")
+        self.remover.setStyleSheet(u"    padding: 6px 12px;")
+
+        self.horizontalLayout_26.addWidget(self.remover)
+
+        self.editar = QPushButton(self.groupBox_12)
+        self.editar.setObjectName(u"editar")
+        self.editar.setStyleSheet(u"    padding: 6px 12px;")
+
+        self.horizontalLayout_26.addWidget(self.editar)
+
+        self.salvar = QPushButton(self.groupBox_12)
+        self.salvar.setObjectName(u"salvar")
+        self.salvar.setStyleSheet(u"    padding: 6px 12px;")
+
+        self.horizontalLayout_26.addWidget(self.salvar)
+
+
+        self.verticalLayout_25.addLayout(self.horizontalLayout_26)
+
+
+        self.verticalLayout_29.addWidget(self.groupBox_12)
+
+        self.janela_definicoes.addWidget(self.Banco)
+        self.page_2 = QWidget()
+        self.page_2.setObjectName(u"page_2")
+        self.verticalLayout_31 = QVBoxLayout(self.page_2)
+        self.verticalLayout_31.setObjectName(u"verticalLayout_31")
+        self.verticalSpacer_5 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout_31.addItem(self.verticalSpacer_5)
+
+        self.janela_definicoes.addWidget(self.page_2)
+        self.unidade = QWidget()
+        self.unidade.setObjectName(u"unidade")
+        self.verticalLayout_13 = QVBoxLayout(self.unidade)
+        self.verticalLayout_13.setObjectName(u"verticalLayout_13")
+        self.verticalLayout_13.setContentsMargins(-1, 0, -1, -1)
+        self.scrollArea_4 = QScrollArea(self.unidade)
+        self.scrollArea_4.setObjectName(u"scrollArea_4")
+        self.scrollArea_4.setStyleSheet(u"QFrame {\n"
 "    background-color: #FFFFFF;\n"
 "    border: none;\n"
 "\n"
@@ -1712,285 +1752,293 @@ class Ui_AquaPump(object):
 "	padding-top: 0px;\n"
 "}\n"
 "")
-        self.scrollArea_5.setSizeAdjustPolicy(QAbstractScrollArea.SizeAdjustPolicy.AdjustToContents)
-        self.scrollArea_5.setWidgetResizable(True)
-        self.scrollAreaWidgetContents_5 = QWidget()
-        self.scrollAreaWidgetContents_5.setObjectName(u"scrollAreaWidgetContents_5")
-        self.scrollAreaWidgetContents_5.setGeometry(QRect(0, 0, 812, 1018))
-        self.verticalLayout_41 = QVBoxLayout(self.scrollAreaWidgetContents_5)
-        self.verticalLayout_41.setSpacing(30)
-        self.verticalLayout_41.setObjectName(u"verticalLayout_41")
-        self.groupBox_8 = QGroupBox(self.scrollAreaWidgetContents_5)
-        self.groupBox_8.setObjectName(u"groupBox_8")
-        self.verticalLayout_40 = QVBoxLayout(self.groupBox_8)
-        self.verticalLayout_40.setObjectName(u"verticalLayout_40")
-        self.label_6 = QLabel(self.groupBox_8)
-        self.label_6.setObjectName(u"label_6")
+        self.scrollArea_4.setSizeAdjustPolicy(QAbstractScrollArea.SizeAdjustPolicy.AdjustToContents)
+        self.scrollArea_4.setWidgetResizable(True)
+        self.scrollAreaWidgetContents_4 = QWidget()
+        self.scrollAreaWidgetContents_4.setObjectName(u"scrollAreaWidgetContents_4")
+        self.scrollAreaWidgetContents_4.setGeometry(QRect(0, -19, 812, 1000))
+        self.verticalLayout_28 = QVBoxLayout(self.scrollAreaWidgetContents_4)
+        self.verticalLayout_28.setSpacing(30)
+        self.verticalLayout_28.setObjectName(u"verticalLayout_28")
+        self.groupBox = QGroupBox(self.scrollAreaWidgetContents_4)
+        self.groupBox.setObjectName(u"groupBox")
+        self.verticalLayout_17 = QVBoxLayout(self.groupBox)
+        self.verticalLayout_17.setObjectName(u"verticalLayout_17")
+        self.label_3 = QLabel(self.groupBox)
+        self.label_3.setObjectName(u"label_3")
         font = QFont()
         font.setFamilies([u"Segoe UI"])
         font.setBold(False)
         font.setItalic(True)
-        self.label_6.setFont(font)
-        self.label_6.setStyleSheet(u"QLabel{\n"
+        self.label_3.setFont(font)
+        self.label_3.setStyleSheet(u"QLabel{\n"
 "    font-family: \"Segoe UI\", \"Roboto\", sans-serif;\n"
 "    font-size: 14px;\n"
 "      font-weight: 400; \n"
 "    color: #333333;\n"
 "    padding-top: 2px;\n"
 "    padding-bottom: 2px;\n"
+"	background-color: transparent;\n"
 "}")
 
-        self.verticalLayout_40.addWidget(self.label_6)
+        self.verticalLayout_17.addWidget(self.label_3)
 
-        self.line_5 = QFrame(self.groupBox_8)
-        self.line_5.setObjectName(u"line_5")
-        self.line_5.setFrameShape(QFrame.Shape.HLine)
-        self.line_5.setFrameShadow(QFrame.Shadow.Sunken)
+        self.radioButton = QRadioButton(self.groupBox)
+        self.radioButton.setObjectName(u"radioButton")
+        self.radioButton.setChecked(True)
 
-        self.verticalLayout_40.addWidget(self.line_5)
+        self.verticalLayout_17.addWidget(self.radioButton)
 
-        self.radioButton_7 = QRadioButton(self.groupBox_8)
-        self.radioButton_7.setObjectName(u"radioButton_7")
-        self.radioButton_7.setChecked(True)
+        self.radioButton_2 = QRadioButton(self.groupBox)
+        self.radioButton_2.setObjectName(u"radioButton_2")
 
-        self.verticalLayout_40.addWidget(self.radioButton_7)
+        self.verticalLayout_17.addWidget(self.radioButton_2)
 
-        self.radioButton_8 = QRadioButton(self.groupBox_8)
-        self.radioButton_8.setObjectName(u"radioButton_8")
+        self.radioButton_3 = QRadioButton(self.groupBox)
+        self.radioButton_3.setObjectName(u"radioButton_3")
 
-        self.verticalLayout_40.addWidget(self.radioButton_8)
-
-        self.radioButton_13 = QRadioButton(self.groupBox_8)
-        self.radioButton_13.setObjectName(u"radioButton_13")
-
-        self.verticalLayout_40.addWidget(self.radioButton_13)
+        self.verticalLayout_17.addWidget(self.radioButton_3)
 
 
-        self.verticalLayout_41.addWidget(self.groupBox_8)
+        self.verticalLayout_28.addWidget(self.groupBox)
 
-        self.groupBox_10 = QGroupBox(self.scrollAreaWidgetContents_5)
-        self.groupBox_10.setObjectName(u"groupBox_10")
-        self.verticalLayout_42 = QVBoxLayout(self.groupBox_10)
-        self.verticalLayout_42.setObjectName(u"verticalLayout_42")
-        self.label_9 = QLabel(self.groupBox_10)
-        self.label_9.setObjectName(u"label_9")
-        self.label_9.setMaximumSize(QSize(450, 16777215))
+        self.groupBox_2 = QGroupBox(self.scrollAreaWidgetContents_4)
+        self.groupBox_2.setObjectName(u"groupBox_2")
+        self.verticalLayout_19 = QVBoxLayout(self.groupBox_2)
+        self.verticalLayout_19.setObjectName(u"verticalLayout_19")
+        self.label_7 = QLabel(self.groupBox_2)
+        self.label_7.setObjectName(u"label_7")
+        self.label_7.setMaximumSize(QSize(450, 16777215))
         font1 = QFont()
         font1.setFamilies([u"Segoe UI"])
         font1.setBold(False)
         font1.setItalic(True)
         font1.setStyleStrategy(QFont.PreferAntialias)
-        self.label_9.setFont(font1)
-        self.label_9.setStyleSheet(u"QLabel{\n"
+        self.label_7.setFont(font1)
+        self.label_7.setStyleSheet(u"QLabel{\n"
 "    font-family: \"Segoe UI\", \"Roboto\", sans-serif;\n"
 "    font-size: 14px;\n"
 "      font-weight: 400; \n"
 "    color: #333333;\n"
 "    padding-top: 2px;\n"
 "    padding-bottom: 2px;\n"
+"	background-color: transparent;\n"
 "}")
 
-        self.verticalLayout_42.addWidget(self.label_9)
+        self.verticalLayout_19.addWidget(self.label_7)
 
-        self.line_6 = QFrame(self.groupBox_10)
-        self.line_6.setObjectName(u"line_6")
-        self.line_6.setFrameShape(QFrame.Shape.HLine)
-        self.line_6.setFrameShadow(QFrame.Shadow.Sunken)
+        self.comboBox_12 = QComboBox(self.groupBox_2)
+        self.comboBox_12.addItem("")
+        self.comboBox_12.addItem("")
+        self.comboBox_12.addItem("")
+        self.comboBox_12.addItem("")
+        self.comboBox_12.addItem("")
+        self.comboBox_12.addItem("")
+        self.comboBox_12.setObjectName(u"comboBox_12")
+        sizePolicy2.setHeightForWidth(self.comboBox_12.sizePolicy().hasHeightForWidth())
+        self.comboBox_12.setSizePolicy(sizePolicy2)
 
-        self.verticalLayout_42.addWidget(self.line_6)
-
-        self.comboBox_13 = QComboBox(self.groupBox_10)
-        self.comboBox_13.addItem("")
-        self.comboBox_13.addItem("")
-        self.comboBox_13.addItem("")
-        self.comboBox_13.addItem("")
-        self.comboBox_13.addItem("")
-        self.comboBox_13.addItem("")
-        self.comboBox_13.setObjectName(u"comboBox_13")
-        sizePolicy2.setHeightForWidth(self.comboBox_13.sizePolicy().hasHeightForWidth())
-        self.comboBox_13.setSizePolicy(sizePolicy2)
-
-        self.verticalLayout_42.addWidget(self.comboBox_13)
+        self.verticalLayout_19.addWidget(self.comboBox_12)
 
 
-        self.verticalLayout_41.addWidget(self.groupBox_10)
+        self.verticalLayout_28.addWidget(self.groupBox_2)
 
-        self.label_11 = QLabel(self.scrollAreaWidgetContents_5)
-        self.label_11.setObjectName(u"label_11")
+        self.label_8 = QLabel(self.scrollAreaWidgetContents_4)
+        self.label_8.setObjectName(u"label_8")
         font2 = QFont()
         font2.setFamilies([u"Segoe UI"])
         font2.setWeight(QFont.DemiBold)
-        self.label_11.setFont(font2)
-        self.label_11.setStyleSheet(u"QLabel {\n"
+        self.label_8.setFont(font2)
+        self.label_8.setStyleSheet(u"QLabel {\n"
 "    font-family: \"Segoe UI\", \"Roboto\", sans-serif;\n"
 "    font-size: 15px;\n"
 "    font-weight: 600; /* Semi-Bold */\n"
 "    color: rgb(161, 161, 161);\n"
-"\n"
+"	background-color: transparent;\n"
 "}\n"
 "")
 
-        self.verticalLayout_41.addWidget(self.label_11)
+        self.verticalLayout_28.addWidget(self.label_8)
 
-        self.label_13 = QLabel(self.scrollAreaWidgetContents_5)
-        self.label_13.setObjectName(u"label_13")
-        self.label_13.setFont(font)
-        self.label_13.setStyleSheet(u"QLabel{\n"
+        self.label_4 = QLabel(self.scrollAreaWidgetContents_4)
+        self.label_4.setObjectName(u"label_4")
+        self.label_4.setFont(font)
+        self.label_4.setStyleSheet(u"QLabel{\n"
 "    font-family: \"Segoe UI\", \"Roboto\", sans-serif;\n"
 "    font-size: 14px;\n"
 "      font-weight: 400; \n"
 "    color: #333333;\n"
-"\n"
+"	background-color: transparent;\n"
 "    padding-bottom: 2px;\n"
 "}")
 
-        self.verticalLayout_41.addWidget(self.label_13)
+        self.verticalLayout_28.addWidget(self.label_4)
 
-        self.groupBox_14 = QGroupBox(self.scrollAreaWidgetContents_5)
-        self.groupBox_14.setObjectName(u"groupBox_14")
-        self.verticalLayout_43 = QVBoxLayout(self.groupBox_14)
-        self.verticalLayout_43.setObjectName(u"verticalLayout_43")
-        self.horizontalLayout_23 = QHBoxLayout()
-        self.horizontalLayout_23.setObjectName(u"horizontalLayout_23")
-        self.caudal_2 = QLabel(self.groupBox_14)
-        self.caudal_2.setObjectName(u"caudal_2")
-        self.caudal_2.setMaximumSize(QSize(180, 16777215))
+        self.groupBox_4 = QGroupBox(self.scrollAreaWidgetContents_4)
+        self.groupBox_4.setObjectName(u"groupBox_4")
+        self.verticalLayout_20 = QVBoxLayout(self.groupBox_4)
+        self.verticalLayout_20.setObjectName(u"verticalLayout_20")
+        self.horizontalLayout_16 = QHBoxLayout()
+        self.horizontalLayout_16.setObjectName(u"horizontalLayout_16")
+        self.caudal = QLabel(self.groupBox_4)
+        self.caudal.setObjectName(u"caudal")
+        self.caudal.setMaximumSize(QSize(180, 16777215))
+        self.caudal.setStyleSheet(u"	background-color: transparent;")
 
-        self.horizontalLayout_23.addWidget(self.caudal_2)
+        self.horizontalLayout_16.addWidget(self.caudal)
 
-        self.caudal_box_2 = QComboBox(self.groupBox_14)
-        self.caudal_box_2.setObjectName(u"caudal_box_2")
-        sizePolicy2.setHeightForWidth(self.caudal_box_2.sizePolicy().hasHeightForWidth())
-        self.caudal_box_2.setSizePolicy(sizePolicy2)
-        self.caudal_box_2.setMaximumSize(QSize(500, 16777215))
+        self.caudal_box = QComboBox(self.groupBox_4)
+        self.caudal_box.setObjectName(u"caudal_box")
+        sizePolicy2.setHeightForWidth(self.caudal_box.sizePolicy().hasHeightForWidth())
+        self.caudal_box.setSizePolicy(sizePolicy2)
+        self.caudal_box.setMaximumSize(QSize(500, 16777215))
 
-        self.horizontalLayout_23.addWidget(self.caudal_box_2)
-
-
-        self.verticalLayout_43.addLayout(self.horizontalLayout_23)
-
-        self.horizontalLayout_27 = QHBoxLayout()
-        self.horizontalLayout_27.setObjectName(u"horizontalLayout_27")
-        self.altura_4 = QLabel(self.groupBox_14)
-        self.altura_4.setObjectName(u"altura_4")
-        self.altura_4.setMaximumSize(QSize(180, 16777215))
-
-        self.horizontalLayout_27.addWidget(self.altura_4)
-
-        self.altura_box_2 = QComboBox(self.groupBox_14)
-        self.altura_box_2.setObjectName(u"altura_box_2")
-        sizePolicy2.setHeightForWidth(self.altura_box_2.sizePolicy().hasHeightForWidth())
-        self.altura_box_2.setSizePolicy(sizePolicy2)
-        self.altura_box_2.setMaximumSize(QSize(500, 16777215))
-
-        self.horizontalLayout_27.addWidget(self.altura_box_2)
+        self.horizontalLayout_16.addWidget(self.caudal_box)
 
 
-        self.verticalLayout_43.addLayout(self.horizontalLayout_27)
+        self.verticalLayout_20.addLayout(self.horizontalLayout_16)
 
-        self.horizontalLayout_28 = QHBoxLayout()
-        self.horizontalLayout_28.setObjectName(u"horizontalLayout_28")
-        self.npsh_2 = QLabel(self.groupBox_14)
-        self.npsh_2.setObjectName(u"npsh_2")
-        self.npsh_2.setMaximumSize(QSize(180, 16777215))
+        self.horizontalLayout_17 = QHBoxLayout()
+        self.horizontalLayout_17.setObjectName(u"horizontalLayout_17")
+        self.altura_2 = QLabel(self.groupBox_4)
+        self.altura_2.setObjectName(u"altura_2")
+        self.altura_2.setMaximumSize(QSize(180, 16777215))
+        self.altura_2.setStyleSheet(u"	background-color: transparent;")
 
-        self.horizontalLayout_28.addWidget(self.npsh_2)
+        self.horizontalLayout_17.addWidget(self.altura_2)
 
-        self.npsh_box_2 = QComboBox(self.groupBox_14)
-        self.npsh_box_2.setObjectName(u"npsh_box_2")
-        self.npsh_box_2.setMaximumSize(QSize(500, 16777215))
+        self.altura_box = QComboBox(self.groupBox_4)
+        self.altura_box.setObjectName(u"altura_box")
+        sizePolicy2.setHeightForWidth(self.altura_box.sizePolicy().hasHeightForWidth())
+        self.altura_box.setSizePolicy(sizePolicy2)
+        self.altura_box.setMaximumSize(QSize(500, 16777215))
 
-        self.horizontalLayout_28.addWidget(self.npsh_box_2)
-
-
-        self.verticalLayout_43.addLayout(self.horizontalLayout_28)
-
-
-        self.verticalLayout_41.addWidget(self.groupBox_14)
-
-        self.groupBox_15 = QGroupBox(self.scrollAreaWidgetContents_5)
-        self.groupBox_15.setObjectName(u"groupBox_15")
-        self.verticalLayout_44 = QVBoxLayout(self.groupBox_15)
-        self.verticalLayout_44.setObjectName(u"verticalLayout_44")
-        self.horizontalLayout_29 = QHBoxLayout()
-        self.horizontalLayout_29.setObjectName(u"horizontalLayout_29")
-        self.diametro_2 = QLabel(self.groupBox_15)
-        self.diametro_2.setObjectName(u"diametro_2")
-        self.diametro_2.setMaximumSize(QSize(180, 16777215))
-
-        self.horizontalLayout_29.addWidget(self.diametro_2)
-
-        self.diametro_box_2 = QComboBox(self.groupBox_15)
-        self.diametro_box_2.setObjectName(u"diametro_box_2")
-        self.diametro_box_2.setMaximumSize(QSize(500, 16777215))
-
-        self.horizontalLayout_29.addWidget(self.diametro_box_2)
+        self.horizontalLayout_17.addWidget(self.altura_box)
 
 
-        self.verticalLayout_44.addLayout(self.horizontalLayout_29)
+        self.verticalLayout_20.addLayout(self.horizontalLayout_17)
 
-        self.horizontalLayout_30 = QHBoxLayout()
-        self.horizontalLayout_30.setObjectName(u"horizontalLayout_30")
-        self.comprimento_2 = QLabel(self.groupBox_15)
-        self.comprimento_2.setObjectName(u"comprimento_2")
+        self.horizontalLayout_19 = QHBoxLayout()
+        self.horizontalLayout_19.setObjectName(u"horizontalLayout_19")
+        self.npsh = QLabel(self.groupBox_4)
+        self.npsh.setObjectName(u"npsh")
+        self.npsh.setMaximumSize(QSize(180, 16777215))
+        self.npsh.setStyleSheet(u"	background-color: transparent;")
+
+        self.horizontalLayout_19.addWidget(self.npsh)
+
+        self.npsh_box = QComboBox(self.groupBox_4)
+        self.npsh_box.setObjectName(u"npsh_box")
+        self.npsh_box.setMaximumSize(QSize(500, 16777215))
+
+        self.horizontalLayout_19.addWidget(self.npsh_box)
+
+
+        self.verticalLayout_20.addLayout(self.horizontalLayout_19)
+
+
+        self.verticalLayout_28.addWidget(self.groupBox_4)
+
+        self.groupBox_6 = QGroupBox(self.scrollAreaWidgetContents_4)
+        self.groupBox_6.setObjectName(u"groupBox_6")
+        self.verticalLayout_22 = QVBoxLayout(self.groupBox_6)
+        self.verticalLayout_22.setObjectName(u"verticalLayout_22")
+        self.horizontalLayout_21 = QHBoxLayout()
+        self.horizontalLayout_21.setObjectName(u"horizontalLayout_21")
+        self.diametro = QLabel(self.groupBox_6)
+        self.diametro.setObjectName(u"diametro")
+        self.diametro.setMaximumSize(QSize(180, 16777215))
+        self.diametro.setStyleSheet(u"	background-color: transparent;")
+
+        self.horizontalLayout_21.addWidget(self.diametro)
+
+        self.diametro_box = QComboBox(self.groupBox_6)
+        self.diametro_box.setObjectName(u"diametro_box")
+        self.diametro_box.setMaximumSize(QSize(500, 16777215))
+
+        self.horizontalLayout_21.addWidget(self.diametro_box)
+
+
+        self.verticalLayout_22.addLayout(self.horizontalLayout_21)
+
+        self.horizontalLayout_22 = QHBoxLayout()
+        self.horizontalLayout_22.setObjectName(u"horizontalLayout_22")
+        self.comprimento = QLabel(self.groupBox_6)
+        self.comprimento.setObjectName(u"comprimento")
         sizePolicy7 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Minimum)
         sizePolicy7.setHorizontalStretch(0)
         sizePolicy7.setVerticalStretch(0)
-        sizePolicy7.setHeightForWidth(self.comprimento_2.sizePolicy().hasHeightForWidth())
-        self.comprimento_2.setSizePolicy(sizePolicy7)
-        self.comprimento_2.setMaximumSize(QSize(180, 16777215))
+        sizePolicy7.setHeightForWidth(self.comprimento.sizePolicy().hasHeightForWidth())
+        self.comprimento.setSizePolicy(sizePolicy7)
+        self.comprimento.setMaximumSize(QSize(180, 16777215))
+        self.comprimento.setStyleSheet(u"	background-color: transparent;")
 
-        self.horizontalLayout_30.addWidget(self.comprimento_2)
+        self.horizontalLayout_22.addWidget(self.comprimento)
 
-        self.comprimento_box_2 = QComboBox(self.groupBox_15)
-        self.comprimento_box_2.setObjectName(u"comprimento_box_2")
-        self.comprimento_box_2.setMaximumSize(QSize(500, 16777215))
+        self.comprimento_box = QComboBox(self.groupBox_6)
+        self.comprimento_box.setObjectName(u"comprimento_box")
+        self.comprimento_box.setMaximumSize(QSize(500, 16777215))
 
-        self.horizontalLayout_30.addWidget(self.comprimento_box_2)
-
-
-        self.verticalLayout_44.addLayout(self.horizontalLayout_30)
+        self.horizontalLayout_22.addWidget(self.comprimento_box)
 
 
-        self.verticalLayout_41.addWidget(self.groupBox_15)
-
-        self.groupBox_16 = QGroupBox(self.scrollAreaWidgetContents_5)
-        self.groupBox_16.setObjectName(u"groupBox_16")
-        self.verticalLayout_45 = QVBoxLayout(self.groupBox_16)
-        self.verticalLayout_45.setObjectName(u"verticalLayout_45")
-        self.horizontalLayout_31 = QHBoxLayout()
-        self.horizontalLayout_31.setObjectName(u"horizontalLayout_31")
-        self.potencia_4 = QLabel(self.groupBox_16)
-        self.potencia_4.setObjectName(u"potencia_4")
-        self.potencia_4.setMaximumSize(QSize(180, 16777215))
-
-        self.horizontalLayout_31.addWidget(self.potencia_4)
-
-        self.potencia_box_2 = QComboBox(self.groupBox_16)
-        self.potencia_box_2.setObjectName(u"potencia_box_2")
-        self.potencia_box_2.setMaximumSize(QSize(500, 16777215))
-
-        self.horizontalLayout_31.addWidget(self.potencia_box_2)
+        self.verticalLayout_22.addLayout(self.horizontalLayout_22)
 
 
-        self.verticalLayout_45.addLayout(self.horizontalLayout_31)
+        self.verticalLayout_28.addWidget(self.groupBox_6)
+
+        self.groupBox_5 = QGroupBox(self.scrollAreaWidgetContents_4)
+        self.groupBox_5.setObjectName(u"groupBox_5")
+        self.verticalLayout_23 = QVBoxLayout(self.groupBox_5)
+        self.verticalLayout_23.setObjectName(u"verticalLayout_23")
+        self.horizontalLayout_24 = QHBoxLayout()
+        self.horizontalLayout_24.setObjectName(u"horizontalLayout_24")
+        self.potencia_2 = QLabel(self.groupBox_5)
+        self.potencia_2.setObjectName(u"potencia_2")
+        self.potencia_2.setMaximumSize(QSize(180, 16777215))
+        self.potencia_2.setStyleSheet(u"	background-color: transparent;")
+
+        self.horizontalLayout_24.addWidget(self.potencia_2)
+
+        self.potencia_box = QComboBox(self.groupBox_5)
+        self.potencia_box.setObjectName(u"potencia_box")
+        self.potencia_box.setMaximumSize(QSize(500, 16777215))
+
+        self.horizontalLayout_24.addWidget(self.potencia_box)
 
 
-        self.verticalLayout_41.addWidget(self.groupBox_16)
+        self.verticalLayout_23.addLayout(self.horizontalLayout_24)
 
-        self.scrollArea_5.setWidget(self.scrollAreaWidgetContents_5)
 
-        self.verticalLayout_39.addWidget(self.scrollArea_5)
+        self.verticalLayout_28.addWidget(self.groupBox_5)
 
-        self.stackedWidget_2.addWidget(self.page_6)
+        self.scrollArea_4.setWidget(self.scrollAreaWidgetContents_4)
 
-        self.verticalLayout_13.addWidget(self.stackedWidget_2)
+        self.verticalLayout_13.addWidget(self.scrollArea_4)
 
-        self.frame_8 = QFrame(self.definicoes_2)
+        self.janela_definicoes.addWidget(self.unidade)
+
+        self.verticalLayout_27.addWidget(self.janela_definicoes)
+
+        self.frame_8 = QFrame(self.layoutWidget1)
         self.frame_8.setObjectName(u"frame_8")
-        self.frame_8.setStyleSheet(u"\n"
-"QWidget {\n"
-"border: None;\n"
+        self.frame_8.setStyleSheet(u"QPushButton {\n"
+"    background-color: #f5f5f5;\n"
+"    color: #000000;\n"
+"    border: 1px solid #c2c2c2;\n"
+"    border-radius: 3px;\n"
+"    padding: 6px 12px;\n"
+"    font-size: 14px;\n"
+"}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: #e0e0e0;\n"
+"    border: 1px solid #e0e0e0;\n"
+"}\n"
+"\n"
+"QPushButton:pressed {\n"
+"    background-color: #d0d0d0;\n"
+"    border: 1px solid #888888;\n"
 "}")
         self.frame_8.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_8.setFrameShadow(QFrame.Shadow.Raised)
@@ -2004,90 +2052,36 @@ class Ui_AquaPump(object):
 
         self.voltar = QPushButton(self.frame_8)
         self.voltar.setObjectName(u"voltar")
-        self.voltar.setStyleSheet(u"QPushButton {\n"
-"    background-color: #f5f5f5;\n"
-"    color: #000000;\n"
-"    border: 1px solid #c2c2c2;\n"
-"    border-radius: 3px;\n"
-"    padding: 6px 12px;\n"
-"    font-size: 14px;\n"
-"}\n"
-"\n"
-"QPushButton:hover {\n"
-"    background-color: #e0e0e0;\n"
-"    border: 1px solid #e0e0e0;\n"
-"}\n"
-"\n"
-"QPushButton:pressed {\n"
-"    background-color: #d0d0d0;\n"
-"    border: 1px solid #888888;\n"
-"}")
 
         self.horizontalLayout_10.addWidget(self.voltar)
 
         self.cancelar = QPushButton(self.frame_8)
         self.cancelar.setObjectName(u"cancelar")
-        self.cancelar.setStyleSheet(u"QPushButton {\n"
-"    background-color: #f5f5f5;\n"
-"    color: #000000;\n"
-"    border: 1px solid #c2c2c2;\n"
-"    border-radius: 3px;\n"
-"    padding: 6px 12px;\n"
-"    font-size: 14px;\n"
-"}\n"
-"\n"
-"QPushButton:hover {\n"
-"    background-color: #e0e0e0;\n"
-"    border: 1px solid #e0e0e0;\n"
-"}\n"
-"\n"
-"QPushButton:pressed {\n"
-"    background-color: #d0d0d0;\n"
-"    border: 1px solid #888888;\n"
-"}")
 
         self.horizontalLayout_10.addWidget(self.cancelar)
 
         self.aplicar = QPushButton(self.frame_8)
         self.aplicar.setObjectName(u"aplicar")
-        self.aplicar.setStyleSheet(u"QPushButton {\n"
-"    background-color: #f5f5f5;\n"
-"    color: #000000;\n"
-"    border: 1px solid #c2c2c2;\n"
-"    border-radius: 3px;\n"
-"    padding: 6px 12px;\n"
-"    font-size: 14px;\n"
-"}\n"
-"\n"
-"QPushButton:hover {\n"
-"    background-color: #e0e0e0;\n"
-"    border: 1px solid #e0e0e0;\n"
-"}\n"
-"\n"
-"QPushButton:pressed {\n"
-"    background-color: #d0d0d0;\n"
-"    border: 1px solid #888888;\n"
-"}")
 
         self.horizontalLayout_10.addWidget(self.aplicar)
 
 
-        self.verticalLayout_13.addWidget(self.frame_8)
+        self.verticalLayout_27.addWidget(self.frame_8)
 
+        self.splitter_3.addWidget(self.layoutWidget1)
 
-        self.horizontalLayout_16.addLayout(self.verticalLayout_13)
+        self.verticalLayout_32.addWidget(self.splitter_3)
 
         self.stackedWidget.addWidget(self.definicoes_2)
-        self.selecao = QWidget()
-        self.selecao.setObjectName(u"selecao")
-        self.verticalLayout_18 = QVBoxLayout(self.selecao)
-        self.verticalLayout_18.setSpacing(0)
+        self.page_6 = QWidget()
+        self.page_6.setObjectName(u"page_6")
+        self.verticalLayout_18 = QVBoxLayout(self.page_6)
         self.verticalLayout_18.setObjectName(u"verticalLayout_18")
-        self.verticalLayout_18.setContentsMargins(1, 0, 0, 0)
-        self.frame_9 = QFrame(self.selecao)
+        self.verticalLayout_18.setContentsMargins(-1, 0, 0, 0)
+        self.frame_9 = QFrame(self.page_6)
         self.frame_9.setObjectName(u"frame_9")
         self.frame_9.setStyleSheet(u"QFrame {\n"
-"    background-color: rgb(252, 252, 252);\n"
+"    background-color: transparent;\n"
 "    border: 2px solid #DDDDDD;\n"
 "    padding: 2px;\n"
 "	padding-top: 0px;\n"
@@ -2223,10 +2217,10 @@ class Ui_AquaPump(object):
 
         self.horizontalLayout_18.addWidget(self.proxima)
 
-        self.associarr = QPushButton(self.frame_9)
-        self.associarr.setObjectName(u"associarr")
+        self.procurar = QPushButton(self.frame_9)
+        self.procurar.setObjectName(u"procurar")
 
-        self.horizontalLayout_18.addWidget(self.associarr)
+        self.horizontalLayout_18.addWidget(self.procurar)
 
 
         self.verticalLayout_35.addLayout(self.horizontalLayout_18)
@@ -2234,7 +2228,7 @@ class Ui_AquaPump(object):
 
         self.verticalLayout_18.addWidget(self.frame_9)
 
-        self.stackedWidget.addWidget(self.selecao)
+        self.stackedWidget.addWidget(self.page_6)
 
         self.verticalLayout.addWidget(self.stackedWidget)
 
@@ -2250,7 +2244,7 @@ class Ui_AquaPump(object):
         self.projecto_2.setDefault(True)
         self.stackedWidget.setCurrentIndex(0)
         self.stackedWidget_3.setCurrentIndex(0)
-        self.stackedWidget_2.setCurrentIndex(1)
+        self.janela_definicoes.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(AquaPump)
@@ -2317,50 +2311,63 @@ class Ui_AquaPump(object):
 #endif // QT_CONFIG(tooltip)
         self.actualizar_grafico.setText("")
         self.expandir_3.setText("")
+        self.label_11.setText(QCoreApplication.translate("AquaPump", u"Defini\u00e7\u00f5es", None))
         self.geral.setText(QCoreApplication.translate("AquaPump", u"Geral", None))
         self.unidades.setText(QCoreApplication.translate("AquaPump", u"Unidades", None))
         self.banco_dados.setText(QCoreApplication.translate("AquaPump", u"Banco de Dados", None))
-        self.groupBox_7.setTitle(QCoreApplication.translate("AquaPump", u"Apar\u00eancia", None))
+        self.groupBox_8.setTitle("")
+        self.label_6.setText(QCoreApplication.translate("AquaPump", u"Apar\u00eancia ", None))
         self.comboBox_5.setItemText(0, QCoreApplication.translate("AquaPump", u"Predefini\u00e7\u00e3o do Sistema", None))
         self.comboBox_5.setItemText(1, QCoreApplication.translate("AquaPump", u"Claro", None))
         self.comboBox_5.setItemText(2, QCoreApplication.translate("AquaPump", u"Escuro", None))
 
-        self.groupBox_9.setTitle(QCoreApplication.translate("AquaPump", u"Idioma", None))
+        self.label_9.setText(QCoreApplication.translate("AquaPump", u"Idioma", None))
         self.comboBox_6.setItemText(0, QCoreApplication.translate("AquaPump", u"Portugu\u00eas", None))
         self.comboBox_6.setItemText(1, QCoreApplication.translate("AquaPump", u"Ingl\u00eas", None))
 
         self.groupBox_13.setTitle(QCoreApplication.translate("AquaPump", u"F\u00f3rmulas Pr\u00e9-definidas/ Perdas de Carga", None))
-        self.radioButton_11.setText(QCoreApplication.translate("AquaPump", u"Hazen Williams", None))
-        self.radioButton_12.setText(QCoreApplication.translate("AquaPump", u"Darcy", None))
-        self.groupBox_8.setTitle(QCoreApplication.translate("AquaPump", u"Padr\u00e3o de Unidades Preferencial", None))
-        self.label_6.setText(QCoreApplication.translate("AquaPump", u"Escolha entre os sistemas de unidades M\u00e9trico (SI) ou Imperial (EUA) para configurar todas as suas prefer\u00eancias de uma vez. ", None))
-        self.radioButton_7.setText(QCoreApplication.translate("AquaPump", u"Sistema Internacional (SI / M\u00e9trico)", None))
-        self.radioButton_8.setText(QCoreApplication.translate("AquaPump", u"Sistema Imperial (EUA)", None))
-        self.radioButton_13.setText(QCoreApplication.translate("AquaPump", u"Personalizado", None))
-        self.groupBox_10.setTitle(QCoreApplication.translate("AquaPump", u"Precis\u00e3o (casas decimais)", None))
-        self.label_9.setText(QCoreApplication.translate("AquaPump", u"\n"
+        self.radioButton_9.setText(QCoreApplication.translate("AquaPump", u"Hazen Williams", None))
+        self.radioButton_10.setText(QCoreApplication.translate("AquaPump", u"Darcy", None))
+        self.Banco_dados.setText(QCoreApplication.translate("AquaPump", u"Banco de Dados", None))
+        self.groupBox_11.setTitle(QCoreApplication.translate("AquaPump", u"Gerenciar Materiais de Tubula\u00e7\u00e3o", None))
+        self.adicionar_2.setText(QCoreApplication.translate("AquaPump", u"Adicionar Novo", None))
+        self.remover_2.setText(QCoreApplication.translate("AquaPump", u"Remover Selecionado", None))
+        self.editar_2.setText(QCoreApplication.translate("AquaPump", u"Editar", None))
+        self.salvar_2.setText(QCoreApplication.translate("AquaPump", u"Salvar", None))
+        self.groupBox_12.setTitle(QCoreApplication.translate("AquaPump", u"Gerenciar Materiais de Acess\u00f3rios ", None))
+        self.adicionar.setText(QCoreApplication.translate("AquaPump", u"Adicionar Novo", None))
+        self.remover.setText(QCoreApplication.translate("AquaPump", u"Remover Selecionado", None))
+        self.editar.setText(QCoreApplication.translate("AquaPump", u"Editar", None))
+        self.salvar.setText(QCoreApplication.translate("AquaPump", u"Salvar", None))
+        self.groupBox.setTitle(QCoreApplication.translate("AquaPump", u"Padr\u00e3o de Unidades Preferencial", None))
+        self.label_3.setText(QCoreApplication.translate("AquaPump", u"Escolha entre os sistemas de unidades M\u00e9trico (SI) ou Imperial (EUA) para configurar todas as suas prefer\u00eancias de uma vez. ", None))
+        self.radioButton.setText(QCoreApplication.translate("AquaPump", u"Sistema Internacional (SI / M\u00e9trico)", None))
+        self.radioButton_2.setText(QCoreApplication.translate("AquaPump", u"Sistema Imperial (EUA)", None))
+        self.radioButton_3.setText(QCoreApplication.translate("AquaPump", u"Personalizado", None))
+        self.groupBox_2.setTitle(QCoreApplication.translate("AquaPump", u"Precis\u00e3o (casas decimais)", None))
+        self.label_7.setText(QCoreApplication.translate("AquaPump", u"\n"
 "Define o n\u00famero de casas decimais a serem exibidas nos c\u00e1lculos \n"
 "e resultados.", None))
-        self.comboBox_13.setItemText(0, QCoreApplication.translate("AquaPump", u"0.00", None))
-        self.comboBox_13.setItemText(1, QCoreApplication.translate("AquaPump", u"0.0", None))
-        self.comboBox_13.setItemText(2, QCoreApplication.translate("AquaPump", u"0.000", None))
-        self.comboBox_13.setItemText(3, QCoreApplication.translate("AquaPump", u"0.0000", None))
-        self.comboBox_13.setItemText(4, QCoreApplication.translate("AquaPump", u"0.00000", None))
-        self.comboBox_13.setItemText(5, QCoreApplication.translate("AquaPump", u"0.000000", None))
+        self.comboBox_12.setItemText(0, QCoreApplication.translate("AquaPump", u"0.00", None))
+        self.comboBox_12.setItemText(1, QCoreApplication.translate("AquaPump", u"0.0", None))
+        self.comboBox_12.setItemText(2, QCoreApplication.translate("AquaPump", u"0.000", None))
+        self.comboBox_12.setItemText(3, QCoreApplication.translate("AquaPump", u"0.0000", None))
+        self.comboBox_12.setItemText(4, QCoreApplication.translate("AquaPump", u"0.00000", None))
+        self.comboBox_12.setItemText(5, QCoreApplication.translate("AquaPump", u"0.000000", None))
 
-        self.label_11.setText(QCoreApplication.translate("AquaPump", u"Personaliza\u00e7\u00e3o de unidades", None))
-        self.label_13.setText(QCoreApplication.translate("AquaPump", u"\n"
+        self.label_8.setText(QCoreApplication.translate("AquaPump", u"Personaliza\u00e7\u00e3o de unidades", None))
+        self.label_4.setText(QCoreApplication.translate("AquaPump", u"\n"
 "Ajuste individualmente as unidades para cada par\u00e2metro \n"
 "(ex: Caudal, Press\u00e3o, Di\u00e2metro).", None))
-        self.groupBox_14.setTitle(QCoreApplication.translate("AquaPump", u"Desempenho", None))
-        self.caudal_2.setText(QCoreApplication.translate("AquaPump", u"Caudal", None))
-        self.altura_4.setText(QCoreApplication.translate("AquaPump", u"Altura Man\u00f4metrica", None))
-        self.npsh_2.setText(QCoreApplication.translate("AquaPump", u"NPSH", None))
-        self.groupBox_15.setTitle(QCoreApplication.translate("AquaPump", u"Dimens\u00f5es F\u00edsicas", None))
-        self.diametro_2.setText(QCoreApplication.translate("AquaPump", u"Di\u00e2metro da Tubagem", None))
-        self.comprimento_2.setText(QCoreApplication.translate("AquaPump", u"Comprimento da Tubagem", None))
-        self.groupBox_16.setTitle(QCoreApplication.translate("AquaPump", u"Pot\u00eancia ", None))
-        self.potencia_4.setText(QCoreApplication.translate("AquaPump", u"Pot\u00eancia", None))
+        self.groupBox_4.setTitle(QCoreApplication.translate("AquaPump", u"Desempenho", None))
+        self.caudal.setText(QCoreApplication.translate("AquaPump", u"Caudal", None))
+        self.altura_2.setText(QCoreApplication.translate("AquaPump", u"Altura Man\u00f4metrica", None))
+        self.npsh.setText(QCoreApplication.translate("AquaPump", u"NPSH", None))
+        self.groupBox_6.setTitle(QCoreApplication.translate("AquaPump", u"Dimens\u00f5es F\u00edsicas", None))
+        self.diametro.setText(QCoreApplication.translate("AquaPump", u"Di\u00e2metro da Tubagem", None))
+        self.comprimento.setText(QCoreApplication.translate("AquaPump", u"Comprimento da Tubagem", None))
+        self.groupBox_5.setTitle(QCoreApplication.translate("AquaPump", u"Pot\u00eancia ", None))
+        self.potencia_2.setText(QCoreApplication.translate("AquaPump", u"Pot\u00eancia", None))
         self.voltar.setText(QCoreApplication.translate("AquaPump", u"Voltar", None))
         self.cancelar.setText(QCoreApplication.translate("AquaPump", u"Cancelar", None))
         self.aplicar.setText(QCoreApplication.translate("AquaPump", u"Aplicar", None))
@@ -2388,8 +2395,8 @@ class Ui_AquaPump(object):
 #endif // QT_CONFIG(tooltip)
         self.proxima.setText(QCoreApplication.translate("AquaPump", u"Pr\u00f3xima ", None))
 #if QT_CONFIG(tooltip)
-        self.associarr.setToolTip(QCoreApplication.translate("AquaPump", u"Associar diferentes bombas", None))
+        self.procurar.setToolTip(QCoreApplication.translate("AquaPump", u"Procurar por Bomba", None))
 #endif // QT_CONFIG(tooltip)
-        self.associarr.setText(QCoreApplication.translate("AquaPump", u"Associar", None))
+        self.procurar.setText(QCoreApplication.translate("AquaPump", u"Associar", None))
     # retranslateUi
 
