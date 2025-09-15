@@ -11,6 +11,7 @@ class ConversorUnidades:
         self.ureg.define('litro_por_segundo = liter / second = L/s')
         self.ureg.define('metro_cubico_por_hora = meter**3 / hour = m³/h')
         self.ureg.define('litro_por_hora = liter / hour = L/h')
+        self.ureg.define('cv = 735.49875 * watt = cavalo_vapor')
         
     def _validar_unidades(self, de_unidade, para_unidade, tipo):
         """Valida se as unidades fornecidas são suportadas"""
@@ -63,8 +64,8 @@ class ConversorUnidades:
             quantidade = self.Q_(valor, de_unidade)
             resultado = quantidade.to(para_unidade).magnitude
             return resultado
-        except (DimensionalityError, UndefinedUnitError, ValueError) as e:
-            raise ValueError(f"Erro na conversão de potência: {e}") from e
+        except Exception as e:
+            print("Erro na conversão de potência devido a", e)
     
     def converter_pressao(self, valor, de_unidade, para_unidade):
         """
@@ -117,7 +118,7 @@ class ConversorUnidades:
     
     def get_unidades_potencia(self):
         """Retorna lista de unidades de potência suportadas"""
-        return ['W', 'kW', 'MW', 'hp', 'cv']
+        return ['watt', 'kilowatt', 'megawatt', 'horsepower', 'cv']
     
     def get_unidades_pressao(self):
         """Retorna lista de unidades de pressão suportadas"""

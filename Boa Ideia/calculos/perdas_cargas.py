@@ -1,6 +1,7 @@
 import math
 from typing import Optional
 from CoolProp.CoolProp import PropsSI
+from scipy.constants import g
 
 class Perdas:
     def __init__(self, vazao_m3s: Optional[float] = None, 
@@ -8,7 +9,7 @@ class Perdas:
                 area: Optional[float] = None,
                 material_darcy: Optional[str] = None,
                 material_hazen: Optional[str] = None,
-                gravidade_ms2: float = 9.81):
+                gravidade_ms2: Optional[float] = g):
         
         self.diametro_m = diametro_m
         self.area = area

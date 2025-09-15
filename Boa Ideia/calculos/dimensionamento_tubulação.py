@@ -20,5 +20,5 @@ class Tubulacao:
             raise ValueError("O diâmetro deve ser calculado primeiro.")
         return math.pi * (self.D / 2) ** 2
 
-    def calcular_potencia(self, H_geometrico):
-        return (H_geometrico * self.vazao * self.peso_especifico) / 75
+    def calcular_potencia(self, H_geometrico, vazao):
+        return (H_geometrico * vazao * self.peso_especifico) / 1000

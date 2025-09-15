@@ -137,47 +137,7 @@
                 }
             }).addTo(map);
         }
-
-        function carregarCSV(conteudo) {
-            Papa.parse(conteudo, {
-                header: true,
-                dynamicTyping: true,
-                complete: function(results) {
-                    const features = results.data.map(row => {
-                        if (!row.latitude || !row.longitude) return null;
-                        return {
-                            type: "Feature",
-                            geometry: {
-                                type: "Point",
-                                coordinates: [parseFloat(row.longitude), parseFloat(row.latitude)]
-                            },
-                            properties: row
-                        };
-                    }).filter(f => f !== null);
-
-                    const geojson = {
-                        type: "FeatureCollection",
-                        features: features
-                    };
-
-                    carregarGeoJSON(JSON.stringify(geojson));
-                }
-            });
-        }
-
-        function carregarKML(conteudo) {
-            const blob = new Blob([conteudo], { type: 'application/vnd.google-earth.kml+xml' });
-            const url = URL.createObjectURL(blob);
-            omnivore.kml(url).on('ready', function() {
-                this.eachLayer(function(layer) {
-                    if (layer.feature && layer.feature.properties) {
-                        layer.bindPopup(Object.entries(layer.feature.properties).map(([k, v]) => `${k}: ${v}`).join('<br>'));
-                    }
-                });
-                this.addTo(map);
-            });
-        }
-
+  
         document.addEventListener("DOMContentLoaded", function() {
             if (typeof QWebChannel !== "undefined") {
                 new QWebChannel(qt.webChannelTransport, function (channel) {
@@ -253,34 +213,31 @@
             window.comprimento_recebido.comprimento_recebido(distancia_total);
         }
 
-
-        function calcular_diametro(flow, tempo) {
-            if (tempo === 24) return 1.2 * Math.sqrt(flow);
-            return 1.3 * Math.sqrt(flow) * Math.sqrt(tempo / 24);
-        }
-
-        function potencia(flow, altura) {
-            return (flow * altura * 1000) / 75;
-        }
-
         function actualizar_popup(layer) {
             calcularAltura(layer).then(altura => {
                 const flow = valor_1_guardado;
-                const tempo = valor_2_guardado;
+                const diametro = valor_2_guardado;
+                const altura_manonetrica = valor_3_guardado;
+                const perdas = valor_5_guardado;
+
+                const unidade_diametro = unidade_diametro; 
+                const unidade_altura = unidade_altura;
+                const unidade_perdas = unidade_perdas; 
+
                 const nome = layer.customProperties?.name || "Projecto";
                 const distancia = calcular_distancia(layer);
-                const diametro = calcular_diametro(flow, tempo);
-                const pot = potencia(flow, altura);
                 
                 window.altura.altura_(altura);
                 window.comprimento.comprimento_(distancia);
   
                 layer.bindPopup(`
                     <strong>${nome}</strong><br>
-                    Distância: ${(distancia/1000).toFixed(2)} km<br>
-                    Diâmetro: ${diametro?.toFixed(2)}<br>
-                    Altura: ${altura?.toFixed(2)} m<br>
-                    Potência: ${pot?.toFixed(2)} CV
+                    Vazão: ${flow?.toFixed(2)} m³/s<br>
+                    Distância: ${(distancia/1000).toFixed(3)} km<br>
+                    Diâmetro: ${diametro?.toFixed(2)} ${unidade_diametro}<br>
+                    Altura: ${altura_manometrica?.toFixed(2)} ${unidade_altura}<br>
+                    Perdas: ${perdas?.toFixed(2)} ${unidade_perdas}
+
                 `).openPopup();
 
                 
@@ -352,13 +309,28 @@
     });
 
 
-        function receber_dados(v1, v2) {
+        function receber_dados(v1, v2, v3, v4, v5) {
             valor_1_guardado = Number(v1);
             valor_2_guardado = Number(v2);
+            valor_3_guardado = Number(v3);
+            valor_4_guardado = Number(v4);
+            valor_5_guardado = Number(v5);
+
+            drawnItems.eachLayer(actualizar_popup);
+        }
+
+        function definir_unidades(u1, u2, u3, u4, u5) {
+            unidade_vazao = u1;
+            unidade_diametro = u2;
+            unidade_altura = u3;
+            unidade_potencia = u4;
+            unidade_perdas = u5;
+
             drawnItems.eachLayer(actualizar_popup);
         }
 
         window.receber_dados = receber_dados;
+        window.definir_unidades = definir_unidades;
 
         map.on('dblclick', () => document.getElementById('popup-menu').style.display = 'none');
     </script>

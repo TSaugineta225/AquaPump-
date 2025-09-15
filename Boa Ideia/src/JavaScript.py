@@ -129,6 +129,14 @@ class Mapa:
         let acessorios = []
         let valor_1_guardado = null;
         let valor_2_guardado = null;
+        let valor_3_guardado = null;
+        let valor_4_guardado = null;
+        let valor_5_guardado = null;
+
+        let unidade_vazao = null;
+        let unidade_diametro = null;
+        let unidade_altura = null;
+        let unidade_potencia = null;
 
         function carregarGeoJSON(conteudo) {
             const data = JSON.parse(conteudo);
@@ -217,33 +225,32 @@ class Mapa:
         }
 
 
-        function calcular_diametro(flow, tempo) {
-            if (tempo === 24) return 1.3 * Math.sqrt(flow);
-            return 1.3 * Math.sqrt(flow) * Math.sqrt(tempo / 24);
-        }
-
-        function potencia(flow, altura) {
-            return (flow * altura * 1000) / 75;
-        }
-
         function actualizar_popup(layer) {
             calcularAltura(layer).then(altura => {
                 const flow = valor_1_guardado;
-                const tempo = valor_2_guardado;
+                const diametro = valor_2_guardado;
+                const altura_man = valor_3_guardado;
+                const potencia = valor_4_guardado;
+
+                const und_vazao = unidade_vazao;
+                const und_diametro = unidade_diametro;
+                const und_altura = unidade_altura;
+                const und_potencia = unidade_potencia;
+
                 const nome = layer.customProperties?.name || "Projecto";
                 const distancia = calcular_distancia(layer);
-                const diametro = calcular_diametro(flow, tempo);
-                const pot = potencia(flow, altura);
-                
+
                 window.altura.altura_(altura);
                 window.comprimento.comprimento_(distancia);
   
                 layer.bindPopup(`
                     <strong>${nome}</strong><br>
-                    Distância: ${(distancia/1000).toFixed(2)} km<br>
-                    Diâmetro: ${diametro?.toFixed(2)}<br>
-                    Altura: ${altura?.toFixed(2)} m<br>
-                    Potência: ${pot?.toFixed(2)} CV
+                    Vazão: ${flow?.toFixed(2)} ${und_vazao}<br>
+                    Diâmetro: ${diametro?.toFixed(2)} ${und_diametro}<br>
+                    Distancia: ${(distancia/1000).toFixed(2)} km<br>
+                    Potência: ${potencia?.toFixed(2)} ${und_potencia}<br>
+                    Altura Manométrica: ${altura_man?.toFixed(2)} ${und_altura}<br>
+
                 `).openPopup();
 
                 
@@ -315,12 +322,22 @@ class Mapa:
     });
 
 
-        function receber_dados(v1, v2) {
+        function receber_dados(v1, v2, v3, v4) {
             valor_1_guardado = Number(v1);
             valor_2_guardado = Number(v2);
+            valor_3_guardado = Number(v3);
+            valor_4_guardado = Number(v4);
             drawnItems.eachLayer(actualizar_popup);
         }
-
+        function receber_unidades(u1, u2, u3, u4) {
+            unidade_vazao = str(u1);
+            unidade_diametro = str(u2);
+            unidade_altura = str(u3);
+            unidade_potencia = str(u4);
+            drawnItems.eachLayer(actualizar_popup);
+        }
+        
+        window.receber_unidades = receber_unidades;
         window.receber_dados = receber_dados;
 
         map.on('dblclick', () => document.getElementById('popup-menu').style.display = 'none');

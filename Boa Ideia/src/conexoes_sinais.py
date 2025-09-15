@@ -10,10 +10,12 @@ class ConexoesUI():
         self.config = configuracoes
         
         # Inicializa todas as conexões
+        self._conectar_js_dados()
+        self._conectar_js_unidades()
+        self._conectar_mapa()
         self._conectar_principais_dados()
         self._conectar_configuracoes()
         self._conectar_entradas_calculo()
-        self._conectar_js_e_mapa()
         self._conectar_menus()
         self._conectar_abas_frames()
         self._conectar_botoes_sair()
@@ -55,16 +57,33 @@ class ConexoesUI():
         # Unidade de vazão
         self.parent.icone_2.currentIndexChanged.connect(self.parent.actualizar_vazao)
 
-    def _conectar_js_e_mapa(self):
+    def _conectar_mapa(self):
         """Conecta os sinais vindos do QWebChannel (JavaScript)."""
-        # Envio de dados para o JS
-        self.parent.Vazao_2.textChanged.connect(self.parent.enviar_js)
-        self.parent.Vazao.textChanged.connect(self.parent.enviar_js)
-                
         # Recebimento de dados do JS para cálculos
         self.parent.acessorios_channel.lista.connect(self.parent.definir_acessorios)
         self.parent.altura_geometrica_channel.altura_recebido.connect(self.parent.receber_altura)
         self.parent.comprimento_tubulacao_channel.comprimento_recebido.connect(self.parent.receber_comprimento)
+
+    def _conectar_js_unidades(self):
+        """Conecta os sinais para atualização das unidades (JavaScript)."""
+        self.parent.icone_2.currentIndexChanged.connect(self.parent.enviar_unidades_js)
+        self.parent.altura_box.currentIndexChanged.connect(self.parent.enviar_unidades_js)
+        self.parent.diametro_box.currentIndexChanged.connect(self.parent.enviar_unidades_js)
+        self.parent.potencia_box.currentIndexChanged.connect(self.parent.enviar_unidades_js)
+        self.parent.diametro_box.currentIndexChanged.connect(self.parent.enviar_unidades_js)
+        self.parent.comprimento_box.currentIndexChanged.connect(self.parent.enviar_unidades_js)
+
+    def _conectar_js_dados(self):
+        """Conecta os sinais para envio e recebimento de dados com o JavaScript."""
+        self.parent.Vazao_2.textChanged.connect(self.parent.enviar_js)
+        self.parent.Vazao.textChanged.connect(self.parent.enviar_js)
+        
+        self.parent.icone_2.currentIndexChanged.connect(self.parent.enviar_js)
+        self.parent.altura_box.currentIndexChanged.connect(self.parent.enviar_js)
+        self.parent.diametro_box.currentIndexChanged.connect(self.parent.enviar_js)
+        self.parent.potencia_box.currentIndexChanged.connect(self.parent.enviar_js)
+        self.parent.diametro_box.currentIndexChanged.connect(self.parent.enviar_js)
+        self.parent.comprimento_box.currentIndexChanged.connect(self.parent.enviar_js)
 
     def _conectar_menus(self):
         """Conecta os botões da barra de título aos seus respectivos menus."""
@@ -98,7 +117,7 @@ class ConexoesUI():
     def _conectar_abas_frames(self):
         """Conecta os botões para animações de painéis laterais."""
         self.parent.fechar_lateral_2.clicked.connect(
-            lambda: self.animacoes.largura(self.parent.frame_4, largura_alvo=300)
+            lambda: self.animacoes.largura(self.parent.janel_direita, largura_alvo=300)
         )
         self.parent.abrir_layout_3.clicked.connect(
             lambda: self.animacoes.largura(self.parent.frame_4, self.parent.frame_6, largura_alvo=300)

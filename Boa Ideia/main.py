@@ -23,6 +23,7 @@ from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest
 
 # ================== Bibliotecas Externas ==================
 from qframelesswindow import FramelessWindow, StandardTitleBar
+import matplotlib.pyplot as plt
 
 # ================== Importacoes Locais (GUI) ==================
 from gui.Ui_main import Ui_AquaPump
@@ -82,6 +83,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.localizadas = 0.0
         self.perdas_totais = 0.0
         self.altura_manometrica = 0.0
+        self.potencia_requerida = 0.0
 
         # ---------- Inicialização de Classes Internas ----------
         self.animações = Animações()
@@ -172,7 +174,9 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     def atualizar_parametros_entrada(self):
         """Lê os valores de entrada (vazão, tempo) e recalcula o sistema."""
         texto_vazao = self.Vazao_2.text().strip().replace(',', '.')
-        self.vazao = float(texto_vazao) if texto_vazao else 0.0
+        vazao = float(texto_vazao) if texto_vazao else 0.0
+        self.vazao = self.conversor.converter_vazao(vazao, self.icone_2.currentText(), 'm³/s')
+        print("Vazão atualizada:", self.vazao, "m³/s")
 
         texto_tempo = self.Vazao.text().strip().replace(',', '.')
         self.tempo = float(texto_tempo) if texto_tempo else 0.0
@@ -186,7 +190,9 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.diametro_tubulacao = self._diametro.calcular_diametro(
             self.vazao, self.tempo
         )
-
+        print(f"Diâmetro da tubulação calculado: {self.diametro_tubulacao} m ")
+        print(f"Área da seção calculada: {self._diametro.area_seccao():.6f} m²")
+        
     def perdas_carga(self):
         """Instancia a classe de Perdas com os parâmetros atuais."""
         vazao_m3s = self.vazao
@@ -230,7 +236,6 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         if not hasattr(self, 'perdas') or not self.diametro_tubulacao > 0:
             return
 
-        # --- 1. Perdas distribuídas ---
         perda_distribuida = 0.0
         if self.comprimento_tubulacao_val > 0:
             try:
@@ -249,13 +254,23 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
         # --- 2. Perdas totais e altura manométrica ---
         self.perdas_totais = perda_distribuida + self.localizadas
-        self.altura_manometrica = self.altura_geometrica_val + self.perdas_totais
+        self.calcular_potencia()
 
         print(f"Perdas totais: {self.perdas_totais:.8f} m")
-        print("Altura manométrica calculada:", self.altura_manometrica)
+        self.calcular_altura_manometrica()
 
         # --- 3. Atualização dos gráficos ---
         self.atualizar_graficos_curvas()
+    
+    def calcular_potencia(self):
+        """Calcula a potencia em KW"""
+        self.potencia_requerida = self._diametro.calcular_potencia(self.altura_manometrica, self.vazao)
+        print("Potência calculada:", self.potencia_requerida, "KW")
+
+    def calcular_altura_manometrica(self):
+        """Calcula a altura manométrica."""
+        self.altura_manometrica = self.altura_geometrica_val + self.perdas_totais
+        print("Altura manométrica calculada:", self.altura_manometrica)
 
     # ==========================================================
     #                 GRÁFICOS
@@ -263,25 +278,36 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     def inicializar_graficos_curvas(self):
         """Inicializa os gráficos de altura, potência e rendimento."""
 
+        unidade_vazao = self.caudal_box.currentText()
+        unidade_altura = self.altura_box.currentText()
+        unidade_potencia = self.potencia_box.currentText()
+
         self.grafico_altura = Grafico(
             tipo='altura',
-            potencia=self.potencia_box.currentText(),
-            altura=self.altura_box.currentText(),
-            v=self.caudal_box.currentText()
+            potencia=unidade_potencia,
+            altura=unidade_altura,
+            v=unidade_vazao,
+            vazao_nominal=self.vazao,
+            altura_nominal=self.altura_manometrica
         )
         self.grafico_potencia = Grafico(
             tipo='potencia',
-            potencia=self.potencia_box.currentText(),
-            altura=self.altura_box.currentText(),
-            v=self.caudal_box.currentText()
+            potencia=unidade_potencia,
+            altura=unidade_altura,
+            v=unidade_vazao,
+            vazao_nominal=self.vazao,
+            altura_nominal=self.altura_manometrica
         )
         self.grafico_rendimento = Grafico(
             tipo='rendimento',
-            potencia=self.potencia_box.currentText(),
-            altura=self.altura_box.currentText(),
-            v=self.caudal_box.currentText()
+            potencia=unidade_potencia,
+            altura=unidade_altura,
+            v=unidade_vazao,
+            vazao_nominal=self.vazao,
+            altura_nominal=self.altura_manometrica
         )
 
+        # Garantir que os layouts existem
         if not hasattr(self, "layout_altura"):
             self.layout_altura = QVBoxLayout(self.altura)
         if not hasattr(self, "layout_potencia"):
@@ -289,17 +315,20 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         if not hasattr(self, "layout_rendimento"):
             self.layout_rendimento = QVBoxLayout(self.rendimento)
 
+        # Limpar widgets antigos e fechar figuras associadas
         for layout in [self.layout_altura, self.layout_potencia, self.layout_rendimento]:
             while layout.count():
                 child = layout.takeAt(0)
                 if child.widget():
+                    # Fecha a figura do matplotlib se existir
+                    if hasattr(child.widget(), "figure"):
+                        plt.close(child.widget().figure)
                     child.widget().deleteLater()
 
         self.layout_altura.addWidget(self.grafico_altura)
         self.layout_potencia.addWidget(self.grafico_potencia)
         self.layout_rendimento.addWidget(self.grafico_rendimento)
 
-    
     def estilo_grafico(self):
         """Aplica estilo consistente aos gráficos."""
         
@@ -309,30 +338,107 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
     def atualizar_graficos_curvas(self):
         """Atualiza os gráficos com os dados calculados mais recentes."""
-        vazao_m3h_quadrado = self.vazao ** 2
+        vazao_m3h = self.converter_vazao_para_m3h(self.vazao, self.icone_2.currentText())
+        vazao_m3h_quadrado = vazao_m3h ** 2
         coef_perda = self.perdas_totais / vazao_m3h_quadrado if vazao_m3h_quadrado > 1e-9 else 0.0
 
         self.grafico_altura.actualizar_dados(self.altura_geometrica_val, coef_perda)
         self.grafico_potencia.actualizar_dados(self.altura_geometrica_val, coef_perda)
         self.grafico_rendimento.actualizar_dados(self.altura_geometrica_val, coef_perda)
 
+    def converter_vazao_para_m3h(self, valor, unidade):
+        if unidade == 'm³/h':
+            return valor
+        elif unidade == 'm³/s':
+            return valor * 3600
+        elif unidade == 'L/s':
+            return valor * 3.6
+        elif unidade == 'L/h':
+            return valor / 1000
+        elif unidade == 'gal/s':
+            return valor * 0.00378541 * 3600
+        elif unidade == 'gal/min':
+            return valor * 0.00378541 * 60
+        elif unidade == 'gal/h':
+            return valor * 0.00378541
+        elif unidade == 'ft³/s':
+            return valor * 101.941
+        elif unidade == 'ft³/min':
+            return valor * 1.69901
+        elif unidade == 'ft³/h':
+            return valor * 0.0283168
+        else:
+            return valor  
+
     def atualizar_unidades_graficos(self):
         """Atualiza os gráficos quando as unidades são alteradas"""
         if hasattr(self, 'grafico_altura') and hasattr(self, 'grafico_potencia') and hasattr(self, 'grafico_rendimento'):
+
+            unidade_vazao = self.caudal_box.currentText()
+            unidade_altura = self.altura_box.currentText()
+            unidade_potencia = self.potencia_box.currentText()
+
+            self.grafico_altura.unidade_vazao = unidade_vazao
+            self.grafico_altura.unidade_altura = unidade_altura
+            self.grafico_altura.unidade_potencia = unidade_potencia
+            
+            self.grafico_potencia.unidade_vazao = unidade_vazao
+            self.grafico_potencia.unidade_altura = unidade_altura
+            self.grafico_potencia.unidade_potencia = unidade_potencia
+            
+            self.grafico_rendimento.unidade_vazao = unidade_vazao
+            self.grafico_rendimento.unidade_altura = unidade_altura
+            self.grafico_rendimento.unidade_potencia = unidade_potencia
             self.inicializar_graficos_curvas()
             self.atualizar_graficos_curvas()
+
+    # ==========================================================
+    #                 Dados para Exibicao
+    # =========================================================
+    def exibir_dados_calculados(self):
+        """Atualiza os resultados em SI para outras unidades."""
+        try:
+            self.vazao_ex = self.conversor.converter_vazao(self.vazao, 'm³/s', self.icone_2.currentText())
+            
+            self.diametro_t = self.conversor.converter_comprimento(
+                self.diametro_tubulacao, 'm', self.diametro_box.currentText()
+            )
+            self.compr = self.conversor.converter_comprimento(
+                self.comprimento_tubulacao_val, 'm', self.comprimento_box.currentText()
+            )
+            self.potencia_exe = self.conversor.converter_potencia(
+                self.potencia_requerida, 'kilowatt', self.potencia_box.currentText()
+            )
+            self.altura_geometrica_ex = self.conversor.converter_comprimento(
+                self.altura_geometrica_val, 'm', self.altura_box.currentText()
+            )
+            self.altura_manometrica_ex = self.conversor.converter_comprimento(
+                self.altura_manometrica, 'm', self.altura_box.currentText()
+            )
+
+        except Exception as e:
+            QMessageBox.critical(self, 'ERRO', f'Erro ao converter unidades devido a {e}')
+            return
+
+    def unidades_exibicao(self):
+        """"Retorna as unidades atualmente selecionadas."""
+        self.unidade_vazao = self.icone_2.currentText()
+        self.unidade_diametro = self.diametro_box.currentText()
+        self.unidade_altura = self.altura_box.currentText()
+        self.unidade_potencia = self.potencia_box.currentText()
+
     # ==========================================================
     #                 INTEGRAÇÃO COM JAVASCRIPT
     # ==========================================================
     def enviar_js(self):
         """Envia dados de entrada (vazão, tempo) para o JavaScript."""
-        texto_vazao = self.Vazao_2.text().strip().replace(',', '.')
-        self.vazao = float(texto_vazao) if texto_vazao else 0.0
-
-        texto_tempo = self.Vazao.text().strip().replace(',', '.')
-        self.tempo = float(texto_tempo) if texto_tempo else 0.0
-
-        self.dados.enviar_dados(self.vazao, self.tempo, self.view)
+        self.exibir_dados_calculados()
+        self.dados.enviar_dados(self.vazao, self.diametro_t, self.altura_manometrica_ex, self.potencia_exe, self.view)
+    
+    def enviar_unidades_js(self):
+        """Envia unidades selecionadas para o JavaScript."""
+        self.unidades_exibicao()
+        self.dados.enviar_unidades(self.unidade_vazao, self.unidade_diametro, self.unidade_altura, self.unidade_potencia, self.view)
 
     def mudanca_dinamica_perdas_carga(self):
         """Alterna entre lista de materiais Darcy e Hazen conforme opção selecionada."""
@@ -370,22 +476,24 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     #                EXPORTAÇÃO PARA PDF
     # ==========================================================
     def gerar_pdf(self):
+        """Gera o relatório em PDF com os dados atuais."""
         try:
+            self.exibir_dados_calculados()
             material = self.darcy.currentText() if self.radioButton_10.isChecked() else self.hazen_will.currentText()
             dados_relatorio = {
-                'Vazão': (f"{self.vazao:.4f}", f'{self.icone_2.currentText()}'),
-                'Tempo de funcionamento': (f"{self.tempo:.2f}", 'horas'),
-                'Comprimento da tubulação': (f"{self.comprimento_tubulacao_val:.2f}", 'm'),
-                'Diâmetro da tubulação': (f"{self.diametro_tubulacao:.4f}", f'{self.diametro_box.currentText()}'),
-                'Altura geométrica': (f"{self.altura_geometrica_val:.2f}", f'{self.altura_box.currentText()}'),
-                'Perdas totais': (f"{self.perdas_totais:.4f}", f'{self.altura_box.currentText()}'),
-                'Altura manométrica': (f"{self.altura_manometrica:.2f}", f'{self.altura_box.currentText()}'),
+                'Vazão': (f"{self.vazao_ex:.3f}", f'{self.icone_2.currentText()}'),
+                'Tempo de funcionamento': (f"{self.tempo:.1f}", 'horas'),
+                'Comprimento da tubulação': (f"{self.compr:.3f}", f'{self.comprimento_box.currentText()}'),
+                'Diâmetro da tubulação': (f"{self.diametro_t:.3f}", f'{self.diametro_box.currentText()}'),
+                'Potência requerida': (f"{self.potencia_exe:.3f}", f'{self.potencia_box.currentText()}'),
+                'Altura geométrica': (f"{self.altura_geometrica_ex:.3f}", f'{self.altura_box.currentText()}'),
+                'Perdas totais': (f"{self.perdas_totais:.3f}", f'{self.altura_box.currentText()}'),
+                'Altura manométrica': (f"{self.altura_manometrica_ex:.3f}", f'{self.altura_box.currentText()}'),
                 'Material da Tubulação': (material, None),
             }
 
-            self.atualizar_graficos_curvas()
+            #self.atualizar_graficos_curvas()
 
-            # Configurar e gerar PDF
             self.relatorio_pdf.adicionar_titulos("Relatório do Sistema de Bombeamento")
             self.relatorio_pdf.adicionar_secao("Dados do Dimensionamento")
             self.relatorio_pdf.adicionar_conteudo(dados_relatorio)
@@ -395,7 +503,6 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             self.relatorio_pdf.adicionar_grafico(self.grafico_altura.figure, self.grafico_potencia.figure, self.grafico_rendimento.figure)
 
             self.relatorio_pdf.gravar_pdf()
-            QMessageBox.information(self, "Sucesso", "Relatório PDF gerado com sucesso!")
             
         except Exception as e:
             QMessageBox.critical(self, 'ERRO', f'Erro ao gerar PDF devido a {e}')
@@ -425,12 +532,9 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
                 "Relatório gerado automaticamente pelo sistema AquaPump"
             )
             
-            # Adicionar seção principal
-            csv_exporter.adicionar_secao("DADOS DO SISTEMA")
-            
-            # Adicionar todos os dados do relatório
+            csv_exporter.adicionar_secao("DADOS DO SISTEMA DE BOMBEAMENTO")
             csv_exporter.adicionar_conjunto_dados(dados_relatorio, "Cálculos do Sistema")
-            
+            csv_exporter.adicionar_secao("GRÁFICOS DE CURVAS DA BOMBA - SIMULAÇÃO")
             # Gerar CSV
             sucesso = csv_exporter.exportar("relatorio_bombeamento.csv")        
             if sucesso:
@@ -803,7 +907,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.config.salvar_geometria_janela(self)
         self.config.salvar_estado_splitter(self.splitter_2, "splitter_principal")
         self.config.salvar_estado_splitter(self.splitter, "splitter_mapa_perfil")
-        self.config.salvar_texto_lineedit(self.Vazao_2, "vazao_valor")
+        #self.config.salvar_texto_lineedit(self.Vazao_2, "vazao_valor")
         self.config.salvar_indice_combobox(self.icone_2, "vazao_unidade_indice")
         self.config.restaurar_indice_combobox(self.caudal_box, "vazao_unidade_indice")
         self.config.salvar_texto_combobox(self.darcy, "darcy_material_texto")
@@ -814,7 +918,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.config.restaurar_geometria_janela(self)
         self.config.restaurar_estado_splitter(self.splitter_2, "splitter_principal")
         self.config.restaurar_estado_splitter(self.splitter, "splitter_mapa_perfil")
-        self.config.restaurar_texto_lineedit(self.Vazao_2, "vazao_valor")
+        #self.config.restaurar_texto_lineedit(self.Vazao_2, "vazao_valor")
         self.config.restaurar_indice_combobox(self.icone_2, "vazao_unidade_indice")
         self.config.restaurar_indice_combobox(self.caudal_box, "vazao_unidade_indice")
         self.config.restaurar_texto_combobox(self.darcy, "darcy_material_texto")

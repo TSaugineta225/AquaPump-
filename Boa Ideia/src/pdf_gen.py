@@ -201,7 +201,7 @@ class PDF():
         canvas.drawString(largura - 130, 30 - 12, tempo)
 
         canvas.setFont('Courier', 6)
-        canvas.drawRightString(140, 30-12, u"© 2025 Tenerife da Saugineta")
+        canvas.drawRightString(130, 30-12, u"© Tenerife da Saugineta")
         # Adicionar linha decorativa
         canvas.setStrokeColor(colors.HexColor('#3498db'))
         canvas.setLineWidth(0.5)
@@ -217,7 +217,7 @@ class PDF():
         try:
             if caminho is None:
                 caminho, _ = QFileDialog.getSaveFileName(
-                    None, "Salvar como PDF", "Relatório.pdf", "Arquivos PDF (*.pdf)"
+                    None, "Salvar como PDF", "doc.pdf", "Arquivos PDF (*.pdf)"
                 )
                 if not caminho:
                     return False

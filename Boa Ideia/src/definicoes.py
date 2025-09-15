@@ -6,9 +6,9 @@ class Definicoes:
         self.unidades_metricas = {
             'caudal': [f'm{self.ex_3}/s', f'm{self.ex_3}/h', 'L/s'],
             'altura': ['m'],
-            'comprimento': ['m'],
-            'diametro': ['mm', 'm'],
-            'potencia': ['KW', 'W', 'CV'],
+            'comprimento': ['m', 'km', 'cm'],
+            'diametro': ['m', 'mm'],
+            'potencia': ['watt', 'kilowatt', 'megawatt', 'horsepower', 'cv'],
             'npsh': ['m']
         }
 
