@@ -329,13 +329,15 @@ class Mapa:
             valor_4_guardado = Number(v4);
             drawnItems.eachLayer(actualizar_popup);
         }
+        
         function receber_unidades(u1, u2, u3, u4) {
-            unidade_vazao = str(u1);
-            unidade_diametro = str(u2);
-            unidade_altura = str(u3);
-            unidade_potencia = str(u4);
+            unidade_vazao = u1;
+            unidade_diametro = u2;
+            unidade_altura = u3;
+            unidade_potencia = u4;
             drawnItems.eachLayer(actualizar_popup);
         }
+
         
         window.receber_unidades = receber_unidades;
         window.receber_dados = receber_dados;

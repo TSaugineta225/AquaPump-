@@ -1,5 +1,6 @@
 from PySide6.QtWidgets import QMessageBox
 from PySide6.QtCore import QObject, Slot, Signal, QUrl
+import json
 
 class Dados():
     def __init__(self):
@@ -27,7 +28,10 @@ class Dados():
         self.unidade_3 = unidade_altura
         self.unidade_4 = unidade_potencia
 
-        pagina.page().runJavaScript(f"receber_unidades({self.unidade_1}, {self.unidade_2}, {self.unidade_3}, {self.unidade_4})")
+        pagina.page().runJavaScript(
+            f"receber_unidades({json.dumps(self.unidade_1)}, {json.dumps(self.unidade_2)}, {json.dumps(self.unidade_3)}, {json.dumps(self.unidade_4)})"
+        )
+        print(f"Unidades enviadas para a página web: {self.unidade_1}, {self.unidade_2}, {self.unidade_3}, {self.unidade_4}")
 
 class Outros_dados():
     @Slot(str)

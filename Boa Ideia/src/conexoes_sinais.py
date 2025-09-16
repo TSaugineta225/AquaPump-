@@ -13,6 +13,7 @@ class ConexoesUI():
         self._conectar_js_dados()
         self._conectar_js_unidades()
         self._conectar_mapa()
+    #    self._connectar_actualizacoes()
         self._conectar_principais_dados()
         self._conectar_configuracoes()
         self._conectar_entradas_calculo()
@@ -23,7 +24,7 @@ class ConexoesUI():
         self._perda_carga_dinamica()
         self._conectar_actualizao_graph()
         self._connectar_actualizacao_unidades()
-        self._connectar_actualizacao_unidades_graficos()
+        #self._connectar_actualizacao_unidades_graficos()
         self._conectar_geracao_pdf() 
         self._connectar_arquivo()   
         self._conectar_ocultacoes()
@@ -66,6 +67,9 @@ class ConexoesUI():
 
     def _conectar_js_unidades(self):
         """Conecta os sinais para atualização das unidades (JavaScript)."""
+        self.parent.Vazao_2.textChanged.connect(self.parent.enviar_unidades_js)
+        self.parent.Vazao.textChanged.connect(self.parent.enviar_unidades_js)
+
         self.parent.icone_2.currentIndexChanged.connect(self.parent.enviar_unidades_js)
         self.parent.altura_box.currentIndexChanged.connect(self.parent.enviar_unidades_js)
         self.parent.diametro_box.currentIndexChanged.connect(self.parent.enviar_unidades_js)
@@ -84,6 +88,18 @@ class ConexoesUI():
         self.parent.potencia_box.currentIndexChanged.connect(self.parent.enviar_js)
         self.parent.diametro_box.currentIndexChanged.connect(self.parent.enviar_js)
         self.parent.comprimento_box.currentIndexChanged.connect(self.parent.enviar_js)
+    
+    def _connectar_actualizacoes(self):
+        """Conecta os sinais para atualizar os cálculos quando as entradas mudam."""
+        self.parent.Vazao_2.textChanged.connect(self.parent.atualizar_parametros_entrada)
+        self.parent.Vazao.textChanged.connect(self.parent.atualizar_parametros_entrada)
+
+        self.parent.icone_2.currentIndexChanged.connect(self.parent.atualizar_parametros_entrada)
+        self.parent.altura_box.currentIndexChanged.connect(self.parent.atualizar_parametros_entrada)
+        self.parent.diametro_box.currentIndexChanged.connect(self.parent.atualizar_parametros_entrada)
+        self.parent.potencia_box.currentIndexChanged.connect(self.parent.atualizar_parametros_entrada)
+        self.parent.diametro_box.currentIndexChanged.connect(self.parent.atualizar_parametros_entrada)
+        self.parent.comprimento_box.currentIndexChanged.connect(self.parent.atualizar_parametros_entrada)
 
     def _conectar_menus(self):
         """Conecta os botões da barra de título aos seus respectivos menus."""

@@ -22,8 +22,10 @@ from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineProfile
 from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest
 
 # ================== Bibliotecas Externas ==================
-from qframelesswindow import FramelessWindow, StandardTitleBar
-import matplotlib.pyplot as plt
+from qframelesswindow import FramelessWindow
+import fluids.piping as piping
+from matplotlib import pyplot as plt
+import numpy as np
 
 # ================== Importacoes Locais (GUI) ==================
 from gui.Ui_main import Ui_AquaPump
@@ -161,7 +163,8 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.status_label = QLabel()
 
         # ---------- Inicialização de Gráficos ----------
-        self.inicializar_graficos_curvas()
+        self.inicializar_graficos()
+        self.atualizar_graficos_curvas()
         self.mudanca_dinamica_perdas_carga()
 
     # ==========================================================
@@ -190,6 +193,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.diametro_tubulacao = self._diametro.calcular_diametro(
             self.vazao, self.tempo
         )
+      
         print(f"Diâmetro da tubulação calculado: {self.diametro_tubulacao} m ")
         print(f"Área da seção calculada: {self._diametro.area_seccao():.6f} m²")
         
@@ -275,122 +279,124 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     # ==========================================================
     #                 GRÁFICOS
     # ==========================================================
-    def inicializar_graficos_curvas(self):
-        """Inicializa os gráficos de altura, potência e rendimento."""
+    def inicializar_graficos(self):
+        self.grafico_altura = Grafico()
+        self.grafico_potencia = Grafico()
+        self.grafico_rendimento = Grafico()
 
-        unidade_vazao = self.caudal_box.currentText()
-        unidade_altura = self.altura_box.currentText()
-        unidade_potencia = self.potencia_box.currentText()
 
-        self.grafico_altura = Grafico(
-            tipo='altura',
-            potencia=unidade_potencia,
-            altura=unidade_altura,
-            v=unidade_vazao,
-            vazao_nominal=self.vazao,
-            altura_nominal=self.altura_manometrica
-        )
-        self.grafico_potencia = Grafico(
-            tipo='potencia',
-            potencia=unidade_potencia,
-            altura=unidade_altura,
-            v=unidade_vazao,
-            vazao_nominal=self.vazao,
-            altura_nominal=self.altura_manometrica
-        )
-        self.grafico_rendimento = Grafico(
-            tipo='rendimento',
-            potencia=unidade_potencia,
-            altura=unidade_altura,
-            v=unidade_vazao,
-            vazao_nominal=self.vazao,
-            altura_nominal=self.altura_manometrica
-        )
-
-        # Garantir que os layouts existem
-        if not hasattr(self, "layout_altura"):
-            self.layout_altura = QVBoxLayout(self.altura)
-        if not hasattr(self, "layout_potencia"):
-            self.layout_potencia = QVBoxLayout(self.potencia)
-        if not hasattr(self, "layout_rendimento"):
-            self.layout_rendimento = QVBoxLayout(self.rendimento)
-
-        # Limpar widgets antigos e fechar figuras associadas
-        for layout in [self.layout_altura, self.layout_potencia, self.layout_rendimento]:
-            while layout.count():
-                child = layout.takeAt(0)
-                if child.widget():
-                    # Fecha a figura do matplotlib se existir
-                    if hasattr(child.widget(), "figure"):
-                        plt.close(child.widget().figure)
-                    child.widget().deleteLater()
-
-        self.layout_altura.addWidget(self.grafico_altura)
-        self.layout_potencia.addWidget(self.grafico_potencia)
-        self.layout_rendimento.addWidget(self.grafico_rendimento)
-
-    def estilo_grafico(self):
-        """Aplica estilo consistente aos gráficos."""
+        for layout in [self.altura.layout(), self.potencia.layout(), self.rendimento.layout()]:
+            if layout is not None:
+                while layout.count():
+                    child = layout.takeAt(0)
+                    if child.widget():
+                        child.widget().deleteLater()
         
-        self.janel_direita.setStyleSheet("""
-            background-color: #ffffff;
-        """)
-
+        # Adicionar os novos gráficos
+        QVBoxLayout(self.altura).addWidget(self.grafico_altura)
+        QVBoxLayout(self.potencia).addWidget(self.grafico_potencia)
+        QVBoxLayout(self.rendimento).addWidget(self.grafico_rendimento)
+        
+        # 3. TERCEIRO, ligamos os sinais dinâmicos.
+        self.mudanca_dinamica_perdas_carga()
+        
+        # 4. FINALMENTE, chamamos a função para preencher os gráficos com dados iniciais.
+        self.atualizar_graficos_curvas()
     def atualizar_graficos_curvas(self):
-        """Atualiza os gráficos com os dados calculados mais recentes."""
-        vazao_m3h = self.converter_vazao_para_m3h(self.vazao, self.icone_2.currentText())
-        vazao_m3h_quadrado = vazao_m3h ** 2
-        coef_perda = self.perdas_totais / vazao_m3h_quadrado if vazao_m3h_quadrado > 1e-9 else 0.0
+        """
+        Atualiza TODOS os gráficos de SIMULAÇÃO (Altura, Potência, Rendimento)
+        com os dados calculados mais recentes, respeitando as unidades do utilizador.
+        """
+        try:
+            # --- 1. PARÂMETROS DA SIMULAÇÃO (EM UNIDADES SI) ---
+            vazao_nominal_m3s = self.vazao if self.vazao > 1e-9 else 0.01
+            altura_nominal_m = self.altura_manometrica if self.altura_manometrica > 1e-9 else 10
 
-        self.grafico_altura.actualizar_dados(self.altura_geometrica_val, coef_perda)
-        self.grafico_potencia.actualizar_dados(self.altura_geometrica_val, coef_perda)
-        self.grafico_rendimento.actualizar_dados(self.altura_geometrica_val, coef_perda)
+            # --- 2. GERAR PONTOS DE VAZÃO (EM UNIDADES SI) ---
+            q_max_m3s = vazao_nominal_m3s * 1.5
+            vazao_plot_m3s = np.linspace(0.001, q_max_m3s, 200)
 
-    def converter_vazao_para_m3h(self, valor, unidade):
-        if unidade == 'm³/h':
-            return valor
-        elif unidade == 'm³/s':
-            return valor * 3600
-        elif unidade == 'L/s':
-            return valor * 3.6
-        elif unidade == 'L/h':
-            return valor / 1000
-        elif unidade == 'gal/s':
-            return valor * 0.00378541 * 3600
-        elif unidade == 'gal/min':
-            return valor * 0.00378541 * 60
-        elif unidade == 'gal/h':
-            return valor * 0.00378541
-        elif unidade == 'ft³/s':
-            return valor * 101.941
-        elif unidade == 'ft³/min':
-            return valor * 1.69901
-        elif unidade == 'ft³/h':
-            return valor * 0.0283168
-        else:
-            return valor  
+            # --- 3. CÁLCULOS DAS CURVAS (TUDO EM UNIDADES SI) ---
+            # A. Curva da Bomba (H vs Q)
+            H0_bomba_m = altura_nominal_m * 1.3
+            A_bomba = (H0_bomba_m - altura_nominal_m) / (vazao_nominal_m3s ** 2)
+            altura_bomba_plot_m = H0_bomba_m - A_bomba * (vazao_plot_m3s ** 2)
+            altura_bomba_plot_m[altura_bomba_plot_m < 0] = 0
 
-    def atualizar_unidades_graficos(self):
-        """Atualiza os gráficos quando as unidades são alteradas"""
-        if hasattr(self, 'grafico_altura') and hasattr(self, 'grafico_potencia') and hasattr(self, 'grafico_rendimento'):
+            # B. Curva do Sistema (H vs Q)
+            coef_perda_SI = self.perdas_totais / (self.vazao**2) if self.vazao > 1e-9 else 0
+            altura_sistema_plot_m = self.altura_geometrica_val + coef_perda_SI * (vazao_plot_m3s**2)
 
-            unidade_vazao = self.caudal_box.currentText()
-            unidade_altura = self.altura_box.currentText()
-            unidade_potencia = self.potencia_box.currentText()
+            # C. Curva de Rendimento (η vs Q)
+            eta_max = 0.75
+            k_rendimento = 0.01 / (vazao_nominal_m3s**2) # Ajustar k à escala de vazão
+            rendimento_plot = eta_max - k_rendimento * (vazao_plot_m3s - vazao_nominal_m3s)**2
+            rendimento_plot[rendimento_plot < 0] = 0 # Rendimento não pode ser negativo
 
-            self.grafico_altura.unidade_vazao = unidade_vazao
-            self.grafico_altura.unidade_altura = unidade_altura
-            self.grafico_altura.unidade_potencia = unidade_potencia
+            # D. Curva de Potência (P vs Q)
+            rho = 1000  # kg/m³
+            g = 9.81  # m/s²
+            eta_seguro = np.where(rendimento_plot > 0.1, rendimento_plot, 0.1) # Evitar divisão por zero
+            potencia_plot_watt = (rho * g * vazao_plot_m3s * altura_bomba_plot_m) / eta_seguro
             
-            self.grafico_potencia.unidade_vazao = unidade_vazao
-            self.grafico_potencia.unidade_altura = unidade_altura
-            self.grafico_potencia.unidade_potencia = unidade_potencia
+            # --- 4. ENCONTRAR PONTO DE OPERAÇÃO (EM UNIDADES SI) ---
+            idx_operacao = np.argmin(np.abs(altura_bomba_plot_m - altura_sistema_plot_m))
+            q_op_m3s = vazao_plot_m3s[idx_operacao]
+            h_op_m = altura_sistema_plot_m[idx_operacao]
+            p_op_watt = np.interp(q_op_m3s, vazao_plot_m3s, potencia_plot_watt)
+            eta_op = np.interp(q_op_m3s, vazao_plot_m3s, rendimento_plot)
+
+            # --- 5. FAZER AS CONVERSÕES PARA AS UNIDADES DE EXIBIÇÃO ---
+            unidade_vazao_exibir = self.caudal_box.currentText()
+            unidade_altura_exibir = self.altura_box.currentText()
+            unidade_potencia_exibir = self.potencia_box.currentText()
+
+            # Eixos X (Vazão)
+            vazao_exibir = self.conversor.converter_vazao(vazao_plot_m3s, 'm³/s', unidade_vazao_exibir)
+            q_op_exibir = self.conversor.converter_vazao(q_op_m3s, 'm³/s', unidade_vazao_exibir)
             
-            self.grafico_rendimento.unidade_vazao = unidade_vazao
-            self.grafico_rendimento.unidade_altura = unidade_altura
-            self.grafico_rendimento.unidade_potencia = unidade_potencia
-            self.inicializar_graficos_curvas()
-            self.atualizar_graficos_curvas()
+            # Eixos Y
+            altura_bomba_exibir = self.conversor.converter_comprimento(altura_bomba_plot_m, 'm', unidade_altura_exibir)
+            altura_sistema_exibir = self.conversor.converter_comprimento(altura_sistema_plot_m, 'm', unidade_altura_exibir)
+            h_op_exibir = self.conversor.converter_comprimento(h_op_m, 'm', unidade_altura_exibir)
+            
+            potencia_exibir = self.conversor.converter_potencia(potencia_plot_watt, 'watt', unidade_potencia_exibir)
+            p_op_exibir = self.conversor.converter_potencia(p_op_watt, 'watt', unidade_potencia_exibir)
+            
+            rendimento_exibir = rendimento_plot * 100 # Em percentagem
+            eta_op_exibir = eta_op * 100
+
+            # --- 6. ATUALIZAR OS TRÊS GRÁFICOS ---
+            # Gráfico de Altura
+            self.grafico_altura.plotar_dados(
+                tipo_grafico='Altura',
+                dados_curva1={'label': 'Curva Bomba (Simulada)', 'x': vazao_exibir, 'y': altura_bomba_exibir},
+                dados_curva2={'label': 'Curva Sistema', 'x': vazao_exibir, 'y': altura_sistema_exibir},
+                ponto_operacao={'x': q_op_exibir, 'y': h_op_exibir},
+                unidade_vazao=unidade_vazao_exibir, unidade_y=unidade_altura_exibir,
+                titulo='Altura vs. Vazão (Simulação)'
+            )
+
+            # Gráfico de Potência
+            self.grafico_potencia.plotar_dados(
+                tipo_grafico='Potência',
+                dados_curva1={'label': 'Potência Consumida', 'x': vazao_exibir, 'y': potencia_exibir, 'cor': '#2ca02c'},
+                ponto_operacao={'x': q_op_exibir, 'y': p_op_exibir},
+                unidade_vazao=unidade_vazao_exibir, unidade_y=unidade_potencia_exibir,
+                titulo='Potência vs. Vazão (Simulação)'
+            )
+            
+            # Gráfico de Rendimento
+            self.grafico_rendimento.plotar_dados(
+                tipo_grafico='Rendimento',
+                dados_curva1={'label': 'Rendimento', 'x': vazao_exibir, 'y': rendimento_exibir, 'cor': '#d62728'},
+                ponto_operacao={'x': q_op_exibir, 'y': eta_op_exibir},
+                unidade_vazao=unidade_vazao_exibir, unidade_y='%',
+                titulo='Rendimento vs. Vazão (Simulação)'
+            )
+            
+        except Exception as e:
+            logger.error(f"Erro ao atualizar gráficos de simulação: {e}")
 
     # ==========================================================
     #                 Dados para Exibicao
@@ -433,7 +439,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     def enviar_js(self):
         """Envia dados de entrada (vazão, tempo) para o JavaScript."""
         self.exibir_dados_calculados()
-        self.dados.enviar_dados(self.vazao, self.diametro_t, self.altura_manometrica_ex, self.potencia_exe, self.view)
+        self.dados.enviar_dados(self.vazao_ex, self.diametro_t, self.altura_manometrica_ex, self.potencia_exe, self.view)
     
     def enviar_unidades_js(self):
         """Envia unidades selecionadas para o JavaScript."""
