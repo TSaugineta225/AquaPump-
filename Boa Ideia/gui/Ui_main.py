@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'mainWeDpun.ui'
+## Form generated from reading UI file 'mainwmGzzk.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -538,7 +538,7 @@ class Ui_AquaPump(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 177, 393))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 177, 407))
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.projecto_2 = QPushButton(self.scrollAreaWidgetContents)
@@ -1511,7 +1511,7 @@ class Ui_AquaPump(object):
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollAreaWidgetContents_3 = QWidget()
         self.scrollAreaWidgetContents_3.setObjectName(u"scrollAreaWidgetContents_3")
-        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 234, 631))
+        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 184, 631))
         self.verticalLayout_14 = QVBoxLayout(self.scrollAreaWidgetContents_3)
         self.verticalLayout_14.setSpacing(10)
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
@@ -1756,7 +1756,7 @@ class Ui_AquaPump(object):
         self.scrollArea_4.setWidgetResizable(True)
         self.scrollAreaWidgetContents_4 = QWidget()
         self.scrollAreaWidgetContents_4.setObjectName(u"scrollAreaWidgetContents_4")
-        self.scrollAreaWidgetContents_4.setGeometry(QRect(0, -19, 812, 1000))
+        self.scrollAreaWidgetContents_4.setGeometry(QRect(0, 0, 812, 1000))
         self.verticalLayout_28 = QVBoxLayout(self.scrollAreaWidgetContents_4)
         self.verticalLayout_28.setSpacing(30)
         self.verticalLayout_28.setObjectName(u"verticalLayout_28")
@@ -2212,15 +2212,15 @@ class Ui_AquaPump(object):
 
         self.horizontalLayout_18.addWidget(self.selecionar)
 
+        self.anterior = QPushButton(self.frame_9)
+        self.anterior.setObjectName(u"anterior")
+
+        self.horizontalLayout_18.addWidget(self.anterior)
+
         self.proxima = QPushButton(self.frame_9)
         self.proxima.setObjectName(u"proxima")
 
         self.horizontalLayout_18.addWidget(self.proxima)
-
-        self.procurar = QPushButton(self.frame_9)
-        self.procurar.setObjectName(u"procurar")
-
-        self.horizontalLayout_18.addWidget(self.procurar)
 
 
         self.verticalLayout_35.addLayout(self.horizontalLayout_18)
@@ -2243,7 +2243,7 @@ class Ui_AquaPump(object):
 
         self.projecto_2.setDefault(True)
         self.stackedWidget.setCurrentIndex(0)
-        self.stackedWidget_3.setCurrentIndex(0)
+        self.stackedWidget_3.setCurrentIndex(1)
         self.janela_definicoes.setCurrentIndex(0)
 
 
@@ -2391,12 +2391,12 @@ class Ui_AquaPump(object):
 #endif // QT_CONFIG(tooltip)
         self.selecionar.setText(QCoreApplication.translate("AquaPump", u"Seleccionar", None))
 #if QT_CONFIG(tooltip)
+        self.anterior.setToolTip(QCoreApplication.translate("AquaPump", u"Associar diferentes bombas", None))
+#endif // QT_CONFIG(tooltip)
+        self.anterior.setText(QCoreApplication.translate("AquaPump", u"Anterior", None))
+#if QT_CONFIG(tooltip)
         self.proxima.setToolTip(QCoreApplication.translate("AquaPump", u"Proxima Proposta", None))
 #endif // QT_CONFIG(tooltip)
         self.proxima.setText(QCoreApplication.translate("AquaPump", u"Pr\u00f3xima ", None))
-#if QT_CONFIG(tooltip)
-        self.procurar.setToolTip(QCoreApplication.translate("AquaPump", u"Procurar por Bomba", None))
-#endif // QT_CONFIG(tooltip)
-        self.procurar.setText(QCoreApplication.translate("AquaPump", u"Associar", None))
     # retranslateUi
 

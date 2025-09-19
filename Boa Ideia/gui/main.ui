@@ -676,7 +676,7 @@ QPushButton:checked {
              <x>0</x>
              <y>0</y>
              <width>177</width>
-             <height>393</height>
+             <height>407</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -2306,7 +2306,7 @@ QPushButton:checked {
                 <rect>
                  <x>0</x>
                  <y>0</y>
-                 <width>234</width>
+                 <width>184</width>
                  <height>631</height>
                 </rect>
                </property>
@@ -3468,22 +3468,22 @@ border-radius: 4px;</string>
                  </widget>
                 </item>
                 <item>
+                 <widget class="QPushButton" name="anterior">
+                  <property name="toolTip">
+                   <string>Associar diferentes bombas</string>
+                  </property>
+                  <property name="text">
+                   <string>Anterior</string>
+                  </property>
+                 </widget>
+                </item>
+                <item>
                  <widget class="QPushButton" name="proxima">
                   <property name="toolTip">
                    <string>Proxima Proposta</string>
                   </property>
                   <property name="text">
                    <string>Próxima </string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QPushButton" name="associarr">
-                  <property name="toolTip">
-                   <string>Associar diferentes bombas</string>
-                  </property>
-                  <property name="text">
-                   <string>Associar</string>
                   </property>
                  </widget>
                 </item>

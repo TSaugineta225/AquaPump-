@@ -1,11 +1,12 @@
 import math
 import CoolProp.CoolProp as CP
+from scipy.constants import g
 
 class Tubulacao:
     def __init__(self):
 
         self.rho = CP.PropsSI("D", "T", 293.15, "P", 101325, "Water")
-        self.peso_especifico = self.rho * 9.81  # kg/m³ * m/s² = N/m³
+        self.peso_especifico = self.rho * g  # kg/m³ * m/s² = N/m³
 
     def calcular_diametro(self, vazao, tempo):
         if tempo == 24:

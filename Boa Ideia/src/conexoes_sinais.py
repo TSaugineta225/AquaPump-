@@ -25,7 +25,7 @@ class ConexoesUI():
         self._conectar_actualizao_graph()
         self._connectar_actualizacao_unidades()
         #self._connectar_actualizacao_unidades_graficos()
-        self._conectar_geracao_pdf() 
+        self._conectar_geracao_relatorio() 
         self._connectar_arquivo()   
         self._conectar_ocultacoes()
         self._connectar_janelas_responsivas()
@@ -70,6 +70,12 @@ class ConexoesUI():
         self.parent.Vazao_2.textChanged.connect(self.parent.enviar_unidades_js)
         self.parent.Vazao.textChanged.connect(self.parent.enviar_unidades_js)
 
+        self.parent.grafico_icon.clicked.connect(self.parent.enviar_unidades_js)
+        self.parent.grafico.clicked.connect(self.parent.enviar_unidades_js)
+
+        self.parent.darcy.currentIndexChanged.connect(self.parent.enviar_unidades_js)
+        self.parent.hazen_will.currentIndexChanged.connect(self.parent.enviar_unidades_js)
+
         self.parent.icone_2.currentIndexChanged.connect(self.parent.enviar_unidades_js)
         self.parent.altura_box.currentIndexChanged.connect(self.parent.enviar_unidades_js)
         self.parent.diametro_box.currentIndexChanged.connect(self.parent.enviar_unidades_js)
@@ -81,6 +87,12 @@ class ConexoesUI():
         """Conecta os sinais para envio e recebimento de dados com o JavaScript."""
         self.parent.Vazao_2.textChanged.connect(self.parent.enviar_js)
         self.parent.Vazao.textChanged.connect(self.parent.enviar_js)
+
+        self.parent.grafico_icon.clicked.connect(self.parent.enviar_js)
+        self.parent.grafico.clicked.connect(self.parent.enviar_js)
+
+        self.parent.darcy.currentIndexChanged.connect(self.parent.enviar_js)
+        self.parent.hazen_will.currentIndexChanged.connect(self.parent.enviar_js)
         
         self.parent.icone_2.currentIndexChanged.connect(self.parent.enviar_js)
         self.parent.altura_box.currentIndexChanged.connect(self.parent.enviar_js)
@@ -151,6 +163,9 @@ class ConexoesUI():
             lambda: self.animacoes.largura(self.parent.frame_4, self.parent.frame_6)
         )
 
+        self.parent.parametros.clicked.connect(
+            lambda:self.animacoes.altura(self.parent.exportar, altura=100)
+        )
     def _conectar_botoes_sair(self):
         """Conecta os botões de fechar a aplicação."""
         self.parent.sair_2.clicked.connect(self.parent.close)
@@ -175,6 +190,9 @@ class ConexoesUI():
         self.parent.rel.clicked.connect(self.parent.selecionar_melhor_bomba)
         self.parent.relatorio_3.clicked.connect(self.parent.selecionar_melhor_bomba)
         self.parent.voltar_2.clicked.connect(lambda: self.parent.stackedWidget.setCurrentIndex(0))
+        self.parent.proxima.clicked.connect(self.parent.proxima_sugestao)
+        self.parent.anterior.clicked.connect(self.parent.sugestao_anterior)
+        #self.parent.parent.selecionar.clicked.connect(self.parent.selecionar_melhor_bomba)
 
     def _connectar_abrir_graph(self):
         self.parent.grafico_icon.clicked.connect(lambda: self.animacoes.largura(self.parent.janel_direita, largura_alvo=500))
@@ -190,13 +208,14 @@ class ConexoesUI():
         self.parent.altura_box.currentTextChanged.connect(self.parent.atualizar_unidades_graficos)
         self.parent.potencia_box.currentTextChanged.connect(self.parent.atualizar_unidades_graficos)
 
-    def _conectar_geracao_pdf(self):
+    def _conectar_geracao_relatorio(self):
         self.parent.exportar_pdf.clicked.connect(self.parent.gerar_pdf)
+        self.parent.exportar_csv.clicked.connect(self.parent.gerar_csv)
 
     def _conectar_ocultacoes(self):
         """Conecta os botões para ocultar/mostrar elementos da UI."""
         self.parent.banco_dados.setHidden(True)
-
+    
     def _connectar_arquivo(self):
         self.parent.novo_arquivo.clicked.connect(self.parent.novo_projecto)
         self.parent.salvar_projecto.clicked.connect(self.parent.salvar_historico)
@@ -204,7 +223,7 @@ class ConexoesUI():
 
     def _connectar_janelas_responsivas(self):
         self.parent.parametros.clicked.connect(lambda: self.animacoes.altura(self.parent.exportar, altura=400))
-        self.parent.projecto_2.clicked.connect(lambda: self.animacoes.altura(self.parent.projecto, altura=100))
+        self.parent.projecto_2.clicked.connect(lambda: self.animacoes.altura(self.parent.projecto, altura=400))
 
     def _connectar_widgets_desativadas(self):
         self.parent.groupBox_2.setVisible(False)

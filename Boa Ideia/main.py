@@ -26,6 +26,8 @@ from qframelesswindow import FramelessWindow
 import fluids.piping as piping
 from matplotlib import pyplot as plt
 import numpy as np
+import CoolProp.CoolProp as CP
+from scipy.constants import g
 
 # ================== Importacoes Locais (GUI) ==================
 from gui.Ui_main import Ui_AquaPump
@@ -43,6 +45,8 @@ from src.JavaScript import Mapa
 from src.animações import Animações
 from src.historico import HistoricoManager
 from src. gestor_database import GestorDatabase
+from src.Observações import Observacoes
+from src.motor_selecção import MotorSelecao
 from src.web_channel import (
     Dados, Altura_Geometrica, Dimensao_Tubulacao, Acessorios_sistema
 )
@@ -86,6 +90,8 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.perdas_totais = 0.0
         self.altura_manometrica = 0.0
         self.potencia_requerida = 0.0
+        self.bombas_sugeridas = []
+        self.indice_bomba_atual = 0
 
         # ---------- Inicialização de Classes Internas ----------
         self.animações = Animações()
@@ -99,14 +105,11 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.janela_sobre = Dialog()
         self.atualizar_parametros_entrada()
         try:
-            self.gestor_db = GestorDatabase(db_path=r'data/aquapump.db')
-            if self.gestor_db.is_fallback_db():
-                logger.warning("Usando banco de dados em memória (fallback)")
-                
+            self.gestor_db = GestorDatabase(r'data/aquapump.db')
+            self.motor_selecao = MotorSelecao(self.gestor_db)
+            logger.info('Base de dados Carregada com sucesso')
         except Exception as e:
-            logger.error(f"Falha crítica ao inicializar banco de dados: {e}")
-            
-
+            logger.warning(f"Erro ao carregar base de dados devido a {e}")
 
         # ---------- WebEngine + WebChannel ----------
         self.altura_geometrica_channel = Altura_Geometrica()
@@ -142,12 +145,6 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         validator.setNotation(QDoubleValidator.StandardNotation)
         self.Vazao_2.setValidator(validator)
         self.Vazao.setValidator(validator)
-
-        # ---------- Autocompletar Pesquisa ----------
-        self.completador = QCompleter()
-        self.completador.setCaseSensitivity(Qt.CaseInsensitive)
-        self.pesquisa_line.setCompleter(self.completador)
-        self.pesquisa_line.setPlaceholderText("Pesquisar")
 
         # ---------- WebEngine + Mapa ----------
         self.mapinha = Mapa()
@@ -264,7 +261,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.calcular_altura_manometrica()
 
         # --- 3. Atualização dos gráficos ---
-        self.atualizar_graficos_curvas()
+        #self.atualizar_graficos_curvas()
     
     def calcular_potencia(self):
         """Calcula a potencia em KW"""
@@ -299,105 +296,109 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         
         # 3. TERCEIRO, ligamos os sinais dinâmicos.
         self.mudanca_dinamica_perdas_carga()
-        
-        # 4. FINALMENTE, chamamos a função para preencher os gráficos com dados iniciais.
         self.atualizar_graficos_curvas()
+
     def atualizar_graficos_curvas(self):
         """
-        Atualiza TODOS os gráficos de SIMULAÇÃO (Altura, Potência, Rendimento)
-        com os dados calculados mais recentes, respeitando as unidades do utilizador.
+        Atualiza TODOS os gráficos de SIMULAÇÃO, garantindo cálculos estáveis e consistentes.
         """
         try:
-            # --- 1. PARÂMETROS DA SIMULAÇÃO (EM UNIDADES SI) ---
-            vazao_nominal_m3s = self.vazao if self.vazao > 1e-9 else 0.01
-            altura_nominal_m = self.altura_manometrica if self.altura_manometrica > 1e-9 else 10
+            # ==============================
+            # 1. PARÂMETROS DE ENTRADA (EM SI)
+            # ==============================
+            vazao_sistema_m3s = self.vazao if self.vazao > 1e-9 else 0.001
+            altura_manometrica_m = self.altura_manometrica if self.altura_manometrica > 1e-9 else 0.1
+            altura_geometrica_m = self.altura_geometrica_val
 
-            # --- 2. GERAR PONTOS DE VAZÃO (EM UNIDADES SI) ---
-            q_max_m3s = vazao_nominal_m3s * 1.5
-            vazao_plot_m3s = np.linspace(0.001, q_max_m3s, 200)
+            # ==============================
+            # 2. GERAR PONTOS PARA O EIXO DA VAZÃO (EM SI)
+            # ==============================
+            q_max_m3s = vazao_sistema_m3s * 1.5
+            q_plot_m3s = np.linspace(1e-9, q_max_m3s, 200)
 
-            # --- 3. CÁLCULOS DAS CURVAS (TUDO EM UNIDADES SI) ---
-            # A. Curva da Bomba (H vs Q)
-            H0_bomba_m = altura_nominal_m * 1.3
-            A_bomba = (H0_bomba_m - altura_nominal_m) / (vazao_nominal_m3s ** 2)
-            altura_bomba_plot_m = H0_bomba_m - A_bomba * (vazao_plot_m3s ** 2)
-            altura_bomba_plot_m[altura_bomba_plot_m < 0] = 0
+            # ==============================
+            # 3. CÁLCULO DAS CURVAS (TUDO EM SI)
+            # ==============================
+            # A. Curva do Sistema (H = H_geom + K * Q²)
+            # K (coeficiente de perda)  K = (H_mano - H_geom) / Q²
+            coef_perda = (altura_manometrica_m - altura_geometrica_m) / (vazao_sistema_m3s ** 2)
+            H_sistema_m = altura_geometrica_m + coef_perda * q_plot_m3s ** 2
 
-            # B. Curva do Sistema (H vs Q)
-            coef_perda_SI = self.perdas_totais / (self.vazao**2) if self.vazao > 1e-9 else 0
-            altura_sistema_plot_m = self.altura_geometrica_val + coef_perda_SI * (vazao_plot_m3s**2)
+            # B. Curva da Bomba Simulada (Parábola H = H0 - A*Q²)
+            # Fazemos a bomba passar pelo ponto de operação do sistema (vazao, altura_manometrica)
+            H0_bomba_m = altura_manometrica_m * 1.3  # Altura de shutoff (Q=0) um pouco acima
+            # A = (H0 - H_nominal) / Q_nominal²
+            A_bomba = (H0_bomba_m - altura_manometrica_m) / (vazao_sistema_m3s ** 2)
+            H_bomba_m = np.clip(H0_bomba_m - A_bomba * q_plot_m3s ** 2, 0, None)
 
-            # C. Curva de Rendimento (η vs Q)
-            eta_max = 0.75
-            k_rendimento = 0.01 / (vazao_nominal_m3s**2) # Ajustar k à escala de vazão
-            rendimento_plot = eta_max - k_rendimento * (vazao_plot_m3s - vazao_nominal_m3s)**2
-            rendimento_plot[rendimento_plot < 0] = 0 # Rendimento não pode ser negativo
+            # C. Curva de Rendimento Simulada (η)
+            eta_max = 0.75 # Ponto de melhor eficiência
+            # A curva de rendimento é uma parábola invertida centrada na vazão do sistema
+            k_rendimento = (eta_max - 0.1) / (vazao_sistema_m3s ** 2) # Assume rendimento baixo no início
+            eta_plot = np.clip(eta_max - k_rendimento * (q_plot_m3s - vazao_sistema_m3s)**2, 0.1, eta_max)
 
-            # D. Curva de Potência (P vs Q)
-            rho = 1000  # kg/m³
-            g = 9.81  # m/s²
-            eta_seguro = np.where(rendimento_plot > 0.1, rendimento_plot, 0.1) # Evitar divisão por zero
-            potencia_plot_watt = (rho * g * vazao_plot_m3s * altura_bomba_plot_m) / eta_seguro
+            # D. Curva de Potência (P = ρ*g*Q*H / η)
+            self.rho = CP.PropsSI("D", "T", 293.15, "P", 101325, "Water")
+            self.peso_especifico = self.rho * g  # kg/m³ * m/s² = N/m³
+            potencia_plot_watt = (self.peso_especifico * q_plot_m3s * H_bomba_m) / eta_plot
             
-            # --- 4. ENCONTRAR PONTO DE OPERAÇÃO (EM UNIDADES SI) ---
-            idx_operacao = np.argmin(np.abs(altura_bomba_plot_m - altura_sistema_plot_m))
-            q_op_m3s = vazao_plot_m3s[idx_operacao]
-            h_op_m = altura_sistema_plot_m[idx_operacao]
-            p_op_watt = np.interp(q_op_m3s, vazao_plot_m3s, potencia_plot_watt)
-            eta_op = np.interp(q_op_m3s, vazao_plot_m3s, rendimento_plot)
+            # ==============================
+            # 4. PONTO DE OPERAÇÃO (JÁ CALCULADO)
+            # ==============================
+            q_op_m3s = vazao_sistema_m3s
+            h_op_m = altura_manometrica_m
+            p_op_watt = np.interp(q_op_m3s, q_plot_m3s, potencia_plot_watt)
+            eta_op = np.interp(q_op_m3s, q_plot_m3s, eta_plot)
 
-            # --- 5. FAZER AS CONVERSÕES PARA AS UNIDADES DE EXIBIÇÃO ---
-            unidade_vazao_exibir = self.caudal_box.currentText()
-            unidade_altura_exibir = self.altura_box.currentText()
-            unidade_potencia_exibir = self.potencia_box.currentText()
+            # ==============================
+            # 5. CONVERSÕES DE UNIDADES PARA EXIBIÇÃO
+            # ==============================
+            u_q = self.caudal_box.currentText()
+            u_h = self.altura_box.currentText()
+            u_p = self.potencia_box.currentText()
 
-            # Eixos X (Vazão)
-            vazao_exibir = self.conversor.converter_vazao(vazao_plot_m3s, 'm³/s', unidade_vazao_exibir)
-            q_op_exibir = self.conversor.converter_vazao(q_op_m3s, 'm³/s', unidade_vazao_exibir)
-            
-            # Eixos Y
-            altura_bomba_exibir = self.conversor.converter_comprimento(altura_bomba_plot_m, 'm', unidade_altura_exibir)
-            altura_sistema_exibir = self.conversor.converter_comprimento(altura_sistema_plot_m, 'm', unidade_altura_exibir)
-            h_op_exibir = self.conversor.converter_comprimento(h_op_m, 'm', unidade_altura_exibir)
-            
-            potencia_exibir = self.conversor.converter_potencia(potencia_plot_watt, 'watt', unidade_potencia_exibir)
-            p_op_exibir = self.conversor.converter_potencia(p_op_watt, 'watt', unidade_potencia_exibir)
-            
-            rendimento_exibir = rendimento_plot * 100 # Em percentagem
+            q_plot_exibir = self.conversor.converter_vazao(q_plot_m3s, "m³/s", u_q)
+            H_bomba_exibir = self.conversor.converter_comprimento(H_bomba_m, "m", u_h)
+            H_sistema_exibir = self.conversor.converter_comprimento(H_sistema_m, "m", u_h)
+            potencia_exibir = self.conversor.converter_potencia(potencia_plot_watt, "watt", u_p)
+            rendimento_exibir = eta_plot * 100
+
+            q_op_exibir = self.conversor.converter_vazao(q_op_m3s, "m³/s", u_q)
+            h_op_exibir = self.conversor.converter_comprimento(h_op_m, "m", u_h)
+            p_op_exibir = self.conversor.converter_potencia(p_op_watt, "watt", u_p)
             eta_op_exibir = eta_op * 100
 
-            # --- 6. ATUALIZAR OS TRÊS GRÁFICOS ---
-            # Gráfico de Altura
+            # ==============================
+            # 6. PLOTAGEM
+            # ============================== 
             self.grafico_altura.plotar_dados(
-                tipo_grafico='Altura',
-                dados_curva1={'label': 'Curva Bomba (Simulada)', 'x': vazao_exibir, 'y': altura_bomba_exibir},
-                dados_curva2={'label': 'Curva Sistema', 'x': vazao_exibir, 'y': altura_sistema_exibir},
-                ponto_operacao={'x': q_op_exibir, 'y': h_op_exibir},
-                unidade_vazao=unidade_vazao_exibir, unidade_y=unidade_altura_exibir,
-                titulo='Altura vs. Vazão (Simulação)'
+                tipo_grafico="Altura",
+                dados_curva1={"label": "Curva Bomba (Simulada)", "x": q_plot_exibir, "y": H_bomba_exibir},
+                dados_curva2={"label": "Curva Sistema", "x": q_plot_exibir, "y": H_sistema_exibir},
+                ponto_operacao={"x": q_op_exibir, "y": h_op_exibir},
+                unidade_vazao=u_q, unidade_y=u_h,
+                titulo="Altura vs. Vazão"
             )
 
-            # Gráfico de Potência
             self.grafico_potencia.plotar_dados(
-                tipo_grafico='Potência',
-                dados_curva1={'label': 'Potência Consumida', 'x': vazao_exibir, 'y': potencia_exibir, 'cor': '#2ca02c'},
-                ponto_operacao={'x': q_op_exibir, 'y': p_op_exibir},
-                unidade_vazao=unidade_vazao_exibir, unidade_y=unidade_potencia_exibir,
-                titulo='Potência vs. Vazão (Simulação)'
+                tipo_grafico="Potência",
+                dados_curva1={"label": "Potência Consumida", "x": q_plot_exibir, "y": potencia_exibir, "cor": "#2ca02c"},
+                ponto_operacao={"x": q_op_exibir, "y": p_op_exibir},
+                unidade_vazao=u_q, unidade_y=u_p,
+                titulo="Potência vs. Vazão"
             )
-            
-            # Gráfico de Rendimento
-            self.grafico_rendimento.plotar_dados(
-                tipo_grafico='Rendimento',
-                dados_curva1={'label': 'Rendimento', 'x': vazao_exibir, 'y': rendimento_exibir, 'cor': '#d62728'},
-                ponto_operacao={'x': q_op_exibir, 'y': eta_op_exibir},
-                unidade_vazao=unidade_vazao_exibir, unidade_y='%',
-                titulo='Rendimento vs. Vazão (Simulação)'
-            )
-            
-        except Exception as e:
-            logger.error(f"Erro ao atualizar gráficos de simulação: {e}")
 
+            self.grafico_rendimento.plotar_dados(
+                tipo_grafico="Rendimento",
+                dados_curva1={"label": "Rendimento", "x": q_plot_exibir, "y": rendimento_exibir, "cor": "#d62728"},
+                ponto_operacao={"x": q_op_exibir, "y": eta_op_exibir},
+                unidade_vazao=u_q, unidade_y="%",
+                titulo="Rendimento vs. Vazão"
+            )
+
+        except Exception as e:
+            logger.error(f"Erro ao atualizar gráficos de simulação: {e}", exc_info=True)
+    
     # ==========================================================
     #                 Dados para Exibicao
     # =========================================================
@@ -439,7 +440,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     def enviar_js(self):
         """Envia dados de entrada (vazão, tempo) para o JavaScript."""
         self.exibir_dados_calculados()
-        self.dados.enviar_dados(self.vazao_ex, self.diametro_t, self.altura_manometrica_ex, self.potencia_exe, self.view)
+        self.dados.enviar_dados(self.vazao, self.diametro_t, self.altura_manometrica_ex, self.potencia_exe, self.view)
     
     def enviar_unidades_js(self):
         """Envia unidades selecionadas para o JavaScript."""
@@ -452,31 +453,13 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.hazen_will.setVisible(self.radioButton_9.isChecked())
 
     # ==========================================================
-    #                 PESQUISA (MAPA + AUTOCOMPLETAR)
+    #                 PESQUISA (MAPA)
     # ==========================================================
     def pesquisa_mapa(self):
         """Executa pesquisa no mapa via JS."""
         texto = self.pesquisa_line.text()
         pesquisa = f"pesquisar_lugar('{texto}')"
         self.view.page().runJavaScript(pesquisa)
-
-    @Slot(str)
-    def buscar_sugestoes(self, texto):
-        """Busca sugestões de local em background (mínimo 3 letras)."""
-        if len(texto) >= 3:
-            self.status_label.setText("Buscando sugestões...")
-            if self.worker and self.worker.isRunning():
-                self.worker.terminate()
-            self.worker = Pesquisa(texto)
-            self.worker.resultado.connect(self.atualizar_completer)
-            self.worker.start()
-
-    @Slot(list)
-    def atualizar_completer(self, sugestoes):
-        """Atualiza o autocompleter com novas sugestões."""
-        self.status_label.setText("")
-        modelo = QStringListModel(sugestoes)
-        self.completador.setModel(modelo)
 
     # ==========================================================
     #                EXPORTAÇÃO PARA PDF
@@ -498,7 +481,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
                 'Material da Tubulação': (material, None),
             }
 
-            #self.atualizar_graficos_curvas()
+            self.atualizar_graficos_curvas()
 
             self.relatorio_pdf.adicionar_titulos("Relatório do Sistema de Bombeamento")
             self.relatorio_pdf.adicionar_secao("Dados do Dimensionamento")
@@ -517,14 +500,16 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         try:
             material = self.darcy.currentText() if self.radioButton_10.isChecked() else self.hazen_will.currentText()
             
-            # Coletar os mesmos dados que seriam usados no PDF
+            # Dados do dimensionamento que aparecem no relatorio .xlsv
             dados_relatorio = {
-                'Vazão': (f"{self.vazao:.4f}", 'm³/s'),
-                'Tempo de funcionamento': (f"{self.tempo:.2f}", 'horas'),
-                'Diâmetro da tubulação': (f"{self.diametro_tubulacao:.4f}", 'm'),
-                'Altura geométrica': (f"{self.altura_geometrica_val:.2f}", 'm'),
-                'Perdas totais': (f"{self.perdas_totais:.4f}", 'm'),
-                'Altura manométrica': (f"{self.altura_manometrica:.2f}", 'm'),
+                'Vazão': (f"{self.vazao_ex:.3f}", f'{self.icone_2.currentText()}'),
+                'Tempo de funcionamento': (f"{self.tempo:.1f}", 'horas'),
+                'Comprimento da tubulação': (f"{self.compr:.3f}", f'{self.comprimento_box.currentText()}'),
+                'Diâmetro da tubulação': (f"{self.diametro_t:.3f}", f'{self.diametro_box.currentText()}'),
+                'Potência requerida': (f"{self.potencia_exe:.3f}", f'{self.potencia_box.currentText()}'),
+                'Altura geométrica': (f"{self.altura_geometrica_ex:.3f}", f'{self.altura_box.currentText()}'),
+                'Perdas totais': (f"{self.perdas_totais:.3f}", f'{self.altura_box.currentText()}'),
+                'Altura manométrica': (f"{self.altura_manometrica_ex:.3f}", f'{self.altura_box.currentText()}'),
                 'Material da Tubulação': (material, None),
             }
             
@@ -539,19 +524,19 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             )
             
             csv_exporter.adicionar_secao("DADOS DO SISTEMA DE BOMBEAMENTO")
-            csv_exporter.adicionar_conjunto_dados(dados_relatorio, "Cálculos do Sistema")
+            csv_exporter.adicionar_conjunto_dados(dados_relatorio)
             csv_exporter.adicionar_secao("GRÁFICOS DE CURVAS DA BOMBA - SIMULAÇÃO")
             # Gerar CSV
             sucesso = csv_exporter.exportar("relatorio_bombeamento.csv")        
             if sucesso:
-                QMessageBox.information(self, "Sucesso", "Relatório CSV gerado com sucesso!")
+                QMessageBox.information(self, "Sucesso", "Relatório .xlsv gerado com sucesso!")
             else:
-                QMessageBox.warning(self, "Aviso", "Não foi possível gerar o relatório CSV.")
+                QMessageBox.warning(self, "Aviso", "Não foi possível gerar o relatório .xlsv.")
                 
             return sucesso
             
         except Exception as e:
-            QMessageBox.warning(self, "Erro", f"Ocorreu um erro ao gerar o CSV: {str(e)}")
+            QMessageBox.criical(self, "Erro", f"Ocorreu um erro ao gerar o .xlsv: {str(e)}")
             return False
         
     # =========================================================
@@ -605,55 +590,85 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             self.recalcular_sistema_completo()
             
             QMessageBox.information(self, "Sucesso", "Histórico carregado com sucesso!")
-
+    
     def selecionar_melhor_bomba(self):
-        """Seleciona e exibe a melhor bomba para o sistema"""
+        """
+        Orquestra a seleção de bombas usando o MotorSelecao e atualiza a UI.
+        """
+        if not self.motor_selecao:
+            self._nenhuma_bomba_encontrada("Base de dados não disponível.")
+            return
+
         try:
-            if not hasattr(self, 'vazao') or not hasattr(self, 'altura_manometrica'):
-                self._nenhuma_bomba_encontrada()
+           
+            vazao_m3h = self.conversor.converter_vazao(self.vazao, self.icone_2.currentText(), 'm³/h')
+            altura_m = self.altura_manometrica
+
+            self.bombas_sugeridas = self.motor_selecao.selecionar_melhores_bombas(vazao_m3h, altura_m, tolerancia=0.5)
+            self.indice_bomba_atual = 0
+
+            if not self.bombas_sugeridas:
+                self._nenhuma_bomba_encontrada("Nenhuma bomba compatível encontrada na faixa de busca.")
                 return
 
-            if self.vazao <= 0 or self.altura_manometrica <= 0:
-                self._nenhuma_bomba_encontrada()
-                return
-
-            bombas_candidatas = self.selecionar_bombas_candidatas()
-            if not bombas_candidatas:
-                self._nenhuma_bomba_encontrada()
-                return
-
-            melhor_bomba = bombas_candidatas[0]
-
-            modelo = melhor_bomba['modelo']
-            fabricante = melhor_bomba['fabricante']
-            tipo_bomba = melhor_bomba['tipo_bomba']
-            potencia = melhor_bomba['potencia_nominal_kW']
-            vazao = melhor_bomba['caudal_nominal_m3h']
-            altura = melhor_bomba['altura_nominal_m']
-            material = melhor_bomba['material_corpo']
-            caminho_imagem = melhor_bomba['caminho_imagem']
-
-            self.modelo.setText(f"{fabricante} - {modelo} ({tipo_bomba})")
-            self.potencia_3.setText(f"Potência: {potencia} kW")
-            self.vazao_label.setText(f"Vazão: {vazao} m³/h")
-            self.altura_3.setText(f"Altura: {altura} m")
-            self.material.setText(f"Material (Corpo Bomba): {material}")
-
-            if caminho_imagem:
-                if caminho_imagem.startswith("http"):  
-                    request = QNetworkRequest(QUrl(caminho_imagem))
-                    self._imagem_request_label = self.label_10
-                    self.manager.get(request)
-                elif os.path.exists(caminho_imagem):
-                    self.label_10.setPixmap(QPixmap(caminho_imagem).scaled(150, 150, Qt.KeepAspectRatio))
-                else:
-                    self.label_10.setPixmap(QPixmap("img/infeliz.png").scaled(150, 150, Qt.KeepAspectRatio))
-            else:
-                self.label_10.setPixmap(QPixmap("img/infeliz.png").scaled(150, 150, Qt.KeepAspectRatio))
+            self._exibir_bomba_atual()
 
         except Exception as e:
-            logger.error(f"Erro ao selecionar melhor bomba: {e}")
-            self._nenhuma_bomba_encontrada()
+            logger.error(f"Erro no processo de seleção de bomba: {e}", exc_info=True)
+            self._nenhuma_bomba_encontrada("Ocorreu um erro inesperado.")
+
+
+    def _exibir_bomba_atual(self):
+        """Função auxiliar para mostrar a bomba selecionada na UI"""
+        if not self.bombas_sugeridas or self.indice_bomba_atual >= len(self.bombas_sugeridas):
+            return
+
+        bomba = self.bombas_sugeridas[self.indice_bomba_atual]
+        score = bomba.get('score', 0)
+        
+        self.label_12.setText(f"Sugestão ({self.indice_bomba_atual + 1}/{len(self.bombas_sugeridas)}) - Score: {score:.2f}")
+        
+        self.modelo.setText(f"<b>{bomba['fabricante']}</b> - {bomba['modelo']}")
+        self.potencia_3.setText(f"<b>Potência:</b> {bomba['potencia_nominal_kW']} kW")
+        self.vazao_label.setText(f"<b>Vazão Nominal:</b> {bomba['caudal_nominal_m3h']} m³/h")
+        self.altura_3.setText(f"<b>Altura Nominal:</b> {bomba['altura_nominal_m']} m")
+        
+    def _nenhuma_bomba_encontrada(self, motivo: str):
+        """Mostra estado quando nenhuma bomba é encontrada"""
+        logger.info(motivo)
+        self.label_12.setText("Sugestões")
+        self.modelo.setText("Nenhuma bomba encontrada")
+        self.material.setText(f"<i>Motivo: {motivo}</i>")
+        
+        self.modelo.clear()
+        self.material.clear()
+        self.vazao_label.clear()
+        self.altura_3.clear()
+        self.potencia_3.clear()
+        self.label_10.clear()
+
+        self.modelo.setText("Nenhuma bomba encontrada")
+        self.vazao_label.setText("--")
+        self.altura_3.setText("--")
+        self.potencia_3.setText("--")
+        self.material.setText("--")
+        self.label_10.setPixmap(QPixmap(r"img\infeliz.png").scaled(150, 150, Qt.KeepAspectRatio))
+    
+    def proxima_sugestao(self):
+        """Mostra para a próxima bomba na lista de sugestões."""
+        if not self.bombas_sugeridas:
+            return
+
+        self.indice_bomba_atual = (self.indice_bomba_atual + 1) % len(self.bombas_sugeridas)
+        self._exibir_bomba_atual()
+
+    def sugestao_anterior(self):
+        """Mostra para a bomba anterior na lista de sugestões."""
+        if not self.bombas_sugeridas:
+            return
+
+        self.indice_bomba_atual = (self.indice_bomba_atual - 1 + len(self.bombas_sugeridas)) % len(self.bombas_sugeridas)
+        self._exibir_bomba_atual()
 
     def _on_image_downloaded(self, reply):
         """Callback quando o QNetworkAccessManager termina o download"""
@@ -673,190 +688,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
         self._imagem_request_label = None
         reply.deleteLater()
-   
-    def _nenhuma_bomba_encontrada(self):
-        """Mostra estado quando nenhuma bomba é encontrada"""
-        self.modelo.clear()
-        self.material.clear()
-        self.vazao_label.clear()
-        self.altura_3.clear()
-        self.potencia_3.clear()
-        self.label_10.clear()
-
-        self.modelo.setText("Nenhuma bomba encontrada")
-        self.vazao_label.setText("--")
-        self.altura_3.setText("--")
-        self.potencia_3.setText("--")
-        self.material.setText("--")
-        self.label_10.setPixmap(QPixmap(r"img\infeliz.png").scaled(150, 150, Qt.KeepAspectRatio))
-        logger.info("Nenhuma bomba candidata encontrada mas tem um pequeno problema com o banco de dados")
-        return
-    
-    def selecionar_bombas_candidatas(self):
-        """
-        Seleciona e retorna todas as bombas candidatas ordenadas por score,
-        permitindo acesso individual a cada bomba.
-        """
-        try:
-            if not hasattr(self, 'vazao') or not hasattr(self, 'altura_manometrica'):
-                logger.warning("Parâmetros de cálculo não disponíveis")
-                return []
-                
-            if self.vazao <= 0 or self.altura_manometrica <= 0:
-                logger.warning("Vazão ou altura manométrica com valores inválidos")
-                return []
-            vazao_necessaria_m3h = self.vazao
-            altura_necessaria_m = self.altura_manometrica
-
-            if not hasattr(self, 'gestor_db') or not self.gestor_db.verificar_conexao():
-                logger.error("Conexão com banco de dados não disponível")
-                QMessageBox.warning(self, "Erro de Conexão", "Não foi possível conectar ao banco de dados de bombas.")
-                return []
-
-            bombas_candidatas = self.gestor_db.pesquisar_bombas_candidatas(vazao_necessaria_m3h, altura_necessaria_m)
-
-            if not bombas_candidatas:
-                QMessageBox.information(self, "Nenhuma Bomba Encontrada", 
-                                    "Não encontramos bombas com essas características. "
-                                    "Tente ajustar os parâmetros do sistema.")
-                return []
-
-            #Processar resultados
-            resultados_finais = []
-            
-            for bomba in bombas_candidatas:
-                try:
-                    # Extrair dados da bomba
-                    id_bomba = bomba['id']
-                    modelo = bomba['modelo']
-                    fabricante = bomba['fabricante']
-                    tipo_bomba = bomba['tipo_bomba']
-                    caudal_nominal_m3h = bomba['caudal_nominal_m3h']
-                    altura_nominal_m = bomba['altura_nominal_m']
-                    potencia_nominal_kW = bomba['potencia_nominal_kW']
-                    velocidade_rpm = bomba['velocidade_rpm']
-                    material_corpo = bomba['material_corpo']
-                    pressao_max_bar = bomba['pressao_max_bar']
-                    caminho_imagem = bomba['caminho_imagem']
-                    fator_vazao = bomba['fator_vazao']
-                    fator_altura = bomba['fator_altura']
-                    score_adequacao = bomba['score_adequacao']
-
-                    if any([valor is None for valor in [modelo, fabricante, caudal_nominal_m3h, altura_nominal_m]]):
-                        logger.warning(f"Dados incompletos para bomba {id_bomba}, ignorando")
-                        continue
-                        
-                    # Calcular fatores de operação
-                    fator_carga = altura_necessaria_m / altura_nominal_m if altura_nominal_m > 0 else float('inf')
-                    fator_vazao_operacao = vazao_necessaria_m3h / caudal_nominal_m3h if caudal_nominal_m3h > 0 else float('inf')
-
-                    if fator_carga > 2.0 or fator_vazao_operacao > 2.0 or fator_carga < 0.5 or fator_vazao_operacao < 0.5:
-                        continue
-                        
-                    # Estimativa de rendimento (aproximação)
-                    diferenca_ideal = abs(1 - fator_carga) + abs(1 - fator_vazao_operacao)
-                    rendimento_estimado = max(0.4, 0.8 - (diferenca_ideal * 0.3))  # Mínimo de 40%, máximo de 80%
-                    
-                    # Calcular potência estimada
-                    # Densidade da água assumida como 1000 kg/m³
-                    potencia_hidraulica = (1000 * 9.81 * vazao_necessaria_m3h * altura_necessaria_m) / 3600
-                    potencia_eletrica_estimada = potencia_hidraulica / rendimento_estimado if rendimento_estimado > 0 else 0
-                    
-                    # Verificar se a potência nominal é suficiente
-                    potencia_suficiente = potencia_nominal_kW >= potencia_eletrica_estimada * 1.2  # Margem de 20%
-                    
-                    # Score de adequação baseado em múltiplos fatores
-                    score_final = self.calcular_score_adequacao_simplificado(
-                        rendimento_estimado,
-                        fator_vazao_operacao,
-                        fator_carga,
-                        potencia_suficiente,
-                        potencia_nominal_kW,
-                        potencia_eletrica_estimada
-                    )
-                    
-                    # Organizar todos os dados em um dicionário estruturado
-                    dados_bomba = {
-                        # Identificação
-                        "id_bomba": id_bomba,
-                        "modelo": modelo,
-                        "fabricante": fabricante,
-                        "tipo_bomba": tipo_bomba,
-                        
-                        # Especificações nominais
-                        "caudal_nominal_m3h": caudal_nominal_m3h,
-                        "altura_nominal_m": altura_nominal_m,
-                        "potencia_nominal_kW": potencia_nominal_kW,
-                        "velocidade_rpm": velocidade_rpm,
-                        "material_corpo": material_corpo,
-                        "pressao_max_bar": pressao_max_bar,
-                        "caminho_imagem": caminho_imagem,
-                        
-                        # Fatores de adequação
-                        "fator_vazao": fator_vazao,
-                        "fator_altura": fator_altura,
-                        "score_adequacao_db": score_adequacao,
-                        
-                        # Análise de operação
-                        "fator_carga_operacao": fator_carga,
-                        "fator_vazao_operacao": fator_vazao_operacao,
-                        "rendimento_estimado": rendimento_estimado,
-                        "potencia_hidraulica_kW": potencia_hidraulica,
-                        "potencia_eletrica_estimada_kW": potencia_eletrica_estimada,
-                        "potencia_suficiente": potencia_suficiente,
-                        "score_final": score_final,
-                        
-                        # Posição/classificação (será preenchida após ordenação)
-                        "posicao_classificacao": 0
-                    }
-                    
-                    resultados_finais.append(dados_bomba)
-                    
-                except Exception as e:
-                    logger.error(f"Erro processando bomba {bomba.get('id_bomba', 'N/A')}: {e}")
-                    continue
-
-            # 6. Ordenar resultados
-            if not resultados_finais:
-                return []
-                
-            resultados_ordenados = sorted(resultados_finais, key=lambda x: x['score_final'], reverse=True)
-            for i, bomba in enumerate(resultados_ordenados):
-                bomba['posicao_classificacao'] = i + 1
-
-            return resultados_ordenados
-
-        except Exception as e:
-            logger.error(f"Erro inesperado na seleção de bombas: {e}")
-            return []
-
-    def calcular_score_adequacao_simplificado(self, rendimento, fator_vazao, fator_altura, 
-                                        potencia_suficiente, potencia_nominal, potencia_estimada):
-        """
-        Calcula um score de adequação simplificado para classificar as bombas.
-        """
-        PESO_RENDIMENTO = 0.30
-        PESO_PROXIMIDADE = 0.40  # Proximidade aos valores nominais
-        PESO_POTENCIA = 0.30
-        fator_rendimento = rendimento
-        
-        # Proximidade ideal é quando ambos os fatores estão próximos de 1
-        fator_proximidade = 1 - (abs(1 - fator_vazao) + abs(1 - fator_altura)) / 2
-        
-        # Fator de potência (penaliza se não for suficiente, recompensa se for eficiente)
-        if not potencia_suficiente:
-            fator_potencia = 0.1  
-        else:
-            # Quanto mais próxima a potência nominal da estimada (sem excesso), melhor
-            excesso_potencia = (potencia_nominal - potencia_estimada) / potencia_estimada
-            fator_potencia = 1.0 if excesso_potencia <= 0.3 else 1.0 - (excesso_potencia - 0.3) / 2
-
-        score = (PESO_RENDIMENTO * fator_rendimento +
-                PESO_PROXIMIDADE * fator_proximidade +
-                PESO_POTENCIA * fator_potencia)
-        
-        return score
-    
+         
     def novo_projecto(self):
         """Reseta a aplicação para um novo projeto, limpando todos os dados"""
         reply = QMessageBox.question(
@@ -937,7 +769,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         """Salva configurações antes de fechar a janela."""
         self.salvar_configuracoes()
         if hasattr(self, 'gestor_db'):
-            self.gestor_db.fechar_conexao()
+            self.gestor_db.fechar()
         super().closeEvent(event)
 
 

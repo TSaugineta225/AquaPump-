@@ -249,6 +249,7 @@ class Mapa:
                     Diâmetro: ${diametro?.toFixed(2)} ${und_diametro}<br>
                     Distancia: ${(distancia/1000).toFixed(2)} km<br>
                     Potência: ${potencia?.toFixed(2)} ${und_potencia}<br>
+                    Altura Geométrica: ${altura?.toFixed(2)} m<br>
                     Altura Manométrica: ${altura_man?.toFixed(2)} ${und_altura}<br>
 
                 `).openPopup();

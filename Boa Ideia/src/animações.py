@@ -24,16 +24,13 @@ class Animações():
         animacao.setEndValue(nova_largura)
         animacao.setEasingCurve(QEasingCurve.OutCubic)
 
-        # Armazena a referência para evitar garbage collection
         self.animacoes_ativas.append(animacao)
-
-        # Remove do histórico quando terminar
         animacao.finished.connect(lambda: self.animacoes_ativas.remove(animacao))
 
         animacao.start()
 
 
-    def altura(self, frame, altura=140, duracao=300):
+    def altura(self, frame, altura=400, duracao=300):
         height = frame.height()
         
         if height == 0:
@@ -41,7 +38,7 @@ class Animações():
 
         else:
             newHeight = 0
-        
+
         self.animacao_2 = QPropertyAnimation(frame, b"maximumHeight")
         self.animacao_2.setDuration(duracao) 
         self.animacao_2.setStartValue(height)
@@ -73,7 +70,7 @@ class Animações():
 
         # Animação de altura (com a mesma duração para sincronia)
         animacao_altura = QPropertyAnimation(frame_2, b"maximumHeight")
-        animacao_altura.setDuration(duracao) # Alterado para usar a mesma 'duracao'
+        animacao_altura.setDuration(duracao) 
         animacao_altura.setStartValue(altura_atual)
         animacao_altura.setEndValue(nova_altura)
         animacao_altura.setEasingCurve(QEasingCurve.OutCubic)

@@ -85,7 +85,7 @@ class Menus:
         # --- Submenu Exportar ---
         submenu_exportar = QMenu("Exportar", rel)
         exportar_pdf = QAction(QIcon(":/img/pdf.png"), "Exportar para PDF", self.parent)
-        exportar_csv = QAction(QIcon(":/img/arquivo-csv.png"), "Exportar para CSV", self.parent)
+        exportar_csv = QAction(QIcon(":/img/arquivo-csv.png"), "Exportar para XLSV", self.parent)
 
         exportar_csv.setShortcut("Ctrl+Shift+C")
         exportar_pdf.setShortcut("Ctrl+Shift+P")

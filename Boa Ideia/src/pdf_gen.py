@@ -31,10 +31,6 @@ class PDF():
         self.styles = getSampleStyleSheet()
         self.configuracao_dos_styles()
         self.Relatorio = []
-        try:
-            pdfmetrics.registerFont(TTFont('GastrolinaSignature', r'src\GastrolineSignature_PERSONAL_USE_ONLY.ttf'))
-        except:
-            pass  # Usar fonte padrão se a personalizada não estiver disponível
 
     def configuracao_dos_styles(self):
 
@@ -191,17 +187,17 @@ class PDF():
         except:
             pass
         
-        # Adicionar texto do rodapé
-        canvas.setFont('GastrolinaSignature', 10)
+        # Rodapé Texto
+        canvas.setFont('Courier-Oblique', 6)
         canvas.setFillColor(colors.HexColor('#7f8c8d'))
-        canvas.drawRightString(largura - 50, 30, 'Relatório gerado pelo AquaPump')
+        canvas.drawRightString(largura - 40, 30, 'Relatório gerado pelo AquaPump')
         
         tempo = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
         canvas.setFont('Courier', 6)
-        canvas.drawString(largura - 130, 30 - 12, tempo)
+        canvas.drawString(largura - 110, 30 - 12, tempo)
 
         canvas.setFont('Courier', 6)
-        canvas.drawRightString(130, 30-12, u"© Tenerife da Saugineta")
+        canvas.drawRightString(125, 30-12, u"© Tenerife da Saugineta")
         # Adicionar linha decorativa
         canvas.setStrokeColor(colors.HexColor('#3498db'))
         canvas.setLineWidth(0.5)
