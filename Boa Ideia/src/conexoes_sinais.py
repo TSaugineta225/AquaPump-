@@ -229,6 +229,9 @@ class ConexoesUI():
         self.parent.groupBox_2.setVisible(False)
         self.parent.npsh.setVisible(False)
         self.parent.npsh_box.setVisible(False)
+        self.parent.groupBox_8.setVisible(False)
+        self.parent.groupBox.setVisible(False)
+        self.parent.label_8.setVisible(False)
     
     def _connectar_versao_pro(self):
         msg = QMessageBox(self.parent)

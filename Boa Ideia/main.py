@@ -77,7 +77,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
         # ---------- Configurações da Janela ----------
         self.setWindowTitle("AquaPump")
-        self.setWindowIcon(QIcon(r"img\logo_principal.png"))
+        self.setWindowIcon(QIcon(u":/img/logo_principal.png"))
         self.ex_3 = chr(0x00B3)   # Expoente para m³
 
         # ---------- Atributos de Cálculo do Sistema ----------
@@ -104,8 +104,9 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.historico_manager = HistoricoManager(self)
         self.janela_sobre = Dialog()
         self.atualizar_parametros_entrada()
+        db_caminho = self.caminho_dados(r'data/aquapump.db')
         try:
-            self.gestor_db = GestorDatabase(r'data/aquapump.db')
+            self.gestor_db = GestorDatabase(db_caminho)
             self.motor_selecao = MotorSelecao(self.gestor_db)
             logger.info('Base de dados Carregada com sucesso')
         except Exception as e:
@@ -163,6 +164,16 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.inicializar_graficos()
         self.atualizar_graficos_curvas()
         self.mudanca_dinamica_perdas_carga()
+
+    # ==========================================================
+    #               Carregamento de arquivos
+    # ==========================================================
+    def caminho_dados(self, caminho_relactivo):
+        """Garante que os arquivos sejam carregados tantos nos testes de python como .exe"""
+        if hasattr(sys, '_MEIPASS'):
+            return os.path.join(sys._MEIPASS, caminho_relactivo)
+        return os.path.join(os.path.abspath("."), caminho_relactivo)
+
 
     # ==========================================================
     #                 MÉTODOS DE CÁLCULO
@@ -289,12 +300,11 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
                     if child.widget():
                         child.widget().deleteLater()
         
-        # Adicionar os novos gráficos
+    
         QVBoxLayout(self.altura).addWidget(self.grafico_altura)
         QVBoxLayout(self.potencia).addWidget(self.grafico_potencia)
         QVBoxLayout(self.rendimento).addWidget(self.grafico_rendimento)
-        
-        # 3. TERCEIRO, ligamos os sinais dinâmicos.
+
         self.mudanca_dinamica_perdas_carga()
         self.atualizar_graficos_curvas()
 
@@ -561,7 +571,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         """Carrega um estado anterior de cálculo"""
         dados = self.historico_manager.carregar_historico()
         if dados:
-            # Atualiza os valores da interface
+            # Atualiza os valores na interface
             self.vazao = dados.get("Vazao_total", 0.0)
             self.diametro_tubulacao = dados.get("Diametro", 0.0)
             self.perdas_totais = dados.get("Perdas_de_Carga", 0.0)
@@ -677,14 +687,14 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
         if reply.error():
             logger.warning(f"Erro ao baixar imagem: {reply.errorString()}")
-            self._imagem_request_label.setPixmap(QPixmap("img/infeliz.png").scaled(150, 150, Qt.KeepAspectRatio))
+            self._imagem_request_label.setPixmap(QPixmap(u":/img/infeliz.png").scaled(150, 150, Qt.KeepAspectRatio))
         else:
             data = reply.readAll()
             pixmap = QPixmap()
             if pixmap.loadFromData(data):
                 self._imagem_request_label.setPixmap(pixmap.scaled(150, 150, Qt.KeepAspectRatio))
             else:
-                self._imagem_request_label.setPixmap(QPixmap("img/infeliz.png").scaled(150, 150, Qt.KeepAspectRatio))
+                self._imagem_request_label.setPixmap(QPixmap(u":/img/infeliz.png").scaled(150, 150, Qt.KeepAspectRatio))
 
         self._imagem_request_label = None
         reply.deleteLater()
@@ -726,10 +736,9 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             
             # ---------- Reset do mapa (via JavaScript) ----------
             self.view.page().runJavaScript("limpar_mapa();")
-            self.inicializar_graficos_curvas()
+            self.inicializar_graficos()
             self.status_label.setText("Novo projeto iniciado")
-            
-            # ---------- Emitir sinal para atualizar a interface se necessário ----------
+
             self.atualizar_parametros_entrada()
             QMessageBox.information(self, "Novo Projeto", "Projeto reiniciado com sucesso!")
             

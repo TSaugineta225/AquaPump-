@@ -1,4 +1,5 @@
 import os
+import sys
 import webbrowser
 from datetime import datetime
 from reportlab.lib.styles import ParagraphStyle
@@ -23,6 +24,8 @@ from reportlab.pdfbase import pdfmetrics
 from PySide6.QtWidgets import QMessageBox, QFileDialog
 import matplotlib.pyplot as plt
 
+import img.img_rc
+
 class PDF():
     def __init__(self):
 
@@ -31,6 +34,13 @@ class PDF():
         self.styles = getSampleStyleSheet()
         self.configuracao_dos_styles()
         self.Relatorio = []
+
+    def caminho_dados(self, caminho_relactivo):
+        """Garante que os arquivos sejam carregados tantos nos testes de python como .exe"""
+        if hasattr(sys, '_MEIPASS'):
+            return os.path.join(sys._MEIPASS, caminho_relactivo)
+        return os.path.join(os.path.abspath("."), caminho_relactivo)
+
 
     def configuracao_dos_styles(self):
 
@@ -68,7 +78,8 @@ class PDF():
         )
 
     def adicionar_titulos(self, titulo_principal="Relatório do Sistema de Bombeamento"):
-        img = Image("img/logo.png", width=100, height=70)
+        caminho = self.caminho_dados(r"img/logo.png")
+        img = Image(caminho, width=100, height=70)
         titulo = Paragraph(titulo_principal, self.titulo)
         tabela = Table([[titulo, img]], colWidths=[350, 100])
         tabela.setStyle(TableStyle([
@@ -181,9 +192,9 @@ class PDF():
         canvas.saveState()
         largura, altura = A4
         
-        # Adicionar logo se disponível
         try:
-            canvas.drawImage(r"img\TS.jpg", 30, 5, width=60, height=50)
+            caminho = self.caminho_dados(r"img/TS.jpg")
+            canvas.drawImage(caminho, 30, 5, width=60, height=50)
         except:
             pass
         
@@ -221,7 +232,6 @@ class PDF():
             if not caminho.endswith('.pdf'):
                 caminho += '.pdf'
 
-            # Cria o documento com o caminho especificado
             doc = SimpleDocTemplate(caminho, pagesize=A4)
 
             doc.build(

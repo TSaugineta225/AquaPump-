@@ -1,4 +1,3 @@
-# unidades.py - Versão corrigida
 from pint import UnitRegistry
 from pint.errors import DimensionalityError, UndefinedUnitError
 
@@ -7,7 +6,6 @@ class ConversorUnidades:
         self.ureg = UnitRegistry()
         self.Q_ = self.ureg.Quantity
         
-        # Definir unidades personalizadas corretamente
         self.ureg.define('litro_por_segundo = liter / second = L/s')
         self.ureg.define('metro_cubico_por_hora = meter**3 / hour = m³/h')
         self.ureg.define('litro_por_hora = liter / hour = L/h')
