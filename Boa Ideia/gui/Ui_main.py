@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'mainwmGzzk.ui'
+## Form generated from reading UI file 'mainMoxVPT.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.1
 ##
@@ -28,59 +28,51 @@ class Ui_AquaPump(object):
     def setupUi(self, AquaPump):
         if not AquaPump.objectName():
             AquaPump.setObjectName(u"AquaPump")
-        AquaPump.resize(1165, 749)
+        AquaPump.resize(940, 674)
         AquaPump.setStyleSheet(u"/* --------- QWidget (Geral) --------- */\n"
 "QWidget {\n"
 "    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
 "    font-size: 14px;\n"
-"    color: #333333;\n"
 "}\n"
 "\n"
 "/* --------- QLineEdit --------- */\n"
 "QLineEdit {\n"
-"    background-color: #ffffff;\n"
-"    border: 2px solid #d9d9d9;\n"
+"    border: 1px solid rgba(140, 175, 255, 35);\n"
 "    border-radius: 4px;\n"
 "    padding: 6px 8px;\n"
 "    font-size: 14px;\n"
 "    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
-"    color: #2b2b2b;\n"
 "}\n"
 "\n"
 "QLineEdit:focus {\n"
-"    border: 2px solid #95acff;\n"
-"    background-color: #fcfcfc;\n"
+"    border: 1px solid #95acff;\n"
 "}\n"
 "\n"
 "QLineEdit:hover {\n"
-"    border: 2px solid #a5baff;\n"
-"    background-color: #fefefe;\n"
+"    border: 1px solid #a5baff;\n"
 "}\n"
 "\n"
 "/* --------- QComboBox --------- */\n"
 "QComboBox {\n"
-"    background-color: #fdfdfd;\n"
-"    border: 2px solid #d0d0d0;\n"
+"    border: 1px solid  rgba(140, 175, 255, 35);\n"
 "    border-radius: 4px;\n"
 "    padding: 6px 8px;\n"
 "    font-size: 14px;\n"
 "    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
-"    color: #2b2b2b;\n"
 "}\n"
 "\n"
 "QComboBox:hover,\n"
 "QComboBox:focus {\n"
-"    border:"
-                        " 2px solid #95acff;\n"
-"    background-color: #ffffff;\n"
+"    border: 1px solid #95acff;\n"
 "}\n"
 "\n"
 "QComboBox::drop-down {\n"
 "    subcontrol-origin: padding;\n"
 "    subcontrol-position: top right;\n"
 "    width: 28px;\n"
-"    border-left: 1px solid #d0d0d0;\n"
-"    background-color: transparent;\n"
+"    border-left: 1px"
+                        " solid #d0d0d0;\n"
+"\n"
 "}\n"
 "\n"
 "QComboBox::down-arrow {\n"
@@ -91,16 +83,12 @@ class Ui_AquaPump(object):
 "}\n"
 "\n"
 "QComboBox QAbstractItemView {\n"
-"    background-color: #ffffff;\n"
 "    border: 1px solid #cfcfcf;\n"
 "    border-radius: 4px;\n"
-"    selection-background-color: #2684ff;\n"
-"    selection-color: #ffffff;\n"
 "    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
 "}\n"
 "\n"
 "QToolButton {\n"
-"background-color: transparent;\n"
 "font-family: Roboto;\n"
 "font-size:10pt;\n"
 "border: none;\n"
@@ -109,13 +97,10 @@ class Ui_AquaPump(object):
 "}\n"
 "/* --------- QGroupBox --------- */\n"
 "QGroupBox {\n"
-"    border: 1px solid #dcdcdc;\n"
+"    border: 1px solid  rgba(140, 175, 255, 35);\n"
 "    border-radius: 6px;\n"
 "    margin-top: 15px;\n"
-"    background-color: tr"
-                        "ansparent;\n"
 "    font-size: 14px;\n"
-"    color: #212121;\n"
 "	padding:8px;\n"
 "}\n"
 "\n"
@@ -128,39 +113,29 @@ class Ui_AquaPump(object):
 "    font-family: \"Segoe UI\", \"Roboto\", sans-serif;\n"
 "    font-size: 19px;\n"
 "    font-weight: bold;\n"
-"    color: #000000;\n"
+"\n"
 "    \n"
 "}\n"
 "\n"
 "QPushButton {\n"
-"    background-color: #f5f5f5;\n"
-"    color: #000000;\n"
-"    border: 1px solid #c2c2c2;\n"
+"    backg"
+                        "round-color: 1px solid  rgba(140, 175, 255, 35);\n"
 "    border-radius: 3px;\n"
+"    padding: 6px 12px;\n"
 "    font-size: 14px;\n"
 "}\n"
 "\n"
 "QPushButton:hover {\n"
-"    background-color: #e0e0e0;\n"
-"    border: 1px solid #e0e0e0;\n"
-"}\n"
-"\n"
-"QPushButton:pressed {\n"
-"    background-color: #d0d0d0;\n"
-"    border: 1px solid #888888;\n"
+"    background-color: rgba(165, 186, 255, 100);\n"
 "}\n"
 "\n"
 "QLabel {\n"
-"    color: #000000;\n"
 "    font-family: Roboto;\n"
 "    font-size: 14px;\n"
 "}\n"
 "\n"
 "QPushButton {\n"
-"    background-color: #f5f5f5;\n"
-"    color: #000000;\n"
-"    border: 1px solid #"
-                        "c2c2c2;\n"
+"    border: 1px solid #c2c2c2;\n"
 "    border-radius: 3px;\n"
 "    padding: 6px 12px;\n"
 "    font-size: 14px;\n"
@@ -168,28 +143,21 @@ class Ui_AquaPump(object):
 "}\n"
 "\n"
 "QPushButton:hover {\n"
-"    background-color: #e0e0e0;\n"
 "    border: 1px solid #e0e0e0;\n"
 "}\n"
 "\n"
 "QPushButton:pressed {\n"
-"    background-color: #d0d0d0;\n"
 "    border: 1px solid #888888;\n"
 "}\n"
 "\n"
 "QMenu {\n"
-"    background-color: #ffffff;\n"
-"    border: 1px solid #b3b3b3;\n"
 "    padding: 4px;\n"
 "    font-family: Roboto, sans-serif;\n"
 "    font-size: 13px;\n"
-"    color: #333333;\n"
 "}\n"
 "\n"
 "QMenu::item {\n"
 "    padding: 6px 20px;\n"
-"    background-color: transparent;\n"
-"    color: #333333;\n"
 "}\n"
 "\n"
 "QMenu::item:selected {\n"
@@ -199,88 +167,75 @@ class Ui_AquaPump(object):
 "}\n"
 "\n"
 "QMenu::item:disabled {\n"
-"    color: #aaaaaa; /* cinza claro */\n"
-"    background-color: transparent;\n"
 "    font-style:italic\n"
 "}\n"
 "\n"
 "/* Separador */\n"
 "QMenu::separator {\n"
-"    height: 1px;\n"
-"    background: #dcdcdc"
-                        ";\n"
+"  "
+                        "  height: 1px;\n"
+"    background: #dcdcdc;\n"
 "    margin: 4px 8px;\n"
-"}\n"
-"\n"
-"\n"
-"")
-        self.layoutWidget = QWidget(AquaPump)
-        self.layoutWidget.setObjectName(u"layoutWidget")
-        self.layoutWidget.setGeometry(QRect(0, 0, 100, 30))
-        self.verticalLayout_12 = QVBoxLayout(self.layoutWidget)
-        self.verticalLayout_12.setObjectName(u"verticalLayout_12")
-        self.verticalLayout_12.setContentsMargins(0, 0, 0, 0)
+"}")
         self.verticalLayout_8 = QVBoxLayout(AquaPump)
         self.verticalLayout_8.setObjectName(u"verticalLayout_8")
         self.horizontalLayout_4 = QHBoxLayout()
         self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
-        self.frame_2 = QFrame(AquaPump)
-        self.frame_2.setObjectName(u"frame_2")
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(self.frame_2.sizePolicy().hasHeightForWidth())
-        self.frame_2.setSizePolicy(sizePolicy)
-        self.frame_2.setStyleSheet(u"QPushButton {\n"
-"background-color: transparent;\n"
-"font-family: Roboto;\n"
-"font-size:10pt;\n"
-"border: none;\n"
-"border-radius:3px;\n"
-"padding:0px\n"
-"\n"
-"}\n"
+        self.arquivo_2 = QPushButton(AquaPump)
+        self.arquivo_2.setObjectName(u"arquivo_2")
+        self.arquivo_2.setMinimumSize(QSize(75, 35))
+        self.arquivo_2.setMaximumSize(QSize(55, 16777215))
+        self.arquivo_2.setStyleSheet(u"QPushButton{border:none;}\n"
 "\n"
 "QPushButton:hover {\n"
-"background-color:	#D9D9D6\n"
-"}")
-        self.frame_2.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_2.setFrameShadow(QFrame.Shadow.Raised)
-        self.horizontalLayout_2 = QHBoxLayout(self.frame_2)
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.horizontalLayout_2.setContentsMargins(0, 0, -1, -1)
-        self.arquivo_2 = QPushButton(self.frame_2)
-        self.arquivo_2.setObjectName(u"arquivo_2")
-        self.arquivo_2.setMinimumSize(QSize(55, 28))
-        self.arquivo_2.setMaximumSize(QSize(55, 16777215))
-        self.arquivo_2.setStyleSheet(u"")
+"    background-color: rgba(140, 175, 255, 35);\n"
+"\n"
+"}\n"
+"")
 
-        self.horizontalLayout_2.addWidget(self.arquivo_2)
+        self.horizontalLayout_4.addWidget(self.arquivo_2)
 
-        self.config_2 = QPushButton(self.frame_2)
+        self.config_2 = QPushButton(AquaPump)
         self.config_2.setObjectName(u"config_2")
-        self.config_2.setMinimumSize(QSize(60, 28))
+        self.config_2.setMinimumSize(QSize(60, 35))
         self.config_2.setMaximumSize(QSize(87, 16777215))
+        self.config_2.setStyleSheet(u"QPushButton{border:none;}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(140, 175, 255, 35);\n"
+"\n"
+"}\n"
+"")
 
-        self.horizontalLayout_2.addWidget(self.config_2)
+        self.horizontalLayout_4.addWidget(self.config_2)
 
-        self.relatorio_2 = QPushButton(self.frame_2)
+        self.relatorio_2 = QPushButton(AquaPump)
         self.relatorio_2.setObjectName(u"relatorio_2")
-        self.relatorio_2.setMinimumSize(QSize(60, 28))
+        self.relatorio_2.setMinimumSize(QSize(82, 35))
         self.relatorio_2.setMaximumSize(QSize(60, 16777215))
-        self.relatorio_2.setStyleSheet(u"")
+        self.relatorio_2.setStyleSheet(u"QPushButton{border:none;}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(140, 175, 255, 35);\n"
+"\n"
+"}\n"
+"")
 
-        self.horizontalLayout_2.addWidget(self.relatorio_2)
+        self.horizontalLayout_4.addWidget(self.relatorio_2)
 
-        self.ajuda_2 = QPushButton(self.frame_2)
+        self.ajuda_2 = QPushButton(AquaPump)
         self.ajuda_2.setObjectName(u"ajuda_2")
-        self.ajuda_2.setMinimumSize(QSize(45, 28))
+        self.ajuda_2.setMinimumSize(QSize(65, 35))
         self.ajuda_2.setMaximumSize(QSize(45, 16777215))
+        self.ajuda_2.setStyleSheet(u"QPushButton{border:none;}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color: rgba(140, 175, 255, 35);\n"
+"\n"
+"}\n"
+"")
 
-        self.horizontalLayout_2.addWidget(self.ajuda_2)
-
-
-        self.horizontalLayout_4.addWidget(self.frame_2)
+        self.horizontalLayout_4.addWidget(self.ajuda_2)
 
         self.horizontalSpacer_2 = QSpacerItem(40, 10, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
@@ -293,16 +248,15 @@ class Ui_AquaPump(object):
         self.horizontalLayout_5.setObjectName(u"horizontalLayout_5")
         self.frame_4 = QFrame(AquaPump)
         self.frame_4.setObjectName(u"frame_4")
-        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        sizePolicy1.setHorizontalStretch(0)
-        sizePolicy1.setVerticalStretch(0)
-        sizePolicy1.setHeightForWidth(self.frame_4.sizePolicy().hasHeightForWidth())
-        self.frame_4.setSizePolicy(sizePolicy1)
+        sizePolicy = QSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        sizePolicy.setHorizontalStretch(0)
+        sizePolicy.setVerticalStretch(0)
+        sizePolicy.setHeightForWidth(self.frame_4.sizePolicy().hasHeightForWidth())
+        self.frame_4.setSizePolicy(sizePolicy)
         self.frame_4.setMinimumSize(QSize(0, 0))
         self.frame_4.setMaximumSize(QSize(0, 16777215))
         self.frame_4.setStyleSheet(u"QFrame {\n"
-"    background-color: #F9F9F9;\n"
-"    border: 1px solid #DDDDDD;\n"
+"    border: 0.5px solid rgba(112, 102, 255, 35);\n"
 "    border-radius: 6px;\n"
 "    padding: 2px;\n"
 "	padding-top: 0px;\n"
@@ -318,101 +272,18 @@ class Ui_AquaPump(object):
 "\n"
 "}\n"
 "\n"
+"\n"
 "QPushButton:hover {\n"
-"background-color:		#D9D9D6\n"
+"    background-color: rgba(140, 175, 255, 35);\n"
+"\n"
 "}\n"
+"\n"
 "\n"
 "QLabel {\n"
 "font-family: Roboto;\n"
 "font-size:10pt;\n"
 "\n"
-"}\n"
-"QDoubleSpinBox {\n"
-"    background-color: #FFFFFF;\n"
-"    border: 2px solid #CCCCCC;\n"
-"    border-radius: 6px;\n"
-"    padding: 2px 6px;\n"
-"    font-size: 14px;\n"
-"    color: #333333;\n"
-"}\n"
-"\n"
-"\n"
-"/* --------- QScrollArea --------- */\n"
-"QScrollArea {\n"
-"    background-color: transparent;\n"
-"    border: none;\n"
-"}\n"
-"\n"
-"/* Viewport transparente tamb\u00e9m */\n"
-"QScrollArea > QWidget > QWidget {\n"
-"    background-color: transparent;\n"
-"}\n"
-"\n"
-"/* --------- Scrollbars --------- */\n"
-"QScrollBar:vertical, QScrollBar:horizontal {\n"
-""
-                        "    background: rgba(0, 0, 0, 0);  /* Transparente */\n"
-"    width: 10px;\n"
-"    height: 10px;\n"
-"    margin: 2px;\n"
-"}\n"
-"\n"
-"QScrollBar::handle:vertical, QScrollBar::handle:horizontal {\n"
-"    background-color: #c0c0c0;\n"
-"    border-radius: 5px;\n"
-"    min-height: 20px;\n"
-"}\n"
-"\n"
-"QScrollBar::handle:vertical:hover, QScrollBar::handle:horizontal:hover {\n"
-"    background-color: #a0a0a0;\n"
-"}\n"
-"\n"
-"/* --------- Bot\u00f5es de rolagem --------- */\n"
-"QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical,\n"
-"QScrollBar::sub-line:horizontal, QScrollBar::add-line:horizontal {\n"
-"    background: none;\n"
-"    border: none;\n"
-"    width: 12px;\n"
-"    height: 12px;\n"
-"}\n"
-"\n"
-"QScrollBar::sub-line:vertical {\n"
-"    subcontrol-position: top;\n"
-"}\n"
-"\n"
-"QScrollBar::add-line:vertical {\n"
-"    subcontrol-position: bottom;\n"
-"}\n"
-"\n"
-"QScrollBar::sub-line:horizontal {\n"
-"    subcontrol-position: left;\n"
-"}\n"
-"\n"
-"QScrollBar::add-line:horizontal {\n"
-"    subcontrol-position: "
-                        "right;\n"
-"}\n"
-"\n"
-"QScrollBar::up-arrow {\n"
-"    image: url(:/img/arrow-up.png);\n"
-"    width: 8px;\n"
-"    height: 8px;\n"
-"}\n"
-"\n"
-"\n"
-" QScrollBar::down-arrow {\n"
-"    image: url(:/img/arrow-down-1.png);\n"
-"    width: 8px;\n"
-"    height: 8px;\n"
-"}\n"
-"\n"
-"\n"
-"/* --------- Canto entre as barras --------- */\n"
-"QScrollBar::corner {\n"
-"    background: transparent;\n"
-"}\n"
-"\n"
-"")
+"}")
         self.frame_4.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_4.setFrameShadow(QFrame.Shadow.Raised)
         self.verticalLayout_2 = QVBoxLayout(self.frame_4)
@@ -461,11 +332,11 @@ class Ui_AquaPump(object):
         self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
         self.pesquisa_line = QLineEdit(self.frame_3)
         self.pesquisa_line.setObjectName(u"pesquisa_line")
-        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
-        sizePolicy2.setHorizontalStretch(0)
-        sizePolicy2.setVerticalStretch(0)
-        sizePolicy2.setHeightForWidth(self.pesquisa_line.sizePolicy().hasHeightForWidth())
-        self.pesquisa_line.setSizePolicy(sizePolicy2)
+        sizePolicy1 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Preferred)
+        sizePolicy1.setHorizontalStretch(0)
+        sizePolicy1.setVerticalStretch(0)
+        sizePolicy1.setHeightForWidth(self.pesquisa_line.sizePolicy().hasHeightForWidth())
+        self.pesquisa_line.setSizePolicy(sizePolicy1)
         self.pesquisa_line.setMinimumSize(QSize(0, 30))
         self.pesquisa_line.setMaximumSize(QSize(500, 30))
         self.pesquisa_line.setStyleSheet(u"QLineEdit {\n"
@@ -486,16 +357,17 @@ class Ui_AquaPump(object):
         self.pesquisar_2.setObjectName(u"pesquisar_2")
         self.pesquisar_2.setMaximumSize(QSize(32, 30))
         self.pesquisar_2.setStyleSheet(u"QPushButton {\n"
-"    border-top: 2px solid #d0d0d0;\n"
+"    border-top: 1px solid rgba(140, 175, 255, 35);\n"
 "    border-top-left-radius: 0px;\n"
 "    border-bottom-left-radius: 0px;\n"
 "    border-top-right-radius: 4px;\n"
 "    border-bottom-right-radius: 4px;\n"
-"border-left:1px solid #d0d0d0;\n"
-" border-bottom: 2px solid #d0d0d0;\n"
-" border-right: 2px solid #d0d0d0;\n"
+"border-left:1px solid rgba(140, 175, 255, 35);\n"
+" border-bottom: 1px solid rgba(140, 175, 255, 35);\n"
+" border-right: 1px solid rgba(140, 175, 255, 35);\n"
 "\n"
 "}\n"
+"\n"
 "")
         icon1 = QIcon()
         icon1.addFile(u":/img/search.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
@@ -509,41 +381,34 @@ class Ui_AquaPump(object):
 
         self.scrollArea = QScrollArea(self.frame_4)
         self.scrollArea.setObjectName(u"scrollArea")
-        self.scrollArea.setStyleSheet(u"/* --------- QPushButton --------- */\n"
+        self.scrollArea.setStyleSheet(u"QScrollArea {\n"
+"border:none\n"
+"}\n"
+"/* --------- QPushButton --------- */\n"
 "QPushButton {\n"
-"    color: #000000;\n"
 "    border: none;\n"
-"    border-radius: 3px;\n"
+"    border-radius: 5px;\n"
 "    padding: 6px 12px;\n"
 "    font-size: 14px;\n"
 "    font-family: Roboto;\n"
-"	background-color: rgb(240, 240, 240);\n"
 "}\n"
 "\n"
-"QPushButton:hover {\n"
-"    background-color: #e0e0e0;\n"
-"    border: 1px solid #e0e0e0;\n"
-"}\n"
-"\n"
-"QPushButton:pressed {\n"
-"    background-color: #d0d0d0;\n"
-"    border: 1px solid #888888;\n"
-"}\n"
-"\n"
-"QPushButton:checked {\n"
-"    background-color: rgb(220, 220, 220);\n"
-"}\n"
 "")
         self.scrollArea.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 177, 407))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 169, 334))
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.projecto_2 = QPushButton(self.scrollAreaWidgetContents)
         self.projecto_2.setObjectName(u"projecto_2")
-        self.projecto_2.setStyleSheet(u"")
+        self.projecto_2.setStyleSheet(u"QPushButton {background-color: rgba(140, 175, 255, 35);}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color:rgba(165, 186, 255, 100);\n"
+"\n"
+"}")
         self.projecto_2.setCheckable(True)
         self.projecto_2.setAutoDefault(True)
         self.projecto_2.setFlat(True)
@@ -560,23 +425,10 @@ class Ui_AquaPump(object):
 "    padding: 7px;\n"
 "	padding-top: 0px;\n"
 "}\n"
-"QPushButton {\n"
-"text-align: left;\n"
-"padding: 8px 5px;\n"
-"}\n"
-"\n"
-"QFrame {\n"
-"    background-color: transparent;\n"
-"    border: 1px solid rgb(249, 249, 249);\n"
-"    border-radius: 6px;\n"
-"    padding: 7px;\n"
-"	padding-top:0px;\n"
-"}\n"
 "\n"
 "/* --------- QPushButton --------- */\n"
 "QPushButton {\n"
 "    background-color: transparent;\n"
-"    color: #000000;\n"
 "    border: none;\n"
 "    border-radius: 3px;\n"
 "    padding: 6px 12px;\n"
@@ -584,16 +436,12 @@ class Ui_AquaPump(object):
 "    font-family: Roboto;\n"
 "	text-align: left;\n"
 "}\n"
-"\n"
 "QPushButton:hover {\n"
-"    background-color: #e0e0e0;\n"
-"    border: 1px solid #e0e0e0;\n"
+"    background-color: rgba(140, 175, 255, 35);\n"
+"\n"
 "}\n"
 "\n"
-"QPushButton:pressed {\n"
-"    background-color: #d0d0d0;\n"
-"    border: 1px solid #888888;\n"
-"}\n"
+"\n"
 "")
         self.projecto.setFrameShape(QFrame.Shape.StyledPanel)
         self.projecto.setFrameShadow(QFrame.Shadow.Raised)
@@ -643,10 +491,15 @@ class Ui_AquaPump(object):
 
         self.parametros = QPushButton(self.scrollAreaWidgetContents)
         self.parametros.setObjectName(u"parametros")
-        sizePolicy2.setHeightForWidth(self.parametros.sizePolicy().hasHeightForWidth())
-        self.parametros.setSizePolicy(sizePolicy2)
+        sizePolicy1.setHeightForWidth(self.parametros.sizePolicy().hasHeightForWidth())
+        self.parametros.setSizePolicy(sizePolicy1)
         self.parametros.setMinimumSize(QSize(0, 0))
-        self.parametros.setStyleSheet(u"")
+        self.parametros.setStyleSheet(u"QPushButton {background-color: rgba(140, 175, 255, 35);}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color:rgba(165, 186, 255, 100);\n"
+"\n"
+"}")
         self.parametros.setCheckable(True)
 
         self.verticalLayout_4.addWidget(self.parametros)
@@ -656,35 +509,27 @@ class Ui_AquaPump(object):
         self.exportar.setMaximumSize(QSize(16777215, 0))
         self.exportar.setStyleSheet(u"QFrame {\n"
 "    background-color: transparent;\n"
-"    border: 1px solid rgb(249, 249, 249);\n"
-"    border-radius: 6px;\n"
+"    border: none;\n"
 "    padding: 7px;\n"
 "	padding-top:0px;\n"
 "}\n"
 "\n"
-"QPushButton {\n"
-"text-align: left;\n"
-"padding: 8px 5px;\n"
-"}\n"
+"\n"
 "/* --------- QPushButton --------- */\n"
 "QPushButton {\n"
 "    background-color: transparent;\n"
-"    color: #000000;\n"
-"    border: none;\n"
+"      border: none;\n"
 "    border-radius: 3px;\n"
 "    padding: 6px 12px;\n"
 "    font-size: 12px;\n"
 "    font-family: Roboto;\n"
+"text-align: left;\n"
+"padding: 8px 5px;\n"
 "}\n"
 "\n"
 "QPushButton:hover {\n"
-"    background-color: #e0e0e0;\n"
-"    border: 1px solid #e0e0e0;\n"
-"}\n"
+"    background-color: rgba(140, 175, 255, 35);\n"
 "\n"
-"QPushButton:pressed {\n"
-"    background-color: #d0d0d0;\n"
-"    border: 1px solid #888888;\n"
 "}\n"
 "\n"
 "")
@@ -719,13 +564,24 @@ class Ui_AquaPump(object):
 
         self.rel = QPushButton(self.scrollAreaWidgetContents)
         self.rel.setObjectName(u"rel")
-        self.rel.setStyleSheet(u"")
+        self.rel.setStyleSheet(u"QPushButton {background-color: rgba(140, 175, 255, 35);}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color:rgba(165, 186, 255, 100);\n"
+"\n"
+"}")
         self.rel.setCheckable(True)
 
         self.verticalLayout_4.addWidget(self.rel)
 
         self.grafico = QPushButton(self.scrollAreaWidgetContents)
         self.grafico.setObjectName(u"grafico")
+        self.grafico.setStyleSheet(u"QPushButton {background-color: rgba(140, 175, 255, 35);}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color:rgba(165, 186, 255, 100);\n"
+"\n"
+"}")
 
         self.verticalLayout_4.addWidget(self.grafico)
 
@@ -740,13 +596,7 @@ class Ui_AquaPump(object):
         self.pushButton_3 = QPushButton(self.frame_4)
         self.pushButton_3.setObjectName(u"pushButton_3")
         self.pushButton_3.setStyleSheet(u"QPushButton {\n"
-"text-align: left;\n"
-"padding: 8px 2px;\n"
-"}\n"
-"\n"
-"QPushButton {\n"
 "    background-color: transparent;\n"
-"    color: #000000;\n"
 "    border: none;\n"
 "    border-radius: 3px;\n"
 "    padding: 6px 12px;\n"
@@ -756,14 +606,11 @@ class Ui_AquaPump(object):
 "}\n"
 "\n"
 "QPushButton:hover {\n"
-"    background-color: #e0e0e0;\n"
-"    border: 1px solid #e0e0e0;\n"
+"    background-color: rgba(140, 175, 255, 35);\n"
+"\n"
 "}\n"
 "\n"
-"QPushButton:pressed {\n"
-"    background-color: #d0d0d0;\n"
-"    border: 1px solid #888888;\n"
-"}\n"
+"\n"
 "")
         icon7 = QIcon()
         icon7.addFile(u":/img/star.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
@@ -774,17 +621,11 @@ class Ui_AquaPump(object):
 
         self.configuracoes = QPushButton(self.frame_4)
         self.configuracoes.setObjectName(u"configuracoes")
-        sizePolicy2.setHeightForWidth(self.configuracoes.sizePolicy().hasHeightForWidth())
-        self.configuracoes.setSizePolicy(sizePolicy2)
+        sizePolicy1.setHeightForWidth(self.configuracoes.sizePolicy().hasHeightForWidth())
+        self.configuracoes.setSizePolicy(sizePolicy1)
         self.configuracoes.setMinimumSize(QSize(0, 25))
         self.configuracoes.setStyleSheet(u"QPushButton {\n"
-"text-align: left;\n"
-"padding: 8px 2px;\n"
-"}\n"
-"\n"
-"QPushButton {\n"
 "    background-color: transparent;\n"
-"    color: #000000;\n"
 "    border: none;\n"
 "    border-radius: 3px;\n"
 "    padding: 6px 12px;\n"
@@ -794,15 +635,9 @@ class Ui_AquaPump(object):
 "}\n"
 "\n"
 "QPushButton:hover {\n"
-"    background-color: #e0e0e0;\n"
-"    border: 1px solid #e0e0e0;\n"
-"}\n"
+"    background-color: rgba(140, 175, 255, 35);\n"
 "\n"
-"QPushButton:pressed {\n"
-"    background-color: #d0d0d0;\n"
-"    border: 1px solid #888888;\n"
-"}\n"
-"")
+"}")
         icon8 = QIcon()
         icon8.addFile(u":/img/settings_67dp_999999_FILL1_wght400_GRAD0_opsz48.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.configuracoes.setIcon(icon8)
@@ -812,17 +647,11 @@ class Ui_AquaPump(object):
 
         self.sair_2 = QPushButton(self.frame_4)
         self.sair_2.setObjectName(u"sair_2")
-        sizePolicy2.setHeightForWidth(self.sair_2.sizePolicy().hasHeightForWidth())
-        self.sair_2.setSizePolicy(sizePolicy2)
+        sizePolicy1.setHeightForWidth(self.sair_2.sizePolicy().hasHeightForWidth())
+        self.sair_2.setSizePolicy(sizePolicy1)
         self.sair_2.setMinimumSize(QSize(100, 25))
         self.sair_2.setStyleSheet(u"QPushButton {\n"
-"text-align: left;\n"
-"padding: 8px 2px;\n"
-"}\n"
-"\n"
-"QPushButton {\n"
 "    background-color: transparent;\n"
-"    color: #000000;\n"
 "    border: none;\n"
 "    border-radius: 3px;\n"
 "    padding: 6px 12px;\n"
@@ -832,15 +661,9 @@ class Ui_AquaPump(object):
 "}\n"
 "\n"
 "QPushButton:hover {\n"
-"    background-color: #e0e0e0;\n"
-"    border: 1px solid #e0e0e0;\n"
-"}\n"
+"    background-color: rgba(140, 175, 255, 35);\n"
 "\n"
-"QPushButton:pressed {\n"
-"    background-color: #d0d0d0;\n"
-"    border: 1px solid #888888;\n"
-"}\n"
-"")
+"}")
         icon9 = QIcon()
         icon9.addFile(u":/img/sair.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.sair_2.setIcon(icon9)
@@ -853,16 +676,15 @@ class Ui_AquaPump(object):
 
         self.frame_6 = QFrame(AquaPump)
         self.frame_6.setObjectName(u"frame_6")
-        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
-        sizePolicy3.setHorizontalStretch(0)
-        sizePolicy3.setVerticalStretch(0)
-        sizePolicy3.setHeightForWidth(self.frame_6.sizePolicy().hasHeightForWidth())
-        self.frame_6.setSizePolicy(sizePolicy3)
+        sizePolicy2 = QSizePolicy(QSizePolicy.Policy.Maximum, QSizePolicy.Policy.Preferred)
+        sizePolicy2.setHorizontalStretch(0)
+        sizePolicy2.setVerticalStretch(0)
+        sizePolicy2.setHeightForWidth(self.frame_6.sizePolicy().hasHeightForWidth())
+        self.frame_6.setSizePolicy(sizePolicy2)
         self.frame_6.setMinimumSize(QSize(0, 0))
         self.frame_6.setMaximumSize(QSize(50, 16777215))
         self.frame_6.setStyleSheet(u"QFrame {\n"
-"    background-color: #F9F9F9;\n"
-"    border: 1px solid #DDDDDD;\n"
+"    border: 0.5px solid rgba(112, 102, 255, 35);\n"
 "    border-radius: 6px;\n"
 "    padding: 2px;\n"
 "	padding-top: 0px;\n"
@@ -878,100 +700,18 @@ class Ui_AquaPump(object):
 "\n"
 "}\n"
 "\n"
+"\n"
 "QPushButton:hover {\n"
-"background-color:		#D9D9D6\n"
+"    background-color: rgba(140, 175, 255, 35);\n"
+"\n"
 "}\n"
+"\n"
 "\n"
 "QLabel {\n"
 "font-family: Roboto;\n"
 "font-size:10pt;\n"
 "\n"
 "}\n"
-"QDoubleSpinBox {\n"
-"    background-color: #FFFFFF;\n"
-"    border: 2px solid #CCCCCC;\n"
-"    border-radius: 6px;\n"
-"    padding: 2px 6px;\n"
-"    font-size: 14px;\n"
-"    color: #333333;\n"
-"}\n"
-"\n"
-"\n"
-"/* --------- QScrollArea --------- */\n"
-"QScrollArea {\n"
-"    background-color: transparent;\n"
-"    border: none;\n"
-"}\n"
-"\n"
-"/* Viewport transparente tamb\u00e9m */\n"
-"QScrollArea > QWidget > QWidget {\n"
-"    background-color: transparent;\n"
-"}\n"
-"\n"
-"/* --------- Scrollbars --------- */\n"
-"QScrollBar:vertical, QScrollBar:horizontal {\n"
-""
-                        "    background: rgba(0, 0, 0, 0);  /* Transparente */\n"
-"    width: 10px;\n"
-"    height: 10px;\n"
-"    margin: 2px;\n"
-"}\n"
-"\n"
-"QScrollBar::handle:vertical, QScrollBar::handle:horizontal {\n"
-"    background-color: #c0c0c0;\n"
-"    border-radius: 5px;\n"
-"    min-height: 20px;\n"
-"}\n"
-"\n"
-"QScrollBar::handle:vertical:hover, QScrollBar::handle:horizontal:hover {\n"
-"    background-color: #a0a0a0;\n"
-"}\n"
-"\n"
-"/* --------- Bot\u00f5es de rolagem --------- */\n"
-"QScrollBar::sub-line:vertical, QScrollBar::add-line:vertical,\n"
-"QScrollBar::sub-line:horizontal, QScrollBar::add-line:horizontal {\n"
-"    background: none;\n"
-"    border: none;\n"
-"    width: 12px;\n"
-"    height: 12px;\n"
-"}\n"
-"\n"
-"QScrollBar::sub-line:vertical {\n"
-"    subcontrol-position: top;\n"
-"}\n"
-"\n"
-"QScrollBar::add-line:vertical {\n"
-"    subcontrol-position: bottom;\n"
-"}\n"
-"\n"
-"QScrollBar::sub-line:horizontal {\n"
-"    subcontrol-position: left;\n"
-"}\n"
-"\n"
-"QScrollBar::add-line:horizontal {\n"
-"    subcontrol-position: "
-                        "right;\n"
-"}\n"
-"\n"
-"QScrollBar::up-arrow {\n"
-"    image: url(:/img/arrow-up.png);\n"
-"    width: 8px;\n"
-"    height: 8px;\n"
-"}\n"
-"\n"
-"\n"
-" QScrollBar::down-arrow {\n"
-"    image: url(:/img/arrow-down-1.png);\n"
-"    width: 8px;\n"
-"    height: 8px;\n"
-"}\n"
-"\n"
-"\n"
-"/* --------- Canto entre as barras --------- */\n"
-"QScrollBar::corner {\n"
-"    background: transparent;\n"
-"}\n"
-"\n"
 "")
         self.frame_6.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_6.setFrameShadow(QFrame.Shadow.Raised)
@@ -1080,15 +820,10 @@ class Ui_AquaPump(object):
 
         self.configuracoes_2 = QPushButton(self.frame_6)
         self.configuracoes_2.setObjectName(u"configuracoes_2")
-        sizePolicy2.setHeightForWidth(self.configuracoes_2.sizePolicy().hasHeightForWidth())
-        self.configuracoes_2.setSizePolicy(sizePolicy2)
+        sizePolicy1.setHeightForWidth(self.configuracoes_2.sizePolicy().hasHeightForWidth())
+        self.configuracoes_2.setSizePolicy(sizePolicy1)
         self.configuracoes_2.setMinimumSize(QSize(0, 25))
         self.configuracoes_2.setStyleSheet(u"QPushButton {\n"
-"text-align: left;\n"
-"padding: 8px 2px;\n"
-"}\n"
-"\n"
-"QPushButton {\n"
 "    background-color: transparent;\n"
 "    color: #000000;\n"
 "    border: none;\n"
@@ -1100,14 +835,10 @@ class Ui_AquaPump(object):
 "}\n"
 "\n"
 "QPushButton:hover {\n"
-"    background-color: #e0e0e0;\n"
-"    border: 1px solid #e0e0e0;\n"
+"    background-color: rgba(140, 175, 255, 35);\n"
+"\n"
 "}\n"
 "\n"
-"QPushButton:pressed {\n"
-"    background-color: #d0d0d0;\n"
-"    border: 1px solid #888888;\n"
-"}\n"
 "")
         self.configuracoes_2.setIcon(icon8)
         self.configuracoes_2.setIconSize(QSize(20, 20))
@@ -1116,8 +847,8 @@ class Ui_AquaPump(object):
 
         self.sair_3 = QPushButton(self.frame_6)
         self.sair_3.setObjectName(u"sair_3")
-        sizePolicy2.setHeightForWidth(self.sair_3.sizePolicy().hasHeightForWidth())
-        self.sair_3.setSizePolicy(sizePolicy2)
+        sizePolicy1.setHeightForWidth(self.sair_3.sizePolicy().hasHeightForWidth())
+        self.sair_3.setSizePolicy(sizePolicy1)
         self.sair_3.setMinimumSize(QSize(0, 25))
         self.sair_3.setStyleSheet(u"QPushButton {\n"
 "text-align: left;\n"
@@ -1126,7 +857,6 @@ class Ui_AquaPump(object):
 "\n"
 "QPushButton {\n"
 "    background-color: transparent;\n"
-"    color: #000000;\n"
 "    border: none;\n"
 "    border-radius: 3px;\n"
 "    padding: 6px 12px;\n"
@@ -1136,14 +866,10 @@ class Ui_AquaPump(object):
 "}\n"
 "\n"
 "QPushButton:hover {\n"
-"    background-color: #e0e0e0;\n"
-"    border: 1px solid #e0e0e0;\n"
+"    background-color: rgba(140, 175, 255, 35);\n"
+"\n"
 "}\n"
 "\n"
-"QPushButton:pressed {\n"
-"    background-color: #d0d0d0;\n"
-"    border: 1px solid #888888;\n"
-"}\n"
 "")
         self.sair_3.setIcon(icon9)
         self.sair_3.setIconSize(QSize(20, 20))
@@ -1167,11 +893,11 @@ class Ui_AquaPump(object):
         self.horizontalLayout.setObjectName(u"horizontalLayout")
         self.darcy = QComboBox(self.page)
         self.darcy.setObjectName(u"darcy")
-        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        sizePolicy4.setHorizontalStretch(0)
-        sizePolicy4.setVerticalStretch(0)
-        sizePolicy4.setHeightForWidth(self.darcy.sizePolicy().hasHeightForWidth())
-        self.darcy.setSizePolicy(sizePolicy4)
+        sizePolicy3 = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        sizePolicy3.setHorizontalStretch(0)
+        sizePolicy3.setVerticalStretch(0)
+        sizePolicy3.setHeightForWidth(self.darcy.sizePolicy().hasHeightForWidth())
+        self.darcy.setSizePolicy(sizePolicy3)
         self.darcy.setMinimumSize(QSize(0, 0))
         self.darcy.setMaximumSize(QSize(450, 16777215))
         self.darcy.setStyleSheet(u"")
@@ -1191,8 +917,11 @@ class Ui_AquaPump(object):
         self.horizontalLayout_7.setObjectName(u"horizontalLayout_7")
         self.Vazao_2 = QLineEdit(self.page)
         self.Vazao_2.setObjectName(u"Vazao_2")
-        sizePolicy.setHeightForWidth(self.Vazao_2.sizePolicy().hasHeightForWidth())
-        self.Vazao_2.setSizePolicy(sizePolicy)
+        sizePolicy4 = QSizePolicy(QSizePolicy.Policy.Preferred, QSizePolicy.Policy.Fixed)
+        sizePolicy4.setHorizontalStretch(0)
+        sizePolicy4.setVerticalStretch(0)
+        sizePolicy4.setHeightForWidth(self.Vazao_2.sizePolicy().hasHeightForWidth())
+        self.Vazao_2.setSizePolicy(sizePolicy4)
         self.Vazao_2.setStyleSheet(u"QLineEdit {\n"
 "    border-top-left-radius: 4px;\n"
 "    border-bottom-left-radius: 4px;\n"
@@ -1209,16 +938,17 @@ class Ui_AquaPump(object):
         self.icone_2.setObjectName(u"icone_2")
         self.icone_2.setMaximumSize(QSize(32, 16777215))
         self.icone_2.setStyleSheet(u"QComboBox {\n"
-"    border-top: 2px solid #d0d0d0;\n"
+"    border-top: 1px solid rgba(140, 175, 255, 35);\n"
 "    border-top-left-radius: 0px;\n"
 "    border-bottom-left-radius: 0px;\n"
 "    border-top-right-radius: 4px;\n"
 "    border-bottom-right-radius: 4px;\n"
-"border-left:0px solid #d0d0d0;\n"
-" border-bottom: 2px solid #d0d0d0;\n"
-" border-right: 2px solid #d0d0d0;\n"
+"border-left:0px solid  rgba(140, 175, 255, 35);\n"
+" border-bottom: 1px solid  rgba(140, 175, 255, 35);\n"
+" border-right: 1px solid rgba(140, 175, 255, 35);\n"
 "\n"
 "}\n"
+"\n"
 "")
 
         self.horizontalLayout_7.addWidget(self.icone_2)
@@ -1231,8 +961,8 @@ class Ui_AquaPump(object):
         self.horizontalLayout_6.setObjectName(u"horizontalLayout_6")
         self.Vazao = QLineEdit(self.page)
         self.Vazao.setObjectName(u"Vazao")
-        sizePolicy.setHeightForWidth(self.Vazao.sizePolicy().hasHeightForWidth())
-        self.Vazao.setSizePolicy(sizePolicy)
+        sizePolicy4.setHeightForWidth(self.Vazao.sizePolicy().hasHeightForWidth())
+        self.Vazao.setSizePolicy(sizePolicy4)
         self.Vazao.setStyleSheet(u"QLineEdit {\n"
 "    border-radius: 4px;\n"
 "\n"
@@ -1432,19 +1162,7 @@ class Ui_AquaPump(object):
         self.verticalLayout_32 = QVBoxLayout(self.definicoes_2)
         self.verticalLayout_32.setObjectName(u"verticalLayout_32")
         self.verticalLayout_32.setContentsMargins(-1, 0, -1, -1)
-        self.frame = QFrame(self.definicoes_2)
-        self.frame.setObjectName(u"frame")
-        sizePolicy.setHeightForWidth(self.frame.sizePolicy().hasHeightForWidth())
-        self.frame.setSizePolicy(sizePolicy)
-        self.frame.setMaximumSize(QSize(16777215, 28))
-        self.frame.setStyleSheet(u"padding:0px")
-        self.frame.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame.setFrameShadow(QFrame.Shadow.Raised)
-        self.horizontalLayout_27 = QHBoxLayout(self.frame)
-        self.horizontalLayout_27.setSpacing(0)
-        self.horizontalLayout_27.setObjectName(u"horizontalLayout_27")
-        self.horizontalLayout_27.setContentsMargins(-1, 0, -1, 0)
-        self.label_11 = QLabel(self.frame)
+        self.label_11 = QLabel(self.definicoes_2)
         self.label_11.setObjectName(u"label_11")
         self.label_11.setStyleSheet(u"QLabel {\n"
 "    font-family: \"Segoe UI\", \"Roboto\", sans-serif;\n"
@@ -1455,22 +1173,18 @@ class Ui_AquaPump(object):
 "\n"
 "}")
 
-        self.horizontalLayout_27.addWidget(self.label_11)
-
-
-        self.verticalLayout_32.addWidget(self.frame)
+        self.verticalLayout_32.addWidget(self.label_11)
 
         self.splitter_3 = QSplitter(self.definicoes_2)
         self.splitter_3.setObjectName(u"splitter_3")
         self.splitter_3.setOrientation(Qt.Orientation.Horizontal)
         self.scrollArea_3 = QScrollArea(self.splitter_3)
         self.scrollArea_3.setObjectName(u"scrollArea_3")
-        sizePolicy2.setHeightForWidth(self.scrollArea_3.sizePolicy().hasHeightForWidth())
-        self.scrollArea_3.setSizePolicy(sizePolicy2)
+        sizePolicy1.setHeightForWidth(self.scrollArea_3.sizePolicy().hasHeightForWidth())
+        self.scrollArea_3.setSizePolicy(sizePolicy1)
         self.scrollArea_3.setMaximumSize(QSize(350, 16777215))
         self.scrollArea_3.setStyleSheet(u"QFrame {\n"
-"    background-color: #F9F9F9;\n"
-"    border: 1px solid #DDDDDD;\n"
+"    border: 1px solid  rgba(140, 175, 255, 35);\n"
 "    border-radius: 6px;\n"
 "    padding: 2px;\n"
 "	padding-top: 0px;\n"
@@ -1478,8 +1192,7 @@ class Ui_AquaPump(object):
 "\n"
 "\n"
 "QPushButton {\n"
-"    background-color: #f5f5f5;\n"
-"    color: #000000;\n"
+"    background-color: rgba(140, 175, 255, 35);\n"
 "    border:none;\n"
 "    border-radius: 3px;\n"
 "    padding: 6px 12px;\n"
@@ -1489,29 +1202,24 @@ class Ui_AquaPump(object):
 "\n"
 "}\n"
 "\n"
-"QPushButton:hover {\n"
-"    background-color: #e0e0e0;\n"
-"    border: 1px solid #e0e0e0;\n"
-"}\n"
-"\n"
-"QPushButton:pressed {\n"
-"    background-color: #d0d0d0;\n"
-"    border: 1px solid #888888;\n"
-"}\n"
-"\n"
 "QPushButton:checked {\n"
 "    border-top-left-radius: 0px;\n"
 "    border-bottom-left-radius: 0px;\n"
 "    border-top-right-radius: 3px;\n"
 "    border-bottom-right-radius: 3px;\n"
 "    border-left: 3px solid rgb(0, 85, 255);\n"
-"    background-color: rgb(220, 220, 220);\n"
+"\n"
 "}\n"
-"")
+"\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color:rgba(165, 186, 255, 100);\n"
+"\n"
+"}")
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollAreaWidgetContents_3 = QWidget()
         self.scrollAreaWidgetContents_3.setObjectName(u"scrollAreaWidgetContents_3")
-        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 184, 631))
+        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 168, 135))
         self.verticalLayout_14 = QVBoxLayout(self.scrollAreaWidgetContents_3)
         self.verticalLayout_14.setSpacing(10)
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
@@ -1557,12 +1265,12 @@ class Ui_AquaPump(object):
 
         self.scrollArea_3.setWidget(self.scrollAreaWidgetContents_3)
         self.splitter_3.addWidget(self.scrollArea_3)
-        self.layoutWidget1 = QWidget(self.splitter_3)
-        self.layoutWidget1.setObjectName(u"layoutWidget1")
-        self.verticalLayout_27 = QVBoxLayout(self.layoutWidget1)
+        self.layoutWidget = QWidget(self.splitter_3)
+        self.layoutWidget.setObjectName(u"layoutWidget")
+        self.verticalLayout_27 = QVBoxLayout(self.layoutWidget)
         self.verticalLayout_27.setObjectName(u"verticalLayout_27")
         self.verticalLayout_27.setContentsMargins(0, 0, 0, 0)
-        self.janela_definicoes = QStackedWidget(self.layoutWidget1)
+        self.janela_definicoes = QStackedWidget(self.layoutWidget)
         self.janela_definicoes.setObjectName(u"janela_definicoes")
         sizePolicy5.setHeightForWidth(self.janela_definicoes.sizePolicy().hasHeightForWidth())
         self.janela_definicoes.setSizePolicy(sizePolicy5)
@@ -1745,8 +1453,7 @@ class Ui_AquaPump(object):
         self.scrollArea_4 = QScrollArea(self.unidade)
         self.scrollArea_4.setObjectName(u"scrollArea_4")
         self.scrollArea_4.setStyleSheet(u"QFrame {\n"
-"    background-color: #FFFFFF;\n"
-"    border: none;\n"
+"     border: none;\n"
 "\n"
 "    padding: 2px;\n"
 "	padding-top: 0px;\n"
@@ -1756,7 +1463,7 @@ class Ui_AquaPump(object):
         self.scrollArea_4.setWidgetResizable(True)
         self.scrollAreaWidgetContents_4 = QWidget()
         self.scrollAreaWidgetContents_4.setObjectName(u"scrollAreaWidgetContents_4")
-        self.scrollAreaWidgetContents_4.setGeometry(QRect(0, 0, 812, 1000))
+        self.scrollAreaWidgetContents_4.setGeometry(QRect(0, 0, 812, 986))
         self.verticalLayout_28 = QVBoxLayout(self.scrollAreaWidgetContents_4)
         self.verticalLayout_28.setSpacing(30)
         self.verticalLayout_28.setObjectName(u"verticalLayout_28")
@@ -1775,7 +1482,6 @@ class Ui_AquaPump(object):
 "    font-family: \"Segoe UI\", \"Roboto\", sans-serif;\n"
 "    font-size: 14px;\n"
 "      font-weight: 400; \n"
-"    color: #333333;\n"
 "    padding-top: 2px;\n"
 "    padding-bottom: 2px;\n"
 "	background-color: transparent;\n"
@@ -1819,7 +1525,6 @@ class Ui_AquaPump(object):
 "    font-family: \"Segoe UI\", \"Roboto\", sans-serif;\n"
 "    font-size: 14px;\n"
 "      font-weight: 400; \n"
-"    color: #333333;\n"
 "    padding-top: 2px;\n"
 "    padding-bottom: 2px;\n"
 "	background-color: transparent;\n"
@@ -1835,8 +1540,8 @@ class Ui_AquaPump(object):
         self.comboBox_12.addItem("")
         self.comboBox_12.addItem("")
         self.comboBox_12.setObjectName(u"comboBox_12")
-        sizePolicy2.setHeightForWidth(self.comboBox_12.sizePolicy().hasHeightForWidth())
-        self.comboBox_12.setSizePolicy(sizePolicy2)
+        sizePolicy1.setHeightForWidth(self.comboBox_12.sizePolicy().hasHeightForWidth())
+        self.comboBox_12.setSizePolicy(sizePolicy1)
 
         self.verticalLayout_19.addWidget(self.comboBox_12)
 
@@ -1867,7 +1572,6 @@ class Ui_AquaPump(object):
 "    font-family: \"Segoe UI\", \"Roboto\", sans-serif;\n"
 "    font-size: 14px;\n"
 "      font-weight: 400; \n"
-"    color: #333333;\n"
 "	background-color: transparent;\n"
 "    padding-bottom: 2px;\n"
 "}")
@@ -1889,8 +1593,8 @@ class Ui_AquaPump(object):
 
         self.caudal_box = QComboBox(self.groupBox_4)
         self.caudal_box.setObjectName(u"caudal_box")
-        sizePolicy2.setHeightForWidth(self.caudal_box.sizePolicy().hasHeightForWidth())
-        self.caudal_box.setSizePolicy(sizePolicy2)
+        sizePolicy1.setHeightForWidth(self.caudal_box.sizePolicy().hasHeightForWidth())
+        self.caudal_box.setSizePolicy(sizePolicy1)
         self.caudal_box.setMaximumSize(QSize(500, 16777215))
 
         self.horizontalLayout_16.addWidget(self.caudal_box)
@@ -1909,8 +1613,8 @@ class Ui_AquaPump(object):
 
         self.altura_box = QComboBox(self.groupBox_4)
         self.altura_box.setObjectName(u"altura_box")
-        sizePolicy2.setHeightForWidth(self.altura_box.sizePolicy().hasHeightForWidth())
-        self.altura_box.setSizePolicy(sizePolicy2)
+        sizePolicy1.setHeightForWidth(self.altura_box.sizePolicy().hasHeightForWidth())
+        self.altura_box.setSizePolicy(sizePolicy1)
         self.altura_box.setMaximumSize(QSize(500, 16777215))
 
         self.horizontalLayout_17.addWidget(self.altura_box)
@@ -2020,25 +1724,21 @@ class Ui_AquaPump(object):
 
         self.verticalLayout_27.addWidget(self.janela_definicoes)
 
-        self.frame_8 = QFrame(self.layoutWidget1)
+        self.frame_8 = QFrame(self.layoutWidget)
         self.frame_8.setObjectName(u"frame_8")
         self.frame_8.setStyleSheet(u"QPushButton {\n"
-"    background-color: #f5f5f5;\n"
-"    color: #000000;\n"
-"    border: 1px solid #c2c2c2;\n"
+"    border: 1px solid  rgba(140, 175, 255, 35);\n"
 "    border-radius: 3px;\n"
 "    padding: 6px 12px;\n"
 "    font-size: 14px;\n"
 "}\n"
 "\n"
 "QPushButton:hover {\n"
-"    background-color: #e0e0e0;\n"
-"    border: 1px solid #e0e0e0;\n"
+"    background-color: rgba(165, 186, 255, 100);\n"
 "}\n"
-"\n"
-"QPushButton:pressed {\n"
-"    background-color: #d0d0d0;\n"
-"    border: 1px solid #888888;\n"
+"QFrame {\n"
+"	background-color: transparent;\n"
+"border:none;\n"
 "}")
         self.frame_8.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_8.setFrameShadow(QFrame.Shadow.Raised)
@@ -2068,7 +1768,7 @@ class Ui_AquaPump(object):
 
         self.verticalLayout_27.addWidget(self.frame_8)
 
-        self.splitter_3.addWidget(self.layoutWidget1)
+        self.splitter_3.addWidget(self.layoutWidget)
 
         self.verticalLayout_32.addWidget(self.splitter_3)
 
@@ -2081,8 +1781,7 @@ class Ui_AquaPump(object):
         self.frame_9 = QFrame(self.page_6)
         self.frame_9.setObjectName(u"frame_9")
         self.frame_9.setStyleSheet(u"QFrame {\n"
-"    background-color: transparent;\n"
-"    border: 2px solid #DDDDDD;\n"
+"       border: 2px solid rgba(140, 175, 255, 35);\n"
 "    padding: 2px;\n"
 "	padding-top: 0px;\n"
 "    border-top-left-radius: 6px;\n"
@@ -2091,6 +1790,7 @@ class Ui_AquaPump(object):
 "    border-bottom-right-radius: 0px;\n"
 "	border-right: 0px solid #d0d0d0;\n"
 "}\n"
+"\n"
 "")
         self.frame_9.setFrameShape(QFrame.Shape.StyledPanel)
         self.frame_9.setFrameShadow(QFrame.Shadow.Raised)
@@ -2123,9 +1823,9 @@ class Ui_AquaPump(object):
         self.splitter_4.setOrientation(Qt.Orientation.Horizontal)
         self.label_10 = QLabel(self.splitter_4)
         self.label_10.setObjectName(u"label_10")
-        sizePolicy1.setHeightForWidth(self.label_10.sizePolicy().hasHeightForWidth())
-        self.label_10.setSizePolicy(sizePolicy1)
-        self.label_10.setStyleSheet(u"    border: 1px solid #DDDDDD;\n"
+        sizePolicy.setHeightForWidth(self.label_10.sizePolicy().hasHeightForWidth())
+        self.label_10.setSizePolicy(sizePolicy)
+        self.label_10.setStyleSheet(u"    border: 1px solid rgba(140, 175, 255, 35);\n"
 "border-radius: 4px;")
         self.splitter_4.addWidget(self.label_10)
         self.frame_11 = QFrame(self.splitter_4)
@@ -2204,21 +1904,29 @@ class Ui_AquaPump(object):
         self.horizontalLayout_18.setObjectName(u"horizontalLayout_18")
         self.voltar_2 = QPushButton(self.frame_9)
         self.voltar_2.setObjectName(u"voltar_2")
+        self.voltar_2.setStyleSheet(u"background-color: rgba(140, 175, 255, 35);\n"
+"border:none")
 
         self.horizontalLayout_18.addWidget(self.voltar_2)
 
         self.selecionar = QPushButton(self.frame_9)
         self.selecionar.setObjectName(u"selecionar")
+        self.selecionar.setStyleSheet(u"background-color: rgba(140, 175, 255, 35);\n"
+"border:none")
 
         self.horizontalLayout_18.addWidget(self.selecionar)
 
         self.anterior = QPushButton(self.frame_9)
         self.anterior.setObjectName(u"anterior")
+        self.anterior.setStyleSheet(u"background-color: rgba(140, 175, 255, 35);\n"
+"border:none")
 
         self.horizontalLayout_18.addWidget(self.anterior)
 
         self.proxima = QPushButton(self.frame_9)
         self.proxima.setObjectName(u"proxima")
+        self.proxima.setStyleSheet(u"border:none;\n"
+"background-color: rgba(140, 175, 255, 35);")
 
         self.horizontalLayout_18.addWidget(self.proxima)
 
@@ -2244,7 +1952,7 @@ class Ui_AquaPump(object):
         self.projecto_2.setDefault(True)
         self.stackedWidget.setCurrentIndex(0)
         self.stackedWidget_3.setCurrentIndex(1)
-        self.janela_definicoes.setCurrentIndex(0)
+        self.janela_definicoes.setCurrentIndex(3)
 
 
         QMetaObject.connectSlotsByName(AquaPump)
