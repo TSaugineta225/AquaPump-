@@ -4,13 +4,12 @@ class Definicoes:
         self.ex_3 = chr(0x00B3)
 
         self.unidades_metricas = {
-            'caudal': [f'm{self.ex_3}/s', f'm{self.ex_3}/h', 'L/s', 'gal/s', 'gal/min', 'gal/h',
-            'ft³/s', 'ft³/min', 'ft³/h'],
-            'altura': ['m', 'fy'],
-            'comprimento': ['m', 'km', 'cm', 'ft'],
-            'diametro': ['m', 'mm', 'in'],
-            'potencia': ['watt', 'kilowatt', 'megawatt', 'horsepower', 'cv'],
-            'npsh': ['m', 'ft']
+            'caudal': [f'm{self.ex_3}/s', f'm{self.ex_3}/h', 'L/s'],
+            'altura': ['m'],
+            'comprimento': ['m', 'km', 'cm'],
+            'diametro': ['m', 'mm'],
+            'potencia': ['watt', 'kilowatt', 'megawatt', 'cv'],
+            'npsh': ['m']
         }
 
         self.unidades_imperiais = {

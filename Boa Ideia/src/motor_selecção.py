@@ -1,5 +1,3 @@
-# Em src/motor_selecao.py
-
 import logging
 from typing import List, Dict
 from src.gestor_database import GestorDatabase

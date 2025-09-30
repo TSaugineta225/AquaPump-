@@ -28,6 +28,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 import CoolProp.CoolProp as CP
 from scipy.constants import g
+import qdarkstyle
 
 # ================== Importacoes Locais (GUI) ==================
 from gui.Ui_main import Ui_AquaPump
@@ -47,7 +48,6 @@ from src.historico import HistoricoManager
 from src. gestor_database import GestorDatabase
 from src.Observações import Observacoes
 from src.motor_selecção import MotorSelecao
-from src.path import Path
 from src.web_channel import (
     Dados, Altura_Geometrica, Dimensao_Tubulacao, Acessorios_sistema
 )
@@ -97,7 +97,6 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         # ---------- Inicialização de Classes Internas ----------
         self.animações = Animações()
         self.relatorio_pdf = PDF()
-        self.path = Path()
         self.definicoes = Definicoes(parent=self)
         self.config = Configuracoes()
         self.menu = Menus(parent=self, config=self.config)
@@ -106,7 +105,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.historico_manager = HistoricoManager(self)
         self.janela_sobre = Dialog()
         self.atualizar_parametros_entrada()
-        db_caminho = self.path.caminho_dados(r'data/aquapump.db')
+        db_caminho = self.caminho_dados(r'data/aquapump.db')
         try:
             self.gestor_db = GestorDatabase(db_caminho)
             self.motor_selecao = MotorSelecao(self.gestor_db)
@@ -167,6 +166,16 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.inicializar_graficos()
         self.atualizar_graficos_curvas()
         self.mudanca_dinamica_perdas_carga()
+
+    # ==========================================================
+    #               Carregamento de arquivos
+    # ==========================================================
+    def caminho_dados(self, caminho_relactivo):
+        """Garante que os arquivos sejam carregados tantos nos testes de python como .exe"""
+        if hasattr(sys, '_MEIPASS'):
+            return os.path.join(sys._MEIPASS, caminho_relactivo)
+        return os.path.join(os.path.abspath("."), caminho_relactivo)
+
 
     # ==========================================================
     #                 MÉTODOS DE CÁLCULO
@@ -265,7 +274,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.calcular_altura_manometrica()
 
         # --- 3. Atualização dos gráficos ---
-        #self.atualizar_graficos_curvas()
+        self.atualizar_graficos_curvas()
     
     def calcular_potencia(self):
         """Calcula a potencia em KW"""
@@ -284,23 +293,21 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.grafico_altura = Grafico()
         self.grafico_potencia = Grafico()
         self.grafico_rendimento = Grafico()
-        self.grafico_npsh = Grafico() 
-        self.grafico_associacao_serie = Grafico()
-        self.grafico_associacao_paralelo = Grafico()
+        self.grafico_npsh = Grafico()
 
-        for widget in [self.altura, self.potencia, self.rendimento, self.npsh, self.serie, self.paralelo]:
-            if widget.layout() is not None:
-                while widget.layout().count():
-                    child = widget.layout().takeAt(0)
+
+        for layout in [self.altura.layout(), self.potencia.layout(), self.rendimento.layout()]:
+            if layout is not None:
+                while layout.count():
+                    child = layout.takeAt(0)
                     if child.widget():
                         child.widget().deleteLater()
-
-        self.altura.layout().addWidget(self.grafico_altura)
-        self.potencia.layout().addWidget(self.grafico_potencia)
-        self.rendimento.layout().addWidget(self.grafico_rendimento)
-        self.npsh.layout().addWidget(self.grafico_npsh)
-        self.serie.layout().addWidget(self.grafico_associacao_serie)
-        self.paralelo.layout().addWidget(self.grafico_associacao_paralelo)
+        
+    
+        QVBoxLayout(self.altura).addWidget(self.grafico_altura)
+        QVBoxLayout(self.potencia).addWidget(self.grafico_potencia)
+        QVBoxLayout(self.rendimento).addWidget(self.grafico_rendimento)
+        QVBoxLayout(self.npsh_2).addWidget(self.grafico_npsh) 
 
         self.mudanca_dinamica_perdas_carga()
         self.atualizar_graficos_curvas()
@@ -375,6 +382,16 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             p_op_exibir = self.conversor.converter_potencia(p_op_watt, "watt", u_p)
             eta_op_exibir = eta_op * 100
 
+            # --- D. Curva de NPSH Requerido (NPSHr) Simulada ---
+            npsh_min = 1.5 # m
+            npsh_max = 5.0 # m
+            npsh_plot_m = npsh_min + (npsh_max - npsh_min) * (q_plot_m3s / q_max_m3s)**2
+            npsh_op_m = np.interp(q_op_m3s, q_plot_m3s, npsh_plot_m)
+
+            # Conversão de unidades
+            npsh_exibir = self.conversor.converter_comprimento(npsh_plot_m, "m", u_h)
+            npsh_op_exibir = self.conversor.converter_comprimento(npsh_op_m, "m", u_h)
+
             # ==============================
             # 6. PLOTAGEM
             # ============================== 
@@ -402,91 +419,19 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
                 unidade_vazao=u_q, unidade_y="%",
                 titulo="Rendimento vs. Vazão"
             )
+            
+            # Plotagem do NPSH
+            self.grafico_npsh.plotar_dados(
+                tipo_grafico="NPSH",
+                dados_curva1={"label": "NPSH Requerido (Simulado)", "x": q_plot_exibir, "y": npsh_exibir, "cor": "#9467bd"},
+                ponto_operacao={"x": q_op_exibir, "y": npsh_op_exibir},
+                unidade_vazao=u_q, unidade_y=u_h,
+                titulo="NPSH Requerido vs. Vazão"
+            )
+
 
         except Exception as e:
             logger.error(f"Erro ao atualizar gráficos de simulação: {e}", exc_info=True)
-
-    def atualizar_grafico_associacao_serie(self):
-        """Calcula e plota a associação de duas bombas idênticas em SÉRIE."""
-        try:
-            # 1. Obter dados da curva da bomba simulada (EM SI)
-            # (Esta lógica é semelhante à sua função `atualizar_graficos_curvas`)
-            vazao_m3s = self.vazao if self.vazao > 1e-9 else 0.01
-            altura_m = self.altura_manometrica if self.altura_manometrica > 1e-9 else 10
-            q_plot_m3s = np.linspace(1e-9, vazao_m3s * 1.5, 100)
-            H0 = altura_m * 1.3
-            A = (H0 - altura_m) / (vazao_m3s ** 2)
-            H_bomba_m = np.clip(H0 - A * q_plot_m3s ** 2, 0, None)
-
-            # 2. Calcular a curva de associação em SÉRIE (mesma vazão, altura a dobrar)
-            H_serie_m = H_bomba_m * 2
-
-            # 3. Obter a curva do sistema (EM SI)
-            altura_geometrica_m = self.altura_geometrica_val
-            coef_perda = (altura_m - altura_geometrica_m) / (vazao_m3s ** 2)
-            H_sistema_m = altura_geometrica_m + coef_perda * q_plot_m3s ** 2
-
-            # 4. Converter tudo para unidades de exibição
-            u_q = self.caudal_box.currentText()
-            u_h = self.altura_box.currentText()
-            q_exibir = self.conversor.converter_vazao(q_plot_m3s, "m³/s", u_q)
-            H_bomba_exibir = self.conversor.converter_comprimento(H_bomba_m, "m", u_h)
-            H_serie_exibir = self.conversor.converter_comprimento(H_serie_m, "m", u_h)
-            H_sistema_exibir = self.conversor.converter_comprimento(H_sistema_m, "m", u_h)
-            
-            # 5. Preparar dados e plotar
-            curva_bomba_individual = {'label': '1 Bomba', 'x': q_exibir, 'y': H_bomba_exibir, 'linestyle': ':'}
-            curva_bomba_associada = {'label': '2 Bombas em Série', 'x': q_exibir, 'y': H_serie_exibir}
-            curva_sistema = {'label': 'Curva do Sistema', 'x': q_exibir, 'y': H_sistema_exibir}
-            
-            self.grafico_associacao_serie.plotar_curvas_associacao(
-                "Associação de Bombas em Série (Simulação)", u_q, u_h,
-                curva_sistema, curva_bomba_individual, curva_bomba_associada
-            )
-        except Exception as e:
-            logger.error(f"Erro ao gerar gráfico de associação em série: {e}", exc_info=True)
-
-    def atualizar_grafico_associacao_paralelo(self):
-        """Calcula e plota a associação de duas bombas idênticas em PARALELO."""
-        try:
-            # 1. Obter dados da curva da bomba simulada (EM SI)
-            vazao_m3s = self.vazao if self.vazao > 1e-9 else 0.01
-            altura_m = self.altura_manometrica if self.altura_manometrica > 1e-9 else 10
-            q_plot_m3s = np.linspace(1e-9, vazao_m3s * 1.5, 100)
-            H0 = altura_m * 1.3
-            A = (H0 - altura_m) / (vazao_m3s ** 2)
-            H_bomba_m = np.clip(H0 - A * q_plot_m3s ** 2, 0, None)
-
-            # 2. Calcular a curva de associação em PARALELO (mesma altura, vazão a dobrar)
-            q_paralelo_m3s = q_plot_m3s * 2
-            H_paralelo_m = H_bomba_m # A altura é a mesma, mas para o dobro da vazão
-
-            # 3. Obter a curva do sistema (EM SI) - precisa de um range de vazão maior
-            q_sistema_paralelo = np.linspace(1e-9, (vazao_m3s * 1.5) * 2, 100)
-            altura_geometrica_m = self.altura_geometrica_val
-            coef_perda = (altura_m - altura_geometrica_m) / (vazao_m3s ** 2)
-            H_sistema_m = altura_geometrica_m + coef_perda * q_sistema_paralelo ** 2
-
-            # 4. Converter tudo para unidades de exibição
-            u_q = self.caudal_box.currentText()
-            u_h = self.altura_box.currentText()
-            q_bomba_exibir = self.conversor.converter_vazao(q_plot_m3s, "m³/s", u_q)
-            q_paralelo_exibir = self.conversor.converter_vazao(q_paralelo_m3s, "m³/s", u_q)
-            q_sistema_exibir = self.conversor.converter_vazao(q_sistema_paralelo, "m³/s", u_q)
-            H_bomba_exibir = self.conversor.converter_comprimento(H_bomba_m, "m", u_h)
-            H_sistema_exibir = self.conversor.converter_comprimento(H_sistema_m, "m", u_h)
-            
-            # 5. Preparar dados e plotar
-            curva_bomba_individual = {'label': '1 Bomba', 'x': q_bomba_exibir, 'y': H_bomba_exibir, 'linestyle': ':'}
-            curva_bomba_associada = {'label': '2 Bombas em Paralelo', 'x': q_paralelo_exibir, 'y': H_bomba_exibir}
-            curva_sistema = {'label': 'Curva do Sistema', 'x': q_sistema_exibir, 'y': H_sistema_exibir}
-            
-            self.grafico_associacao_paralelo.plotar_curvas_associacao(
-                "Associação de Bombas em Paralelo (Simulação)", u_q, u_h,
-                curva_sistema, curva_bomba_individual, curva_bomba_associada
-            )
-        except Exception as e:
-            logger.error(f"Erro ao gerar gráfico de associação em paralelo: {e}", exc_info=True)
     
     # ==========================================================
     #                 Dados para Exibicao
@@ -513,8 +458,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             )
 
         except Exception as e:
-            QMessageBox.critical(self, 'ERRO', f'Erro ao converter unidades devido a {e}')
-            return
+            pass
 
     def unidades_exibicao(self):
         """"Retorna as unidades atualmente selecionadas."""
@@ -888,6 +832,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    #app.setStyleSheet(qdarkstyle.load_stylesheet())
     window = MainWindow()
     window.show()
     sys.exit(app.exec())

@@ -230,7 +230,7 @@ class ConexoesUI():
         self.parent.npsh.setVisible(False)
         self.parent.npsh_box.setVisible(False)
         self.parent.groupBox_8.setVisible(False)
-        self.parent.groupBox.setVisible(False)
+        self.parent.groupBox.setVisible(True)
         self.parent.label_8.setVisible(False)
     
     def _connectar_versao_pro(self):

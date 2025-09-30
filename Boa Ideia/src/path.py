@@ -1,4 +1,5 @@
 import os
+import sys
 
 class Path:
     def caminho_dados(self, caminho_relactivo):

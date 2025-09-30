@@ -538,7 +538,7 @@ QPushButton {
              <x>0</x>
              <y>0</y>
              <width>169</width>
-             <height>334</height>
+             <height>329</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -1421,13 +1421,13 @@ QPushButton:hover {
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>0</height>
+                 <height>35</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>450</width>
-                 <height>16777215</height>
+                 <height>35</height>
                 </size>
                </property>
                <property name="styleSheet">
@@ -1440,13 +1440,13 @@ QPushButton:hover {
                <property name="minimumSize">
                 <size>
                  <width>0</width>
-                 <height>30</height>
+                 <height>35</height>
                 </size>
                </property>
                <property name="maximumSize">
                 <size>
                  <width>450</width>
-                 <height>16777215</height>
+                 <height>35</height>
                 </size>
                </property>
                <property name="styleSheet">
@@ -1467,6 +1467,18 @@ QPushButton:hover {
                    <verstretch>0</verstretch>
                   </sizepolicy>
                  </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>35</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>35</height>
+                  </size>
+                 </property>
                  <property name="styleSheet">
                   <string notr="true">QLineEdit {
     border-top-left-radius: 4px;
@@ -1482,10 +1494,16 @@ QPushButton:hover {
                </item>
                <item>
                 <widget class="QComboBox" name="icone_2">
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>35</height>
+                  </size>
+                 </property>
                  <property name="maximumSize">
                   <size>
                    <width>32</width>
-                   <height>16777215</height>
+                   <height>35</height>
                   </size>
                  </property>
                  <property name="styleSheet">
@@ -1519,6 +1537,18 @@ border-left:0px solid  rgba(140, 175, 255, 35);
                    <horstretch>0</horstretch>
                    <verstretch>0</verstretch>
                   </sizepolicy>
+                 </property>
+                 <property name="minimumSize">
+                  <size>
+                   <width>0</width>
+                   <height>35</height>
+                  </size>
+                 </property>
+                 <property name="maximumSize">
+                  <size>
+                   <width>16777215</width>
+                   <height>35</height>
+                  </size>
                  </property>
                  <property name="styleSheet">
                   <string notr="true">QLineEdit {
@@ -1815,29 +1845,12 @@ border-left:0px solid  rgba(140, 175, 255, 35);
                    </property>
                   </widget>
                  </item>
-                 <item>
-                  <widget class="QToolButton" name="expandir_3">
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="icon">
-                    <iconset resource="../img/img.qrc">
-                     <normaloff>:/img/zoom.png</normaloff>:/img/zoom.png</iconset>
-                   </property>
-                   <property name="iconSize">
-                    <size>
-                     <width>24</width>
-                     <height>24</height>
-                    </size>
-                   </property>
-                  </widget>
-                 </item>
                 </layout>
                </item>
                <item>
                 <widget class="QStackedWidget" name="stackedWidget_3">
                  <property name="currentIndex">
-                  <number>1</number>
+                  <number>0</number>
                  </property>
                  <widget class="QWidget" name="page_3">
                   <layout class="QHBoxLayout" name="horizontalLayout_14">
@@ -1902,6 +1915,72 @@ border-left:0px solid  rgba(140, 175, 255, 35);
                    </property>
                    <item>
                     <widget class="QWidget" name="rendimento" native="true"/>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="page_7">
+                  <layout class="QVBoxLayout" name="verticalLayout_12">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QWidget" name="npsh_2" native="true"/>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="page_8">
+                  <layout class="QVBoxLayout" name="verticalLayout_36">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QWidget" name="serie" native="true"/>
+                   </item>
+                  </layout>
+                 </widget>
+                 <widget class="QWidget" name="page_9">
+                  <layout class="QVBoxLayout" name="verticalLayout_37">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <property name="leftMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="topMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="rightMargin">
+                    <number>0</number>
+                   </property>
+                   <property name="bottomMargin">
+                    <number>0</number>
+                   </property>
+                   <item>
+                    <widget class="QWidget" name="paralelo" native="true"/>
                    </item>
                   </layout>
                  </widget>
@@ -1997,7 +2076,7 @@ QPushButton:hover {
                  <x>0</x>
                  <y>0</y>
                  <width>168</width>
-                 <height>135</height>
+                 <height>547</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_14">
@@ -2115,7 +2194,7 @@ QPushButton:hover {
                   </sizepolicy>
                  </property>
                  <property name="currentIndex">
-                  <number>3</number>
+                  <number>0</number>
                  </property>
                  <widget class="QWidget" name="geral_2">
                   <layout class="QVBoxLayout" name="verticalLayout_16">

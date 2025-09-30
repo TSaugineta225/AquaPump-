@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'mainMoxVPT.ui'
+## Form generated from reading UI file 'mainEIyyzY.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.9.1
+## Created by: Qt User Interface Compiler version 6.9.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -398,7 +398,7 @@ class Ui_AquaPump(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 169, 334))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 169, 329))
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.projecto_2 = QPushButton(self.scrollAreaWidgetContents)
@@ -898,16 +898,16 @@ class Ui_AquaPump(object):
         sizePolicy3.setVerticalStretch(0)
         sizePolicy3.setHeightForWidth(self.darcy.sizePolicy().hasHeightForWidth())
         self.darcy.setSizePolicy(sizePolicy3)
-        self.darcy.setMinimumSize(QSize(0, 0))
-        self.darcy.setMaximumSize(QSize(450, 16777215))
+        self.darcy.setMinimumSize(QSize(0, 35))
+        self.darcy.setMaximumSize(QSize(450, 35))
         self.darcy.setStyleSheet(u"")
 
         self.horizontalLayout.addWidget(self.darcy)
 
         self.hazen_will = QComboBox(self.page)
         self.hazen_will.setObjectName(u"hazen_will")
-        self.hazen_will.setMinimumSize(QSize(0, 30))
-        self.hazen_will.setMaximumSize(QSize(450, 16777215))
+        self.hazen_will.setMinimumSize(QSize(0, 35))
+        self.hazen_will.setMaximumSize(QSize(450, 35))
         self.hazen_will.setStyleSheet(u"")
 
         self.horizontalLayout.addWidget(self.hazen_will)
@@ -922,6 +922,8 @@ class Ui_AquaPump(object):
         sizePolicy4.setVerticalStretch(0)
         sizePolicy4.setHeightForWidth(self.Vazao_2.sizePolicy().hasHeightForWidth())
         self.Vazao_2.setSizePolicy(sizePolicy4)
+        self.Vazao_2.setMinimumSize(QSize(0, 35))
+        self.Vazao_2.setMaximumSize(QSize(16777215, 35))
         self.Vazao_2.setStyleSheet(u"QLineEdit {\n"
 "    border-top-left-radius: 4px;\n"
 "    border-bottom-left-radius: 4px;\n"
@@ -936,7 +938,8 @@ class Ui_AquaPump(object):
 
         self.icone_2 = QComboBox(self.page)
         self.icone_2.setObjectName(u"icone_2")
-        self.icone_2.setMaximumSize(QSize(32, 16777215))
+        self.icone_2.setMinimumSize(QSize(0, 35))
+        self.icone_2.setMaximumSize(QSize(32, 35))
         self.icone_2.setStyleSheet(u"QComboBox {\n"
 "    border-top: 1px solid rgba(140, 175, 255, 35);\n"
 "    border-top-left-radius: 0px;\n"
@@ -963,6 +966,8 @@ class Ui_AquaPump(object):
         self.Vazao.setObjectName(u"Vazao")
         sizePolicy4.setHeightForWidth(self.Vazao.sizePolicy().hasHeightForWidth())
         self.Vazao.setSizePolicy(sizePolicy4)
+        self.Vazao.setMinimumSize(QSize(0, 35))
+        self.Vazao.setMaximumSize(QSize(16777215, 35))
         self.Vazao.setStyleSheet(u"QLineEdit {\n"
 "    border-radius: 4px;\n"
 "\n"
@@ -1101,13 +1106,6 @@ class Ui_AquaPump(object):
 
         self.horizontalLayout_12.addWidget(self.actualizar_grafico)
 
-        self.expandir_3 = QToolButton(self.janel_direita)
-        self.expandir_3.setObjectName(u"expandir_3")
-        self.expandir_3.setIcon(icon17)
-        self.expandir_3.setIconSize(QSize(24, 24))
-
-        self.horizontalLayout_12.addWidget(self.expandir_3)
-
 
         self.verticalLayout_9.addLayout(self.horizontalLayout_12)
 
@@ -1149,6 +1147,42 @@ class Ui_AquaPump(object):
         self.verticalLayout_10.addWidget(self.rendimento)
 
         self.stackedWidget_3.addWidget(self.page_4)
+        self.page_7 = QWidget()
+        self.page_7.setObjectName(u"page_7")
+        self.verticalLayout_12 = QVBoxLayout(self.page_7)
+        self.verticalLayout_12.setSpacing(0)
+        self.verticalLayout_12.setObjectName(u"verticalLayout_12")
+        self.verticalLayout_12.setContentsMargins(0, 0, 0, 0)
+        self.npsh_2 = QWidget(self.page_7)
+        self.npsh_2.setObjectName(u"npsh_2")
+
+        self.verticalLayout_12.addWidget(self.npsh_2)
+
+        self.stackedWidget_3.addWidget(self.page_7)
+        self.page_8 = QWidget()
+        self.page_8.setObjectName(u"page_8")
+        self.verticalLayout_36 = QVBoxLayout(self.page_8)
+        self.verticalLayout_36.setSpacing(0)
+        self.verticalLayout_36.setObjectName(u"verticalLayout_36")
+        self.verticalLayout_36.setContentsMargins(0, 0, 0, 0)
+        self.serie = QWidget(self.page_8)
+        self.serie.setObjectName(u"serie")
+
+        self.verticalLayout_36.addWidget(self.serie)
+
+        self.stackedWidget_3.addWidget(self.page_8)
+        self.page_9 = QWidget()
+        self.page_9.setObjectName(u"page_9")
+        self.verticalLayout_37 = QVBoxLayout(self.page_9)
+        self.verticalLayout_37.setSpacing(0)
+        self.verticalLayout_37.setObjectName(u"verticalLayout_37")
+        self.verticalLayout_37.setContentsMargins(0, 0, 0, 0)
+        self.paralelo = QWidget(self.page_9)
+        self.paralelo.setObjectName(u"paralelo")
+
+        self.verticalLayout_37.addWidget(self.paralelo)
+
+        self.stackedWidget_3.addWidget(self.page_9)
 
         self.verticalLayout_9.addWidget(self.stackedWidget_3)
 
@@ -1219,7 +1253,7 @@ class Ui_AquaPump(object):
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollAreaWidgetContents_3 = QWidget()
         self.scrollAreaWidgetContents_3.setObjectName(u"scrollAreaWidgetContents_3")
-        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 168, 135))
+        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 168, 547))
         self.verticalLayout_14 = QVBoxLayout(self.scrollAreaWidgetContents_3)
         self.verticalLayout_14.setSpacing(10)
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
@@ -1951,8 +1985,8 @@ class Ui_AquaPump(object):
 
         self.projecto_2.setDefault(True)
         self.stackedWidget.setCurrentIndex(0)
-        self.stackedWidget_3.setCurrentIndex(1)
-        self.janela_definicoes.setCurrentIndex(3)
+        self.stackedWidget_3.setCurrentIndex(0)
+        self.janela_definicoes.setCurrentIndex(0)
 
 
         QMetaObject.connectSlotsByName(AquaPump)
@@ -2018,7 +2052,6 @@ class Ui_AquaPump(object):
         self.actualizar_grafico.setToolTip(QCoreApplication.translate("AquaPump", u"Actualizar Gr\u00e1ficos", None))
 #endif // QT_CONFIG(tooltip)
         self.actualizar_grafico.setText("")
-        self.expandir_3.setText("")
         self.label_11.setText(QCoreApplication.translate("AquaPump", u"Defini\u00e7\u00f5es", None))
         self.geral.setText(QCoreApplication.translate("AquaPump", u"Geral", None))
         self.unidades.setText(QCoreApplication.translate("AquaPump", u"Unidades", None))
