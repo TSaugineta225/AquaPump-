@@ -22,7 +22,7 @@ class ConexoesUI():
         self._conectar_botoes_sair()
         self._conectar_pesquisa()
         self._perda_carga_dinamica()
-        self._conectar_actualizao_graph()
+       # self._conectar_actualizao_graph()
         self._connectar_actualizacao_unidades()
         #self._connectar_actualizacao_unidades_graficos()
         self._conectar_geracao_relatorio() 
@@ -116,9 +116,9 @@ class ConexoesUI():
     def _conectar_menus(self):
         """Conecta os botões da barra de título aos seus respectivos menus."""
 
-        self.parent.definicoes_direita_2.clicked.connect(
+        self.parent.definicoes_direita_3.clicked.connect(
             lambda: self.menu.menu_selecao_graficos().popup(
-                self.parent.definicoes_direita_2.mapToGlobal(self.parent.definicoes_direita_2.rect().bottomRight())
+                self.parent.definicoes_direita_3.mapToGlobal(self.parent.definicoes_direita_3.rect().bottomRight())
             )
         )
         self.parent.arquivo_2.clicked.connect(
@@ -190,13 +190,14 @@ class ConexoesUI():
         self.parent.rel.clicked.connect(self.parent.selecionar_melhor_bomba)
         self.parent.relatorio_3.clicked.connect(self.parent.selecionar_melhor_bomba)
         self.parent.voltar_2.clicked.connect(lambda: self.parent.stackedWidget.setCurrentIndex(0))
-        self.parent.proxima.clicked.connect(self.parent.proxima_sugestao)
-        self.parent.anterior.clicked.connect(self.parent.sugestao_anterior)
         #self.parent.parent.selecionar.clicked.connect(self.parent.selecionar_melhor_bomba)
 
     def _connectar_abrir_graph(self):
         self.parent.grafico_icon.clicked.connect(lambda: self.animacoes.largura(self.parent.janel_direita, largura_alvo=500))
         self.parent.grafico.clicked.connect(lambda: self.animacoes.largura(self.parent.janel_direita, largura_alvo=500))
+
+        self.parent.calculos.clicked.connect(lambda: self.animacoes.altura(self.parent.scrollArea_5, altura=200))
+        self.parent.graficos.clicked.connect(lambda: self.animacoes.altura(self.parent.janela_graficos, altura=800))
 
     def _connectar_actualizacao_unidades(self):
         self.parent.icone_2.currentTextChanged.connect(self.parent.atualizar_parametros_entrada)
@@ -232,6 +233,8 @@ class ConexoesUI():
         self.parent.groupBox_8.setVisible(False)
         self.parent.groupBox.setVisible(True)
         self.parent.label_8.setVisible(False)
+        self.parent.anterior.setVisible(False)
+        self.parent.proxima.setVisible(False)
     
     def _connectar_versao_pro(self):
         msg = QMessageBox(self.parent)

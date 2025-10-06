@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'mainEIyyzY.ui'
+## Form generated from reading UI file 'mainsDYDqJ.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -28,7 +28,7 @@ class Ui_AquaPump(object):
     def setupUi(self, AquaPump):
         if not AquaPump.objectName():
             AquaPump.setObjectName(u"AquaPump")
-        AquaPump.resize(940, 674)
+        AquaPump.resize(994, 632)
         AquaPump.setStyleSheet(u"/* --------- QWidget (Geral) --------- */\n"
 "QWidget {\n"
 "    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
@@ -398,7 +398,7 @@ class Ui_AquaPump(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 169, 329))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 169, 287))
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.projecto_2 = QPushButton(self.scrollAreaWidgetContents)
@@ -1061,102 +1061,259 @@ class Ui_AquaPump(object):
         self.janel_direita.setMaximumSize(QSize(0, 16777215))
         self.janel_direita.setStyleSheet(u"")
         self.verticalLayout_9 = QVBoxLayout(self.janel_direita)
-        self.verticalLayout_9.setSpacing(0)
+        self.verticalLayout_9.setSpacing(6)
         self.verticalLayout_9.setObjectName(u"verticalLayout_9")
         self.verticalLayout_9.setContentsMargins(0, 0, 0, 0)
-        self.horizontalLayout_12 = QHBoxLayout()
-        self.horizontalLayout_12.setObjectName(u"horizontalLayout_12")
+        self.horizontalLayout_2 = QHBoxLayout()
+        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.fechar_lateral_2 = QToolButton(self.janel_direita)
         self.fechar_lateral_2.setObjectName(u"fechar_lateral_2")
         icon18 = QIcon()
-        icon18.addFile(u":/img/right_panel_close.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon18.addFile(u":/img/rigth_close.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         self.fechar_lateral_2.setIcon(icon18)
         self.fechar_lateral_2.setIconSize(QSize(24, 24))
 
-        self.horizontalLayout_12.addWidget(self.fechar_lateral_2)
+        self.horizontalLayout_2.addWidget(self.fechar_lateral_2)
 
-        self.horizontalSpacer_6 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+        self.horizontalSpacer_4 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
-        self.horizontalLayout_12.addItem(self.horizontalSpacer_6)
-
-        self.label_2 = QLabel(self.janel_direita)
-        self.label_2.setObjectName(u"label_2")
-        self.label_2.setStyleSheet(u"color: rgb(181, 181, 181);")
-
-        self.horizontalLayout_12.addWidget(self.label_2)
-
-        self.horizontalSpacer_7 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
-
-        self.horizontalLayout_12.addItem(self.horizontalSpacer_7)
-
-        self.definicoes_direita_2 = QToolButton(self.janel_direita)
-        self.definicoes_direita_2.setObjectName(u"definicoes_direita_2")
-        self.definicoes_direita_2.setStyleSheet(u"padding-right: 15px")
-        self.definicoes_direita_2.setIcon(icon16)
-        self.definicoes_direita_2.setIconSize(QSize(24, 24))
-
-        self.horizontalLayout_12.addWidget(self.definicoes_direita_2)
-
-        self.actualizar_grafico = QToolButton(self.janel_direita)
-        self.actualizar_grafico.setObjectName(u"actualizar_grafico")
-        icon19 = QIcon()
-        icon19.addFile(u":/img/refresh.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.actualizar_grafico.setIcon(icon19)
-        self.actualizar_grafico.setIconSize(QSize(20, 20))
-
-        self.horizontalLayout_12.addWidget(self.actualizar_grafico)
+        self.horizontalLayout_2.addItem(self.horizontalSpacer_4)
 
 
-        self.verticalLayout_9.addLayout(self.horizontalLayout_12)
+        self.verticalLayout_9.addLayout(self.horizontalLayout_2)
 
-        self.stackedWidget_3 = QStackedWidget(self.janel_direita)
-        self.stackedWidget_3.setObjectName(u"stackedWidget_3")
-        self.page_3 = QWidget()
-        self.page_3.setObjectName(u"page_3")
-        self.horizontalLayout_14 = QHBoxLayout(self.page_3)
-        self.horizontalLayout_14.setSpacing(0)
-        self.horizontalLayout_14.setObjectName(u"horizontalLayout_14")
-        self.horizontalLayout_14.setContentsMargins(0, 0, 0, 0)
-        self.altura = QWidget(self.page_3)
-        self.altura.setObjectName(u"altura")
-
-        self.horizontalLayout_14.addWidget(self.altura)
-
-        self.stackedWidget_3.addWidget(self.page_3)
-        self.page_5 = QWidget()
-        self.page_5.setObjectName(u"page_5")
-        self.horizontalLayout_15 = QHBoxLayout(self.page_5)
-        self.horizontalLayout_15.setSpacing(0)
-        self.horizontalLayout_15.setObjectName(u"horizontalLayout_15")
-        self.horizontalLayout_15.setContentsMargins(0, 0, 0, 0)
-        self.potencia = QWidget(self.page_5)
-        self.potencia.setObjectName(u"potencia")
-
-        self.horizontalLayout_15.addWidget(self.potencia)
-
-        self.stackedWidget_3.addWidget(self.page_5)
-        self.page_4 = QWidget()
-        self.page_4.setObjectName(u"page_4")
-        self.verticalLayout_10 = QVBoxLayout(self.page_4)
-        self.verticalLayout_10.setSpacing(0)
+        self.scrollArea_2 = QScrollArea(self.janel_direita)
+        self.scrollArea_2.setObjectName(u"scrollArea_2")
+        self.scrollArea_2.setStyleSheet(u"QScrollArea {\n"
+"border:None\n"
+"}")
+        self.scrollArea_2.setWidgetResizable(True)
+        self.scrollAreaWidgetContents_2 = QWidget()
+        self.scrollAreaWidgetContents_2.setObjectName(u"scrollAreaWidgetContents_2")
+        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 256, 287))
+        self.verticalLayout_10 = QVBoxLayout(self.scrollAreaWidgetContents_2)
+        self.verticalLayout_10.setSpacing(2)
         self.verticalLayout_10.setObjectName(u"verticalLayout_10")
         self.verticalLayout_10.setContentsMargins(0, 0, 0, 0)
-        self.rendimento = QWidget(self.page_4)
-        self.rendimento.setObjectName(u"rendimento")
+        self.calculos = QPushButton(self.scrollAreaWidgetContents_2)
+        self.calculos.setObjectName(u"calculos")
+        self.calculos.setStyleSheet(u"QPushButton {background-color: rgba(140, 175, 255, 35);\n"
+"border:none}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color:rgba(165, 186, 255, 100);\n"
+"\n"
+"}\n"
+"QPushButton:checked {\n"
+"    background-color: rgba(100, 140, 255, 150);\n"
+"}")
+        self.calculos.setCheckable(True)
 
-        self.verticalLayout_10.addWidget(self.rendimento)
+        self.verticalLayout_10.addWidget(self.calculos)
 
-        self.stackedWidget_3.addWidget(self.page_4)
-        self.page_7 = QWidget()
-        self.page_7.setObjectName(u"page_7")
-        self.verticalLayout_12 = QVBoxLayout(self.page_7)
-        self.verticalLayout_12.setSpacing(0)
+        self.scrollArea_5 = QScrollArea(self.scrollAreaWidgetContents_2)
+        self.scrollArea_5.setObjectName(u"scrollArea_5")
+        self.scrollArea_5.setMaximumSize(QSize(16777215, 0))
+        self.scrollArea_5.setWidgetResizable(True)
+        self.scrollAreaWidgetContents_5 = QWidget()
+        self.scrollAreaWidgetContents_5.setObjectName(u"scrollAreaWidgetContents_5")
+        self.scrollAreaWidgetContents_5.setGeometry(QRect(0, 0, 239, 203))
+        self.verticalLayout_12 = QVBoxLayout(self.scrollAreaWidgetContents_5)
+        self.verticalLayout_12.setSpacing(10)
         self.verticalLayout_12.setObjectName(u"verticalLayout_12")
         self.verticalLayout_12.setContentsMargins(0, 0, 0, 0)
-        self.npsh_2 = QWidget(self.page_7)
-        self.npsh_2.setObjectName(u"npsh_2")
+        self.horizontalLayout_27 = QHBoxLayout()
+        self.horizontalLayout_27.setObjectName(u"horizontalLayout_27")
+        self.vazao_label_2 = QLabel(self.scrollAreaWidgetContents_5)
+        self.vazao_label_2.setObjectName(u"vazao_label_2")
+        self.vazao_label_2.setMinimumSize(QSize(150, 0))
 
-        self.verticalLayout_12.addWidget(self.npsh_2)
+        self.horizontalLayout_27.addWidget(self.vazao_label_2)
+
+        self.vazao_resul = QLabel(self.scrollAreaWidgetContents_5)
+        self.vazao_resul.setObjectName(u"vazao_resul")
+
+        self.horizontalLayout_27.addWidget(self.vazao_resul)
+
+
+        self.verticalLayout_12.addLayout(self.horizontalLayout_27)
+
+        self.horizontalLayout_23 = QHBoxLayout()
+        self.horizontalLayout_23.setObjectName(u"horizontalLayout_23")
+        self.diametro_label = QLabel(self.scrollAreaWidgetContents_5)
+        self.diametro_label.setObjectName(u"diametro_label")
+        self.diametro_label.setMinimumSize(QSize(150, 0))
+
+        self.horizontalLayout_23.addWidget(self.diametro_label)
+
+        self.diametro_resul = QLabel(self.scrollAreaWidgetContents_5)
+        self.diametro_resul.setObjectName(u"diametro_resul")
+
+        self.horizontalLayout_23.addWidget(self.diametro_resul)
+
+
+        self.verticalLayout_12.addLayout(self.horizontalLayout_23)
+
+        self.horizontalLayout_32 = QHBoxLayout()
+        self.horizontalLayout_32.setObjectName(u"horizontalLayout_32")
+        self.label_14 = QLabel(self.scrollAreaWidgetContents_5)
+        self.label_14.setObjectName(u"label_14")
+        self.label_14.setMinimumSize(QSize(150, 0))
+
+        self.horizontalLayout_32.addWidget(self.label_14)
+
+        self.seccao_resul = QLabel(self.scrollAreaWidgetContents_5)
+        self.seccao_resul.setObjectName(u"seccao_resul")
+
+        self.horizontalLayout_32.addWidget(self.seccao_resul)
+
+
+        self.verticalLayout_12.addLayout(self.horizontalLayout_32)
+
+        self.horizontalLayout_20 = QHBoxLayout()
+        self.horizontalLayout_20.setObjectName(u"horizontalLayout_20")
+        self.label = QLabel(self.scrollAreaWidgetContents_5)
+        self.label.setObjectName(u"label")
+        self.label.setMinimumSize(QSize(150, 0))
+
+        self.horizontalLayout_20.addWidget(self.label)
+
+        self.velocidade_resul = QLabel(self.scrollAreaWidgetContents_5)
+        self.velocidade_resul.setObjectName(u"velocidade_resul")
+
+        self.horizontalLayout_20.addWidget(self.velocidade_resul)
+
+
+        self.verticalLayout_12.addLayout(self.horizontalLayout_20)
+
+        self.horizontalLayout_15 = QHBoxLayout()
+        self.horizontalLayout_15.setObjectName(u"horizontalLayout_15")
+        self.label_2 = QLabel(self.scrollAreaWidgetContents_5)
+        self.label_2.setObjectName(u"label_2")
+        self.label_2.setMinimumSize(QSize(150, 0))
+
+        self.horizontalLayout_15.addWidget(self.label_2)
+
+        self.perdas_resul = QLabel(self.scrollAreaWidgetContents_5)
+        self.perdas_resul.setObjectName(u"perdas_resul")
+
+        self.horizontalLayout_15.addWidget(self.perdas_resul)
+
+
+        self.verticalLayout_12.addLayout(self.horizontalLayout_15)
+
+        self.horizontalLayout_14 = QHBoxLayout()
+        self.horizontalLayout_14.setObjectName(u"horizontalLayout_14")
+        self.label_5 = QLabel(self.scrollAreaWidgetContents_5)
+        self.label_5.setObjectName(u"label_5")
+        self.label_5.setMinimumSize(QSize(150, 0))
+
+        self.horizontalLayout_14.addWidget(self.label_5)
+
+        self.label_18 = QLabel(self.scrollAreaWidgetContents_5)
+        self.label_18.setObjectName(u"label_18")
+
+        self.horizontalLayout_14.addWidget(self.label_18)
+
+
+        self.verticalLayout_12.addLayout(self.horizontalLayout_14)
+
+        self.horizontalLayout_12 = QHBoxLayout()
+        self.horizontalLayout_12.setObjectName(u"horizontalLayout_12")
+        self.label_13 = QLabel(self.scrollAreaWidgetContents_5)
+        self.label_13.setObjectName(u"label_13")
+        self.label_13.setMinimumSize(QSize(150, 0))
+
+        self.horizontalLayout_12.addWidget(self.label_13)
+
+        self.label_19 = QLabel(self.scrollAreaWidgetContents_5)
+        self.label_19.setObjectName(u"label_19")
+
+        self.horizontalLayout_12.addWidget(self.label_19)
+
+
+        self.verticalLayout_12.addLayout(self.horizontalLayout_12)
+
+        self.verticalSpacer_7 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout_12.addItem(self.verticalSpacer_7)
+
+        self.scrollArea_5.setWidget(self.scrollAreaWidgetContents_5)
+
+        self.verticalLayout_10.addWidget(self.scrollArea_5)
+
+        self.graficos = QPushButton(self.scrollAreaWidgetContents_2)
+        self.graficos.setObjectName(u"graficos")
+        self.graficos.setStyleSheet(u"QPushButton {background-color: rgba(140, 175, 255, 35);\n"
+"border:none}\n"
+"\n"
+"QPushButton:hover {\n"
+"    background-color:rgba(165, 186, 255, 100);\n"
+"\n"
+"}\n"
+"\n"
+"QPushButton:checked {\n"
+"    background-color: rgba(100, 140, 255, 150);\n"
+"}")
+        self.graficos.setCheckable(True)
+
+        self.verticalLayout_10.addWidget(self.graficos)
+
+        self.janela_graficos = QWidget(self.scrollAreaWidgetContents_2)
+        self.janela_graficos.setObjectName(u"janela_graficos")
+        self.janela_graficos.setMinimumSize(QSize(0, 0))
+        self.janela_graficos.setMaximumSize(QSize(16777215, 0))
+        self.verticalLayout_40 = QVBoxLayout(self.janela_graficos)
+        self.verticalLayout_40.setSpacing(0)
+        self.verticalLayout_40.setObjectName(u"verticalLayout_40")
+        self.verticalLayout_40.setContentsMargins(0, 0, 0, 0)
+        self.horizontalLayout_31 = QHBoxLayout()
+        self.horizontalLayout_31.setObjectName(u"horizontalLayout_31")
+        self.label_21 = QLabel(self.janela_graficos)
+        self.label_21.setObjectName(u"label_21")
+        self.label_21.setStyleSheet(u"color: rgb(181, 181, 181);")
+
+        self.horizontalLayout_31.addWidget(self.label_21)
+
+        self.horizontalSpacer_9 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_31.addItem(self.horizontalSpacer_9)
+
+        self.definicoes_direita_3 = QToolButton(self.janela_graficos)
+        self.definicoes_direita_3.setObjectName(u"definicoes_direita_3")
+        self.definicoes_direita_3.setStyleSheet(u"padding-right: 15px")
+        self.definicoes_direita_3.setIcon(icon16)
+        self.definicoes_direita_3.setIconSize(QSize(24, 24))
+
+        self.horizontalLayout_31.addWidget(self.definicoes_direita_3)
+
+
+        self.verticalLayout_40.addLayout(self.horizontalLayout_31)
+
+        self.stackedWidget_3 = QStackedWidget(self.janela_graficos)
+        self.stackedWidget_3.setObjectName(u"stackedWidget_3")
+        self.page_5 = QWidget()
+        self.page_5.setObjectName(u"page_5")
+        self.horizontalLayout_29 = QHBoxLayout(self.page_5)
+        self.horizontalLayout_29.setSpacing(0)
+        self.horizontalLayout_29.setObjectName(u"horizontalLayout_29")
+        self.horizontalLayout_29.setContentsMargins(0, 0, 0, 0)
+        self.altura = QWidget(self.page_5)
+        self.altura.setObjectName(u"altura")
+
+        self.horizontalLayout_29.addWidget(self.altura)
+
+        self.stackedWidget_3.addWidget(self.page_5)
+        self.page_7 = QWidget()
+        self.page_7.setObjectName(u"page_7")
+        self.horizontalLayout_30 = QHBoxLayout(self.page_7)
+        self.horizontalLayout_30.setSpacing(0)
+        self.horizontalLayout_30.setObjectName(u"horizontalLayout_30")
+        self.horizontalLayout_30.setContentsMargins(0, 0, 0, 0)
+        self.potencia = QWidget(self.page_7)
+        self.potencia.setObjectName(u"potencia")
+
+        self.horizontalLayout_30.addWidget(self.potencia)
 
         self.stackedWidget_3.addWidget(self.page_7)
         self.page_8 = QWidget()
@@ -1165,10 +1322,10 @@ class Ui_AquaPump(object):
         self.verticalLayout_36.setSpacing(0)
         self.verticalLayout_36.setObjectName(u"verticalLayout_36")
         self.verticalLayout_36.setContentsMargins(0, 0, 0, 0)
-        self.serie = QWidget(self.page_8)
-        self.serie.setObjectName(u"serie")
+        self.rendimento = QWidget(self.page_8)
+        self.rendimento.setObjectName(u"rendimento")
 
-        self.verticalLayout_36.addWidget(self.serie)
+        self.verticalLayout_36.addWidget(self.rendimento)
 
         self.stackedWidget_3.addWidget(self.page_8)
         self.page_9 = QWidget()
@@ -1177,14 +1334,49 @@ class Ui_AquaPump(object):
         self.verticalLayout_37.setSpacing(0)
         self.verticalLayout_37.setObjectName(u"verticalLayout_37")
         self.verticalLayout_37.setContentsMargins(0, 0, 0, 0)
-        self.paralelo = QWidget(self.page_9)
-        self.paralelo.setObjectName(u"paralelo")
+        self.npsh_2 = QWidget(self.page_9)
+        self.npsh_2.setObjectName(u"npsh_2")
 
-        self.verticalLayout_37.addWidget(self.paralelo)
+        self.verticalLayout_37.addWidget(self.npsh_2)
 
         self.stackedWidget_3.addWidget(self.page_9)
+        self.page_10 = QWidget()
+        self.page_10.setObjectName(u"page_10")
+        self.verticalLayout_38 = QVBoxLayout(self.page_10)
+        self.verticalLayout_38.setSpacing(0)
+        self.verticalLayout_38.setObjectName(u"verticalLayout_38")
+        self.verticalLayout_38.setContentsMargins(0, 0, 0, 0)
+        self.serie = QWidget(self.page_10)
+        self.serie.setObjectName(u"serie")
 
-        self.verticalLayout_9.addWidget(self.stackedWidget_3)
+        self.verticalLayout_38.addWidget(self.serie)
+
+        self.stackedWidget_3.addWidget(self.page_10)
+        self.page_11 = QWidget()
+        self.page_11.setObjectName(u"page_11")
+        self.verticalLayout_39 = QVBoxLayout(self.page_11)
+        self.verticalLayout_39.setSpacing(0)
+        self.verticalLayout_39.setObjectName(u"verticalLayout_39")
+        self.verticalLayout_39.setContentsMargins(0, 0, 0, 0)
+        self.paralelo = QWidget(self.page_11)
+        self.paralelo.setObjectName(u"paralelo")
+
+        self.verticalLayout_39.addWidget(self.paralelo)
+
+        self.stackedWidget_3.addWidget(self.page_11)
+
+        self.verticalLayout_40.addWidget(self.stackedWidget_3)
+
+
+        self.verticalLayout_10.addWidget(self.janela_graficos)
+
+        self.verticalSpacer_8 = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+
+        self.verticalLayout_10.addItem(self.verticalSpacer_8)
+
+        self.scrollArea_2.setWidget(self.scrollAreaWidgetContents_2)
+
+        self.verticalLayout_9.addWidget(self.scrollArea_2)
 
         self.splitter_2.addWidget(self.janel_direita)
 
@@ -1253,7 +1445,7 @@ class Ui_AquaPump(object):
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollAreaWidgetContents_3 = QWidget()
         self.scrollAreaWidgetContents_3.setObjectName(u"scrollAreaWidgetContents_3")
-        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 168, 547))
+        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 168, 135))
         self.verticalLayout_14 = QVBoxLayout(self.scrollAreaWidgetContents_3)
         self.verticalLayout_14.setSpacing(10)
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
@@ -1262,9 +1454,9 @@ class Ui_AquaPump(object):
         self.geral.setObjectName(u"geral")
         self.geral.setMinimumSize(QSize(0, 0))
         self.geral.setMaximumSize(QSize(20000, 16777215))
-        icon20 = QIcon()
-        icon20.addFile(u":/img/geral.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.geral.setIcon(icon20)
+        icon19 = QIcon()
+        icon19.addFile(u":/img/geral.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.geral.setIcon(icon19)
         self.geral.setIconSize(QSize(16, 16))
         self.geral.setCheckable(True)
         self.geral.setChecked(True)
@@ -1274,9 +1466,9 @@ class Ui_AquaPump(object):
 
         self.unidades = QPushButton(self.scrollAreaWidgetContents_3)
         self.unidades.setObjectName(u"unidades")
-        icon21 = QIcon()
-        icon21.addFile(u":/img/unidades.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.unidades.setIcon(icon21)
+        icon20 = QIcon()
+        icon20.addFile(u":/img/unidades.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.unidades.setIcon(icon20)
         self.unidades.setIconSize(QSize(16, 16))
         self.unidades.setCheckable(True)
         self.unidades.setAutoExclusive(True)
@@ -1285,9 +1477,9 @@ class Ui_AquaPump(object):
 
         self.banco_dados = QPushButton(self.scrollAreaWidgetContents_3)
         self.banco_dados.setObjectName(u"banco_dados")
-        icon22 = QIcon()
-        icon22.addFile(u":/img/dados.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
-        self.banco_dados.setIcon(icon22)
+        icon21 = QIcon()
+        icon21.addFile(u":/img/dados.png", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        self.banco_dados.setIcon(icon21)
         self.banco_dados.setCheckable(True)
         self.banco_dados.setAutoExclusive(True)
 
@@ -2021,7 +2213,7 @@ class Ui_AquaPump(object):
         self.exportar_pdf.setText(QCoreApplication.translate("AquaPump", u"Exportar em PDF", None))
         self.exportar_csv.setText(QCoreApplication.translate("AquaPump", u"Exportar em CSV", None))
         self.rel.setText(QCoreApplication.translate("AquaPump", u"Selec\u00e7\u00e3o de Bombas", None))
-        self.grafico.setText(QCoreApplication.translate("AquaPump", u"Gr\u00e1ficos ", None))
+        self.grafico.setText(QCoreApplication.translate("AquaPump", u"C\u00e1lculos e Gr\u00e1ficos", None))
         self.pushButton_3.setText(QCoreApplication.translate("AquaPump", u"Actualizar (PRO)", None))
         self.configuracoes.setText(QCoreApplication.translate("AquaPump", u"Configura\u00e7\u00f5es ", None))
         self.sair_2.setText(QCoreApplication.translate("AquaPump", u"Sair", None))
@@ -2033,25 +2225,37 @@ class Ui_AquaPump(object):
         self.projeto.setText("")
         self.exportar_2.setText("")
         self.relatorio_3.setText("")
+#if QT_CONFIG(tooltip)
+        self.grafico_icon.setToolTip(QCoreApplication.translate("AquaPump", u"C\u00e1lculos e Gr\u00e1ficos", None))
+#endif // QT_CONFIG(tooltip)
         self.grafico_icon.setText("")
         self.configuracoes_2.setText("")
         self.sair_3.setText("")
         self.fechar_perfil.setText("")
         self.opcoes_perfil.setText("")
         self.expandir_2.setText("")
-#if QT_CONFIG(tooltip)
-        self.fechar_lateral_2.setToolTip(QCoreApplication.translate("AquaPump", u"Fechar Janela", None))
-#endif // QT_CONFIG(tooltip)
         self.fechar_lateral_2.setText("")
-        self.label_2.setText(QCoreApplication.translate("AquaPump", u" Curva H vs Q (Altura vs Vaz\u00e3o) ", None))
+        self.calculos.setText(QCoreApplication.translate("AquaPump", u"C\u00e1lculos ", None))
+        self.vazao_label_2.setText(QCoreApplication.translate("AquaPump", u"Vaz\u00e3o:", None))
+        self.vazao_resul.setText(QCoreApplication.translate("AquaPump", u"-- L/s", None))
+        self.diametro_label.setText(QCoreApplication.translate("AquaPump", u"Di\u00e2metro de Recalque:", None))
+        self.diametro_resul.setText(QCoreApplication.translate("AquaPump", u"-- m", None))
+        self.label_14.setText(QCoreApplication.translate("AquaPump", u"\u00c1rea da Sec\u00e7\u00e3o:", None))
+        self.seccao_resul.setText(QCoreApplication.translate("AquaPump", u"-- m", None))
+        self.label.setText(QCoreApplication.translate("AquaPump", u"Velocidade:", None))
+        self.velocidade_resul.setText(QCoreApplication.translate("AquaPump", u"-- m/s", None))
+        self.label_2.setText(QCoreApplication.translate("AquaPump", u"Perdas de Carga Totais:", None))
+        self.perdas_resul.setText(QCoreApplication.translate("AquaPump", u"-- m", None))
+        self.label_5.setText(QCoreApplication.translate("AquaPump", u"Altura Manometrica:", None))
+        self.label_18.setText(QCoreApplication.translate("AquaPump", u"-- m", None))
+        self.label_13.setText(QCoreApplication.translate("AquaPump", u"Pot\u00eancia:", None))
+        self.label_19.setText(QCoreApplication.translate("AquaPump", u"-- kw", None))
+        self.graficos.setText(QCoreApplication.translate("AquaPump", u"Gr\u00e1ficos", None))
+        self.label_21.setText(QCoreApplication.translate("AquaPump", u" Curva H vs Q (Altura vs Vaz\u00e3o) ", None))
 #if QT_CONFIG(tooltip)
-        self.definicoes_direita_2.setToolTip(QCoreApplication.translate("AquaPump", u"Alterne o grafico exibido", None))
+        self.definicoes_direita_3.setToolTip(QCoreApplication.translate("AquaPump", u"Alterne o grafico exibido", None))
 #endif // QT_CONFIG(tooltip)
-        self.definicoes_direita_2.setText("")
-#if QT_CONFIG(tooltip)
-        self.actualizar_grafico.setToolTip(QCoreApplication.translate("AquaPump", u"Actualizar Gr\u00e1ficos", None))
-#endif // QT_CONFIG(tooltip)
-        self.actualizar_grafico.setText("")
+        self.definicoes_direita_3.setText("")
         self.label_11.setText(QCoreApplication.translate("AquaPump", u"Defini\u00e7\u00f5es", None))
         self.geral.setText(QCoreApplication.translate("AquaPump", u"Geral", None))
         self.unidades.setText(QCoreApplication.translate("AquaPump", u"Unidades", None))

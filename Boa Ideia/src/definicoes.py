@@ -8,7 +8,7 @@ class Definicoes:
             'altura': ['m'],
             'comprimento': ['m', 'km', 'cm'],
             'diametro': ['m', 'mm'],
-            'potencia': ['watt', 'kilowatt', 'megawatt', 'cv'],
+            'potencia': ['kilowatt', 'watt', 'megawatt', 'cv'],
             'npsh': ['m']
         }
 
@@ -18,7 +18,7 @@ class Definicoes:
             'altura': ['ft'],
             'comprimento': ['ft'],
             'diametro': ['in'],
-            'potencia': ['watt', 'kilowatt', 'megawatt', 'horsepower'],
+            'potencia': ['kilowatt', 'watt', 'megawatt', 'horsepower'],
             'npsh': ['ft']
         }
         self.sincronizando = False  

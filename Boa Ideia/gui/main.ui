@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>940</width>
-    <height>674</height>
+    <width>994</width>
+    <height>632</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -538,7 +538,7 @@ QPushButton {
              <x>0</x>
              <y>0</y>
              <width>169</width>
-             <height>329</height>
+             <height>287</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -871,7 +871,7 @@ QPushButton:hover {
 }</string>
               </property>
               <property name="text">
-               <string>Gráficos </string>
+               <string>Cálculos e Gráficos</string>
               </property>
              </widget>
             </item>
@@ -1249,6 +1249,9 @@ padding-bottom:5px</string>
         </item>
         <item>
          <widget class="QPushButton" name="grafico_icon">
+          <property name="toolTip">
+           <string>Cálculos e Gráficos</string>
+          </property>
           <property name="styleSheet">
            <string notr="true">padding-top:5px;
 padding-bottom:5px</string>
@@ -1589,6 +1592,16 @@ border-left:0px solid  rgba(140, 175, 255, 35);
                <property name="frameShadow">
                 <enum>QFrame::Shadow::Raised</enum>
                </property>
+               <widget class="QWidget" name="widget" native="true">
+                <property name="geometry">
+                 <rect>
+                  <x>220</x>
+                  <y>90</y>
+                  <width>298</width>
+                  <height>105</height>
+                 </rect>
+                </property>
+               </widget>
               </widget>
               <widget class="QWidget" name="widget_2" native="true">
                <property name="sizePolicy">
@@ -1730,7 +1743,7 @@ border-left:0px solid  rgba(140, 175, 255, 35);
               </property>
               <layout class="QVBoxLayout" name="verticalLayout_9">
                <property name="spacing">
-                <number>0</number>
+                <number>6</number>
                </property>
                <property name="leftMargin">
                 <number>0</number>
@@ -1745,18 +1758,15 @@ border-left:0px solid  rgba(140, 175, 255, 35);
                 <number>0</number>
                </property>
                <item>
-                <layout class="QHBoxLayout" name="horizontalLayout_12">
+                <layout class="QHBoxLayout" name="horizontalLayout_2">
                  <item>
                   <widget class="QToolButton" name="fechar_lateral_2">
-                   <property name="toolTip">
-                    <string>Fechar Janela</string>
-                   </property>
                    <property name="text">
                     <string/>
                    </property>
                    <property name="icon">
                     <iconset resource="../img/img.qrc">
-                     <normaloff>:/img/right_panel_close.png</normaloff>:/img/right_panel_close.png</iconset>
+                     <normaloff>:/img/rigth_close.png</normaloff>:/img/rigth_close.png</iconset>
                    </property>
                    <property name="iconSize">
                     <size>
@@ -1767,7 +1777,7 @@ border-left:0px solid  rgba(140, 175, 255, 35);
                   </widget>
                  </item>
                  <item>
-                  <spacer name="horizontalSpacer_6">
+                  <spacer name="horizontalSpacer_4">
                    <property name="orientation">
                     <enum>Qt::Orientation::Horizontal</enum>
                    </property>
@@ -1778,128 +1788,31 @@ border-left:0px solid  rgba(140, 175, 255, 35);
                     </size>
                    </property>
                   </spacer>
-                 </item>
-                 <item>
-                  <widget class="QLabel" name="label_2">
-                   <property name="styleSheet">
-                    <string notr="true">color: rgb(181, 181, 181);</string>
-                   </property>
-                   <property name="text">
-                    <string> Curva H vs Q (Altura vs Vazão) </string>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <spacer name="horizontalSpacer_7">
-                   <property name="orientation">
-                    <enum>Qt::Orientation::Horizontal</enum>
-                   </property>
-                   <property name="sizeHint" stdset="0">
-                    <size>
-                     <width>40</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </spacer>
-                 </item>
-                 <item>
-                  <widget class="QToolButton" name="definicoes_direita_2">
-                   <property name="toolTip">
-                    <string>Alterne o grafico exibido</string>
-                   </property>
-                   <property name="styleSheet">
-                    <string notr="true">padding-right: 15px</string>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="icon">
-                    <iconset resource="../img/img.qrc">
-                     <normaloff>:/img/opcoes.png</normaloff>:/img/opcoes.png</iconset>
-                   </property>
-                   <property name="iconSize">
-                    <size>
-                     <width>24</width>
-                     <height>24</height>
-                    </size>
-                   </property>
-                  </widget>
-                 </item>
-                 <item>
-                  <widget class="QToolButton" name="actualizar_grafico">
-                   <property name="toolTip">
-                    <string>Actualizar Gráficos</string>
-                   </property>
-                   <property name="text">
-                    <string/>
-                   </property>
-                   <property name="icon">
-                    <iconset resource="../img/img.qrc">
-                     <normaloff>:/img/refresh.png</normaloff>:/img/refresh.png</iconset>
-                   </property>
-                   <property name="iconSize">
-                    <size>
-                     <width>20</width>
-                     <height>20</height>
-                    </size>
-                   </property>
-                  </widget>
                  </item>
                 </layout>
                </item>
                <item>
-                <widget class="QStackedWidget" name="stackedWidget_3">
-                 <property name="currentIndex">
-                  <number>0</number>
+                <widget class="QScrollArea" name="scrollArea_2">
+                 <property name="styleSheet">
+                  <string notr="true">QScrollArea {
+border:None
+}</string>
                  </property>
-                 <widget class="QWidget" name="page_3">
-                  <layout class="QHBoxLayout" name="horizontalLayout_14">
-                   <property name="spacing">
-                    <number>0</number>
-                   </property>
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>0</number>
-                   </property>
-                   <item>
-                    <widget class="QWidget" name="altura" native="true"/>
-                   </item>
-                  </layout>
-                 </widget>
-                 <widget class="QWidget" name="page_5">
-                  <layout class="QHBoxLayout" name="horizontalLayout_15">
-                   <property name="spacing">
-                    <number>0</number>
-                   </property>
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>0</number>
-                   </property>
-                   <item>
-                    <widget class="QWidget" name="potencia" native="true"/>
-                   </item>
-                  </layout>
-                 </widget>
-                 <widget class="QWidget" name="page_4">
+                 <property name="widgetResizable">
+                  <bool>true</bool>
+                 </property>
+                 <widget class="QWidget" name="scrollAreaWidgetContents_2">
+                  <property name="geometry">
+                   <rect>
+                    <x>0</x>
+                    <y>0</y>
+                    <width>256</width>
+                    <height>287</height>
+                   </rect>
+                  </property>
                   <layout class="QVBoxLayout" name="verticalLayout_10">
                    <property name="spacing">
-                    <number>0</number>
+                    <number>2</number>
                    </property>
                    <property name="leftMargin">
                     <number>0</number>
@@ -1914,73 +1827,505 @@ border-left:0px solid  rgba(140, 175, 255, 35);
                     <number>0</number>
                    </property>
                    <item>
-                    <widget class="QWidget" name="rendimento" native="true"/>
+                    <widget class="QPushButton" name="calculos">
+                     <property name="styleSheet">
+                      <string notr="true">QPushButton {background-color: rgba(140, 175, 255, 35);
+border:none}
+
+QPushButton:hover {
+    background-color:rgba(165, 186, 255, 100);
+
+}
+QPushButton:checked {
+    background-color: rgba(100, 140, 255, 150);
+}</string>
+                     </property>
+                     <property name="text">
+                      <string>Cálculos </string>
+                     </property>
+                     <property name="checkable">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
                    </item>
-                  </layout>
-                 </widget>
-                 <widget class="QWidget" name="page_7">
-                  <layout class="QVBoxLayout" name="verticalLayout_12">
-                   <property name="spacing">
-                    <number>0</number>
-                   </property>
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>0</number>
-                   </property>
                    <item>
-                    <widget class="QWidget" name="npsh_2" native="true"/>
+                    <widget class="QScrollArea" name="scrollArea_5">
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="widgetResizable">
+                      <bool>true</bool>
+                     </property>
+                     <widget class="QWidget" name="scrollAreaWidgetContents_5">
+                      <property name="geometry">
+                       <rect>
+                        <x>0</x>
+                        <y>0</y>
+                        <width>239</width>
+                        <height>203</height>
+                       </rect>
+                      </property>
+                      <layout class="QVBoxLayout" name="verticalLayout_12">
+                       <property name="spacing">
+                        <number>10</number>
+                       </property>
+                       <property name="leftMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="topMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="rightMargin">
+                        <number>0</number>
+                       </property>
+                       <property name="bottomMargin">
+                        <number>0</number>
+                       </property>
+                       <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_27">
+                         <item>
+                          <widget class="QLabel" name="vazao_label_2">
+                           <property name="minimumSize">
+                            <size>
+                             <width>150</width>
+                             <height>0</height>
+                            </size>
+                           </property>
+                           <property name="text">
+                            <string>Vazão:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLabel" name="vazao_resul">
+                           <property name="text">
+                            <string>-- L/s</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_23">
+                         <item>
+                          <widget class="QLabel" name="diametro_label">
+                           <property name="minimumSize">
+                            <size>
+                             <width>150</width>
+                             <height>0</height>
+                            </size>
+                           </property>
+                           <property name="text">
+                            <string>Diâmetro de Recalque:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLabel" name="diametro_resul">
+                           <property name="text">
+                            <string>-- m</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_32">
+                         <item>
+                          <widget class="QLabel" name="label_14">
+                           <property name="minimumSize">
+                            <size>
+                             <width>150</width>
+                             <height>0</height>
+                            </size>
+                           </property>
+                           <property name="text">
+                            <string>Área da Secção:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLabel" name="seccao_resul">
+                           <property name="text">
+                            <string>-- m</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_20">
+                         <item>
+                          <widget class="QLabel" name="label">
+                           <property name="minimumSize">
+                            <size>
+                             <width>150</width>
+                             <height>0</height>
+                            </size>
+                           </property>
+                           <property name="text">
+                            <string>Velocidade:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLabel" name="velocidade_resul">
+                           <property name="text">
+                            <string>-- m/s</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_15">
+                         <item>
+                          <widget class="QLabel" name="label_2">
+                           <property name="minimumSize">
+                            <size>
+                             <width>150</width>
+                             <height>0</height>
+                            </size>
+                           </property>
+                           <property name="text">
+                            <string>Perdas de Carga Totais:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLabel" name="perdas_resul">
+                           <property name="text">
+                            <string>-- m</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_14">
+                         <item>
+                          <widget class="QLabel" name="label_5">
+                           <property name="minimumSize">
+                            <size>
+                             <width>150</width>
+                             <height>0</height>
+                            </size>
+                           </property>
+                           <property name="text">
+                            <string>Altura Manometrica:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLabel" name="label_18">
+                           <property name="text">
+                            <string>-- m</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <layout class="QHBoxLayout" name="horizontalLayout_12">
+                         <item>
+                          <widget class="QLabel" name="label_13">
+                           <property name="minimumSize">
+                            <size>
+                             <width>150</width>
+                             <height>0</height>
+                            </size>
+                           </property>
+                           <property name="text">
+                            <string>Potência:</string>
+                           </property>
+                          </widget>
+                         </item>
+                         <item>
+                          <widget class="QLabel" name="label_19">
+                           <property name="text">
+                            <string>-- kw</string>
+                           </property>
+                          </widget>
+                         </item>
+                        </layout>
+                       </item>
+                       <item>
+                        <spacer name="verticalSpacer_7">
+                         <property name="orientation">
+                          <enum>Qt::Orientation::Vertical</enum>
+                         </property>
+                         <property name="sizeHint" stdset="0">
+                          <size>
+                           <width>20</width>
+                           <height>40</height>
+                          </size>
+                         </property>
+                        </spacer>
+                       </item>
+                      </layout>
+                     </widget>
+                    </widget>
                    </item>
-                  </layout>
-                 </widget>
-                 <widget class="QWidget" name="page_8">
-                  <layout class="QVBoxLayout" name="verticalLayout_36">
-                   <property name="spacing">
-                    <number>0</number>
-                   </property>
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>0</number>
-                   </property>
                    <item>
-                    <widget class="QWidget" name="serie" native="true"/>
+                    <widget class="QPushButton" name="graficos">
+                     <property name="styleSheet">
+                      <string notr="true">QPushButton {background-color: rgba(140, 175, 255, 35);
+border:none}
+
+QPushButton:hover {
+    background-color:rgba(165, 186, 255, 100);
+
+}
+
+QPushButton:checked {
+    background-color: rgba(100, 140, 255, 150);
+}</string>
+                     </property>
+                     <property name="text">
+                      <string>Gráficos</string>
+                     </property>
+                     <property name="checkable">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
                    </item>
-                  </layout>
-                 </widget>
-                 <widget class="QWidget" name="page_9">
-                  <layout class="QVBoxLayout" name="verticalLayout_37">
-                   <property name="spacing">
-                    <number>0</number>
-                   </property>
-                   <property name="leftMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="topMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="rightMargin">
-                    <number>0</number>
-                   </property>
-                   <property name="bottomMargin">
-                    <number>0</number>
-                   </property>
                    <item>
-                    <widget class="QWidget" name="paralelo" native="true"/>
+                    <widget class="QWidget" name="janela_graficos" native="true">
+                     <property name="minimumSize">
+                      <size>
+                       <width>0</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>16777215</width>
+                       <height>0</height>
+                      </size>
+                     </property>
+                     <layout class="QVBoxLayout" name="verticalLayout_40">
+                      <property name="spacing">
+                       <number>0</number>
+                      </property>
+                      <property name="leftMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="topMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="rightMargin">
+                       <number>0</number>
+                      </property>
+                      <property name="bottomMargin">
+                       <number>0</number>
+                      </property>
+                      <item>
+                       <layout class="QHBoxLayout" name="horizontalLayout_31">
+                        <item>
+                         <widget class="QLabel" name="label_21">
+                          <property name="styleSheet">
+                           <string notr="true">color: rgb(181, 181, 181);</string>
+                          </property>
+                          <property name="text">
+                           <string> Curva H vs Q (Altura vs Vazão) </string>
+                          </property>
+                         </widget>
+                        </item>
+                        <item>
+                         <spacer name="horizontalSpacer_9">
+                          <property name="orientation">
+                           <enum>Qt::Orientation::Horizontal</enum>
+                          </property>
+                          <property name="sizeHint" stdset="0">
+                           <size>
+                            <width>40</width>
+                            <height>20</height>
+                           </size>
+                          </property>
+                         </spacer>
+                        </item>
+                        <item>
+                         <widget class="QToolButton" name="definicoes_direita_3">
+                          <property name="toolTip">
+                           <string>Alterne o grafico exibido</string>
+                          </property>
+                          <property name="styleSheet">
+                           <string notr="true">padding-right: 15px</string>
+                          </property>
+                          <property name="text">
+                           <string/>
+                          </property>
+                          <property name="icon">
+                           <iconset resource="../img/img.qrc">
+                            <normaloff>:/img/opcoes.png</normaloff>:/img/opcoes.png</iconset>
+                          </property>
+                          <property name="iconSize">
+                           <size>
+                            <width>24</width>
+                            <height>24</height>
+                           </size>
+                          </property>
+                         </widget>
+                        </item>
+                       </layout>
+                      </item>
+                      <item>
+                       <widget class="QStackedWidget" name="stackedWidget_3">
+                        <property name="currentIndex">
+                         <number>0</number>
+                        </property>
+                        <widget class="QWidget" name="page_5">
+                         <layout class="QHBoxLayout" name="horizontalLayout_29">
+                          <property name="spacing">
+                           <number>0</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
+                          <item>
+                           <widget class="QWidget" name="altura" native="true"/>
+                          </item>
+                         </layout>
+                        </widget>
+                        <widget class="QWidget" name="page_7">
+                         <layout class="QHBoxLayout" name="horizontalLayout_30">
+                          <property name="spacing">
+                           <number>0</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
+                          <item>
+                           <widget class="QWidget" name="potencia" native="true"/>
+                          </item>
+                         </layout>
+                        </widget>
+                        <widget class="QWidget" name="page_8">
+                         <layout class="QVBoxLayout" name="verticalLayout_36">
+                          <property name="spacing">
+                           <number>0</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
+                          <item>
+                           <widget class="QWidget" name="rendimento" native="true"/>
+                          </item>
+                         </layout>
+                        </widget>
+                        <widget class="QWidget" name="page_9">
+                         <layout class="QVBoxLayout" name="verticalLayout_37">
+                          <property name="spacing">
+                           <number>0</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
+                          <item>
+                           <widget class="QWidget" name="npsh_2" native="true"/>
+                          </item>
+                         </layout>
+                        </widget>
+                        <widget class="QWidget" name="page_10">
+                         <layout class="QVBoxLayout" name="verticalLayout_38">
+                          <property name="spacing">
+                           <number>0</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
+                          <item>
+                           <widget class="QWidget" name="serie" native="true"/>
+                          </item>
+                         </layout>
+                        </widget>
+                        <widget class="QWidget" name="page_11">
+                         <layout class="QVBoxLayout" name="verticalLayout_39">
+                          <property name="spacing">
+                           <number>0</number>
+                          </property>
+                          <property name="leftMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="topMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="rightMargin">
+                           <number>0</number>
+                          </property>
+                          <property name="bottomMargin">
+                           <number>0</number>
+                          </property>
+                          <item>
+                           <widget class="QWidget" name="paralelo" native="true"/>
+                          </item>
+                         </layout>
+                        </widget>
+                       </widget>
+                      </item>
+                     </layout>
+                    </widget>
+                   </item>
+                   <item>
+                    <spacer name="verticalSpacer_8">
+                     <property name="orientation">
+                      <enum>Qt::Orientation::Vertical</enum>
+                     </property>
+                     <property name="sizeHint" stdset="0">
+                      <size>
+                       <width>20</width>
+                       <height>40</height>
+                      </size>
+                     </property>
+                    </spacer>
                    </item>
                   </layout>
                  </widget>
@@ -2076,7 +2421,7 @@ QPushButton:hover {
                  <x>0</x>
                  <y>0</y>
                  <width>168</width>
-                 <height>547</height>
+                 <height>135</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_14">

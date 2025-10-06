@@ -91,8 +91,6 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.perdas_totais = 0.0
         self.altura_manometrica = 0.0
         self.potencia_requerida = 0.0
-        self.bombas_sugeridas = []
-        self.indice_bomba_atual = 0
 
         # ---------- Inicialização de Classes Internas ----------
         self.animações = Animações()
@@ -144,7 +142,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.darcy.addItems(Perdas.get_lista_materiais_darcy())
 
         # ---------- Validação de Entrada ----------
-        validator = QDoubleValidator(0.0, 10000.0, 3)
+        validator = QDoubleValidator(0.0, 10000.0, 6)
         validator.setNotation(QDoubleValidator.StandardNotation)
         self.Vazao_2.setValidator(validator)
         self.Vazao.setValidator(validator)
@@ -190,6 +188,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         vazao = float(texto_vazao) if texto_vazao else 0.0
         self.vazao = self.conversor.converter_vazao(vazao, self.icone_2.currentText(), 'm³/s')
         print("Vazão atualizada:", self.vazao, "m³/s")
+        self.vazao_resul.setText(f"{vazao} {self.icone_2.currentText()}")
 
         texto_tempo = self.Vazao.text().strip().replace(',', '.')
         self.tempo = float(texto_tempo) if texto_tempo else 0.0
@@ -203,9 +202,12 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.diametro_tubulacao = self._diametro.calcular_diametro(
             self.vazao, self.tempo
         )
-      
+        self.diametro_resul.setText(f"{self.diametro_tubulacao:.3f} {self.comprimento_box.currentText()}")
+        self.seccao_resul.setText(f"{self._diametro.area_seccao():.3f} m²")
+
         print(f"Diâmetro da tubulação calculado: {self.diametro_tubulacao} m ")
-        print(f"Área da seção calculada: {self._diametro.area_seccao():.6f} m²")
+        print(f"Área da seção calculada: {self._diametro.area_seccao():.6f}")
+        
         
     def perdas_carga(self):
         """Instancia a classe de Perdas com os parâmetros atuais."""
@@ -269,7 +271,8 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         # --- 2. Perdas totais e altura manométrica ---
         self.perdas_totais = perda_distribuida + self.localizadas
         self.calcular_potencia()
-
+        self.perdas_resul.setText(f"{self.perdas_totais:.3f} {self.comprimento_box.currentText()}")
+       # self.velocidade_resul.setText(f"{self.perdas.calcular_velocidade:.3f} {self.comprimento_box.currentText()}")
         print(f"Perdas totais: {self.perdas_totais:.8f} m")
         self.calcular_altura_manometrica()
 
@@ -279,11 +282,13 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     def calcular_potencia(self):
         """Calcula a potencia em KW"""
         self.potencia_requerida = self._diametro.calcular_potencia(self.altura_manometrica, self.vazao)
+        self.label_19.setText(f"{self.potencia_requerida:.3f} {self.potencia_box.currentText()}")
         print("Potência calculada:", self.potencia_requerida, "KW")
 
     def calcular_altura_manometrica(self):
         """Calcula a altura manométrica."""
         self.altura_manometrica = self.altura_geometrica_val + self.perdas_totais
+        self.label_18.setText(f"{self.altura_manometrica:.3f} {self.comprimento_box.currentText()}")
         print("Altura manométrica calculada:", self.altura_manometrica)
 
     # ==========================================================
@@ -473,7 +478,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     def enviar_js(self):
         """Envia dados de entrada (vazão, tempo) para o JavaScript."""
         self.exibir_dados_calculados()
-        self.dados.enviar_dados(self.vazao, self.diametro_t, self.altura_manometrica_ex, self.potencia_exe, self.view)
+        self.dados.enviar_dados(self.vazao, self.tempo, self.altura_manometrica_ex, self.potencia_exe, self.view)
     
     def enviar_unidades_js(self):
         """Envia unidades selecionadas para o JavaScript."""
@@ -625,26 +630,22 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             QMessageBox.information(self, "Sucesso", "Histórico carregado com sucesso!")
     
     def selecionar_melhor_bomba(self):
-        """
-        Orquestra a seleção de bombas usando o MotorSelecao e atualiza a UI.
-        """
-        if not self.motor_selecao:
+
+        if not hasattr(self, 'gestor_db') or not self.gestor_db:
             self._nenhuma_bomba_encontrada("Base de dados não disponível.")
             return
 
         try:
-           
             vazao_m3h = self.conversor.converter_vazao(self.vazao, self.icone_2.currentText(), 'm³/h')
             altura_m = self.altura_manometrica
 
-            self.bombas_sugeridas = self.motor_selecao.selecionar_melhores_bombas(vazao_m3h, altura_m, tolerancia=0.5)
-            self.indice_bomba_atual = 0
+            bomba = self.gestor_db.selecionar_melhor_bomba(vazao_m3h, altura_m)
 
-            if not self.bombas_sugeridas:
+            if not bomba:
                 self._nenhuma_bomba_encontrada("Nenhuma bomba compatível encontrada na faixa de busca.")
                 return
 
-            self._exibir_bomba_atual()
+            self._exibir_bomba(bomba)
 
         except Exception as e:
             logger.error(f"Erro no processo de seleção de bomba: {e}", exc_info=True)
@@ -711,22 +712,6 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.potencia_3.setText("--")
         self.material.setText("--")
         self.label_10.setPixmap(QPixmap(r"img\infeliz.png").scaled(150, 150, Qt.KeepAspectRatio))
-    
-    def proxima_sugestao(self):
-        """Mostra para a próxima bomba na lista de sugestões."""
-        if not self.bombas_sugeridas:
-            return
-
-        self.indice_bomba_atual = (self.indice_bomba_atual + 1) % len(self.bombas_sugeridas)
-        self._exibir_bomba_atual()
-
-    def sugestao_anterior(self):
-        """Mostra para a bomba anterior na lista de sugestões."""
-        if not self.bombas_sugeridas:
-            return
-
-        self.indice_bomba_atual = (self.indice_bomba_atual - 1 + len(self.bombas_sugeridas)) % len(self.bombas_sugeridas)
-        self._exibir_bomba_atual()
 
     def _on_image_downloaded(self, reply):
         """Callback quando o QNetworkAccessManager termina o download"""

@@ -153,7 +153,6 @@ class Mapa:
             if (typeof QWebChannel !== "undefined") {
                 new QWebChannel(qt.webChannelTransport, function (channel) {
                     window.backend = channel.objects.backend;
-                    window.mensagem = channel.objects.mensagem;
                     window.altura = channel.objects.altura;
                     window.comprimento = channel.objects.comprimento;
                     window.acessorios = channel.objects.acessorios;
@@ -224,11 +223,31 @@ class Mapa:
             window.comprimento_recebido.comprimento_recebido(distancia_total);
         }
 
+        function calcular_diametro(flow, tempo) {
+            try {
+                let diametro = 0;
+                if (tempo == 24) {
+                    return diametro = 1.3 * Math.sqrt(flow);
+
+                }
+                else if (tempo < 24) {
+                    return diametro = 1.3 * Math.sqrt(flow) * Math.sqrt(tempo/24);}
+
+                else if (tempo == 0) {
+                    return null
+                }
+                else {
+                    return null
+                }}
+            catch (error) {
+                console.error(error)
+            }
+        }
 
         function actualizar_popup(layer) {
             calcularAltura(layer).then(altura => {
                 const flow = valor_1_guardado;
-                const diametro = valor_2_guardado;
+                const tempo = valor_2_guardado;
                 const altura_man = valor_3_guardado;
                 const potencia = valor_4_guardado;
 
@@ -240,13 +259,14 @@ class Mapa:
                 const nome = layer.customProperties?.name || "Projecto";
                 const distancia = calcular_distancia(layer);
 
+                const diametro = calcular_diametro(flow, tempo)
                 window.altura.altura_(altura);
                 window.comprimento.comprimento_(distancia);
   
                 layer.bindPopup(`
                     <strong>${nome}</strong><br>
                     Vazão: ${flow?.toFixed(2)} ${und_vazao}<br>
-                    Diâmetro: ${diametro?.toFixed(2)} ${und_diametro}<br>
+                    Diâmetro: ${diametro?.toFixed(2)} m<br> 
                     Distancia: ${(distancia/1000).toFixed(2)} km<br>
                     Potência: ${potencia?.toFixed(2)} ${und_potencia}<br>
                     Altura Geométrica: ${altura?.toFixed(2)} m<br>
