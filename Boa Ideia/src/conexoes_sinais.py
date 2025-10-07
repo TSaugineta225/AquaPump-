@@ -191,7 +191,7 @@ class ConexoesUI():
         self.parent.relatorio_3.clicked.connect(self.parent.selecionar_melhor_bomba)
         self.parent.voltar_2.clicked.connect(lambda: self.parent.stackedWidget.setCurrentIndex(0))
         #self.parent.parent.selecionar.clicked.connect(self.parent.selecionar_melhor_bomba)
-
+    
     def _connectar_abrir_graph(self):
         self.parent.grafico_icon.clicked.connect(lambda: self.animacoes.largura(self.parent.janel_direita, largura_alvo=500))
         self.parent.grafico.clicked.connect(lambda: self.animacoes.largura(self.parent.janel_direita, largura_alvo=500))

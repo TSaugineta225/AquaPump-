@@ -34,6 +34,7 @@ class GestorDatabase:
         """
         Seleciona a melhor bomba com tolerâncias mais realistas e critério melhorado.
         """
+        logger.info(f"Buscando bomba para: Vazão={vazao_m3h} m³/h, Altura={altura_m} m")
         if not self.conexao:
             logger.error("A conexão com o banco de dados não está ativa.")
             return None

@@ -18,7 +18,6 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtWebChannel import QWebChannel
 from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineProfile
-
 from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest
 
 # ================== Bibliotecas Externas ==================
@@ -45,9 +44,8 @@ from src.configurações import Configuracoes
 from src.JavaScript import Mapa
 from src.animações import Animações
 from src.historico import HistoricoManager
-from src. gestor_database import GestorDatabase
+from src.gestor_database import GestorDatabase
 from src.Observações import Observacoes
-from src.motor_selecção import MotorSelecao
 from src.web_channel import (
     Dados, Altura_Geometrica, Dimensao_Tubulacao, Acessorios_sistema
 )
@@ -62,20 +60,26 @@ from calculos.dimensionamento_tubulação import Tubulacao
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-
 # ================== WebEngine Configurations ==================
 os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = ("--ignore-gpu-blocklist --enable-gpu-rasterization --enable-zero-copy")
 os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = ("--disable-gpu-vsync --disable-frame-rate-limit")
+
 
 # ==========================================================
 #                       MAIN WINDOW
 # ==========================================================
 class MainWindow(FramelessWindow, Ui_AquaPump):
+    """
+    Classe principal da aplicação AquaPump para dimensionamento de sistemas de bombeamento.
+    """
 
     def __init__(self, parent=None):
+        """Inicializa a janela principal e todos os seus componentes."""
         super().__init__(parent)
         self.setupUi(self)
 
+        # ================== INICIALIZAÇÃO DE ATRIBUTOS ==================
+        
         # ---------- Configurações da Janela ----------
         self.setWindowTitle("AquaPump")
         self.setWindowIcon(QIcon(u":/img/logo_principal.png"))
@@ -92,7 +96,38 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.altura_manometrica = 0.0
         self.potencia_requerida = 0.0
 
-        # ---------- Inicialização de Classes Internas ----------
+        self.modelo.setText(f"Grundfos CM 15-2 - Centrifuga")
+        self.vazao_label.setText("Caudal nominal: 17 m³/h")
+        self.altura_3.setText("Altura manométrica nominal: 29.7 m  ")
+        self.potencia_3.setText("Potência nominal: 1.9 kW ")
+        self.label_10.setPixmap(QPixmap(r"H:\O meu disco\Base de Dados\Grunfos\CM 15-3").scaled(250, 250, Qt.KeepAspectRatio))
+
+        # ---------- Inicialização de Classes Auxiliares ----------
+        self._inicializar_classes_auxiliares()
+        
+        # ---------- Configurações de Interface ----------
+        self._configurar_validadores()
+        self._configurar_combobox()
+        self._configurar_placeholders()
+        
+        # ---------- WebEngine + Mapa ----------
+        self._configurar_webengine()
+        
+        # ---------- Configurações de Rede ----------
+        self._configurar_rede()
+        
+        # ---------- Conexões de Sinais ----------
+        self._configurar_conexoes()
+        
+        # ---------- Inicialização de Gráficos ----------
+        self._inicializar_graficos()
+        self.atualizar_graficos_curvas()
+        self.mudanca_dinamica_perdas_carga()
+
+    # ================== MÉTODOS DE INICIALIZAÇÃO ==================
+
+    def _inicializar_classes_auxiliares(self):
+        """Inicializa todas as classes auxiliares utilizadas na aplicação."""
         self.animações = Animações()
         self.relatorio_pdf = PDF()
         self.definicoes = Definicoes(parent=self)
@@ -102,82 +137,111 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self._diametro = Tubulacao()
         self.historico_manager = HistoricoManager(self)
         self.janela_sobre = Dialog()
-        self.atualizar_parametros_entrada()
+        
+        # Carregar base de dados
         db_caminho = self.caminho_dados(r'data/aquapump.db')
         try:
             self.gestor_db = GestorDatabase(db_caminho)
-            self.motor_selecao = MotorSelecao(self.gestor_db)
             logger.info('Base de dados Carregada com sucesso')
         except Exception as e:
             logger.warning(f"Erro ao carregar base de dados devido a {e}")
 
-        # ---------- WebEngine + WebChannel ----------
-        self.altura_geometrica_channel = Altura_Geometrica()
-        self.comprimento_tubulacao_channel = Dimensao_Tubulacao()
-        self.acessorios_channel = Acessorios_sistema()
-        self.dados = Dados()
+        # Atualizar parâmetros iniciais
+        self.atualizar_parametros_entrada()
 
-        self._canal = QWebChannel()
-        self.page = QWebEnginePage(self)
-        self.view.setPage(self.page)
-        self.page.setWebChannel(self._canal)
-
-        self._canal.registerObject("altura", self.altura_geometrica_channel)
-        self._canal.registerObject("comprimento", self.comprimento_tubulacao_channel)
-        self._canal.registerObject("acessorios", self.acessorios_channel)
-
-        # ---------------Network Manager----------------
-        self.network_manager = QNetworkAccessManager()
-        self.network_manager.finished.connect(self._on_image_downloaded)
-        self._imagem_request_label = None 
-
-        # ---------- Conexões e Configurações ----------
-        self.conexoes = ConexoesUI(
-            parent=self, menu=self.menu, animacoes=self.animações, configuracoes=self.config
-        )
-
-        # ---------- ComboBox ----------
-        self.hazen_will.addItems(Perdas.get_lista_materiais_hazen())
-        self.hazen_will.setHidden(True)
-        self.darcy.addItems(Perdas.get_lista_materiais_darcy())
-
-        # ---------- Validação de Entrada ----------
+    def _configurar_validadores(self):
+        """Configura validadores para campos de entrada numéricos."""
         validator = QDoubleValidator(0.0, 10000.0, 6)
         validator.setNotation(QDoubleValidator.StandardNotation)
         self.Vazao_2.setValidator(validator)
         self.Vazao.setValidator(validator)
 
-        # ---------- WebEngine + Mapa ----------
+    def _configurar_combobox(self):
+        """Configura os combobox com valores iniciais."""
+        self.hazen_will.addItems(Perdas.get_lista_materiais_hazen())
+        self.hazen_will.setHidden(True)
+        self.darcy.addItems(Perdas.get_lista_materiais_darcy())
+
+    def _configurar_placeholders(self):
+        """Configura textos de placeholder para campos de entrada."""
+        self.Vazao_2.setPlaceholderText(f"Vazão em {self.icone_2.currentText()}")
+        self.Vazao.setPlaceholderText("Tempo em horas")
+
+    def _configurar_webengine(self):
+        """Configura o WebEngine, WebChannel e integração com JavaScript."""
+        # Canais de comunicação com JavaScript
+        self.altura_geometrica_channel = Altura_Geometrica()
+        self.comprimento_tubulacao_channel = Dimensao_Tubulacao()
+        self.acessorios_channel = Acessorios_sistema()
+        self.dados = Dados()
+
+        # Configuração do WebChannel
+        self._canal = QWebChannel()
+        self.page = QWebEnginePage(self)
+        self.view.setPage(self.page)
+        self.page.setWebChannel(self._canal)
+
+        # Registro de objetos no canal
+        self._canal.registerObject("altura", self.altura_geometrica_channel)
+        self._canal.registerObject("comprimento", self.comprimento_tubulacao_channel)
+        self._canal.registerObject("acessorios", self.acessorios_channel)
+
+        # Configuração do mapa
         self.mapinha = Mapa()
         self.page.setHtml(self.mapinha.html_code)
         self.icone_2.view().setMinimumWidth(60)
 
-        # ---------- PlaceholderText ----------
-        self.Vazao_2.setPlaceholderText(f"Vazão em {self.icone_2.currentText()}")
-        self.Vazao.setPlaceholderText("Tempo em horas")
+    def _configurar_rede(self):
+        """Configura o gerenciador de rede para download de imagens."""
+        self.network_manager = QNetworkAccessManager()
+        self.network_manager.finished.connect(self._on_image_downloaded)
+        self._imagem_request_label = None
 
-        # ---------- Status e Threads ----------
-        self.worker = None
-        self.status_label = QLabel()
+    def _configurar_conexoes(self):
+        """Configura todas as conexões de sinais da interface."""
+        self.conexoes = ConexoesUI(
+            parent=self, menu=self.menu, animacoes=self.animações, configuracoes=self.config
+        )
 
-        # ---------- Inicialização de Gráficos ----------
-        self.inicializar_graficos()
-        self.atualizar_graficos_curvas()
-        self.mudanca_dinamica_perdas_carga()
+    def _inicializar_graficos(self):
+        """Inicializa e configura todos os gráficos da aplicação."""
+        self.grafico_altura = Grafico()
+        self.grafico_potencia = Grafico()
+        self.grafico_rendimento = Grafico()
+        self.grafico_npsh = Grafico()
 
-    # ==========================================================
-    #               Carregamento de arquivos
-    # ==========================================================
+        # Limpar layouts existentes
+        for layout in [self.altura.layout(), self.potencia.layout(), self.rendimento.layout()]:
+            if layout is not None:
+                while layout.count():
+                    child = layout.takeAt(0)
+                    if child.widget():
+                        child.widget().deleteLater()
+        
+        # Adicionar gráficos aos layouts
+        QVBoxLayout(self.altura).addWidget(self.grafico_altura)
+        QVBoxLayout(self.potencia).addWidget(self.grafico_potencia)
+        QVBoxLayout(self.rendimento).addWidget(self.grafico_rendimento)
+        QVBoxLayout(self.npsh_2).addWidget(self.grafico_npsh)
+
+    # ================== MÉTODOS DE CARREGAMENTO DE ARQUIVOS ==================
+
     def caminho_dados(self, caminho_relactivo):
-        """Garante que os arquivos sejam carregados tantos nos testes de python como .exe"""
+        """
+        Garante que os arquivos sejam carregados tanto nos testes de Python como no .exe.
+        
+        Args:
+            caminho_relactivo: Caminho relativo do arquivo
+            
+        Returns:
+            str: Caminho absoluto do arquivo
+        """
         if hasattr(sys, '_MEIPASS'):
             return os.path.join(sys._MEIPASS, caminho_relactivo)
         return os.path.join(os.path.abspath("."), caminho_relactivo)
 
+    # ================== MÉTODOS DE CÁLCULO DO SISTEMA ==================
 
-    # ==========================================================
-    #                 MÉTODOS DE CÁLCULO
-    # ==========================================================
     def actualizar_vazao(self):
         """Retorna a unidade de vazão selecionada."""
         return self.icone_2.currentText()
@@ -185,10 +249,10 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     def atualizar_parametros_entrada(self):
         """Lê os valores de entrada (vazão, tempo) e recalcula o sistema."""
         texto_vazao = self.Vazao_2.text().strip().replace(',', '.')
-        vazao = float(texto_vazao) if texto_vazao else 0.0
-        self.vazao = self.conversor.converter_vazao(vazao, self.icone_2.currentText(), 'm³/s')
+        self.vazao_geral = float(texto_vazao) if texto_vazao else 0.0
+        self.vazao = self.conversor.converter_vazao(self.vazao_geral, self.icone_2.currentText(), 'm³/s')
         print("Vazão atualizada:", self.vazao, "m³/s")
-        self.vazao_resul.setText(f"{vazao} {self.icone_2.currentText()}")
+        self.vazao_resul.setText(f"{self.vazao_geral} {self.icone_2.currentText()}")
 
         texto_tempo = self.Vazao.text().strip().replace(',', '.')
         self.tempo = float(texto_tempo) if texto_tempo else 0.0
@@ -208,7 +272,6 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         print(f"Diâmetro da tubulação calculado: {self.diametro_tubulacao} m ")
         print(f"Área da seção calculada: {self._diametro.area_seccao():.6f}")
         
-        
     def perdas_carga(self):
         """Instancia a classe de Perdas com os parâmetros atuais."""
         vazao_m3s = self.vazao
@@ -219,6 +282,53 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             self.darcy.currentText(),
             self.hazen_will.currentText()
         )
+
+    def calcular_potencia(self):
+        """Calcula a potencia em KW."""
+        self.potencia_requerida = self._diametro.calcular_potencia(self.altura_manometrica, self.vazao)
+        self.label_19.setText(f"{self.potencia_requerida:.3f} {self.potencia_box.currentText()}")
+        print("Potência calculada:", self.potencia_requerida, "KW")
+
+    def calcular_altura_manometrica(self):
+        """Calcula a altura manométrica."""
+        self.altura_manometrica = self.altura_geometrica_val + self.perdas_totais
+        self.label_18.setText(f"{self.altura_manometrica:.3f} {self.comprimento_box.currentText()}")
+        print("Altura manométrica calculada:", self.altura_manometrica)
+
+    @Slot()
+    def recalcular_sistema_completo(self):
+        """Função central que recalcula perdas, altura manométrica e gráficos."""
+        if not hasattr(self, 'perdas') or not self.diametro_tubulacao > 0:
+            return
+
+        # 1. Calcular perdas distribuídas
+        perda_distribuida = 0.0
+        if self.comprimento_tubulacao_val > 0:
+            try:
+                if self.radioButton_10.isChecked():  # Darcy-Weisbach
+                    self.perdas.definir_material_darcy(self.darcy.currentText())
+                    perda_distribuida = self.perdas.calcular_perda_carga_darcy(
+                        self.comprimento_tubulacao_val
+                    )
+                elif self.radioButton_9.isChecked():  # Hazen-Williams
+                    self.perdas.definir_material_hazen(self.hazen_will.currentText())
+                    perda_distribuida = self.perdas.calcular_perda_carga_hazen_williams(
+                        self.comprimento_tubulacao_val
+                    )
+            except (ValueError, AttributeError):
+                perda_distribuida = 0.0
+
+        # 2. Calcular perdas totais e altura manométrica
+        self.perdas_totais = perda_distribuida + self.localizadas
+        self.calcular_potencia()
+        self.perdas_resul.setText(f"{self.perdas_totais:.3f} {self.comprimento_box.currentText()}")
+        print(f"Perdas totais: {self.perdas_totais:.8f} m")
+        self.calcular_altura_manometrica()
+
+        # 3. Atualizar gráficos
+        self.atualizar_graficos_curvas()
+
+    # ================== MÉTODOS DE COMUNICAÇÃO COM JAVASCRIPT ==================
 
     @Slot(list)
     def definir_acessorios(self, lista):
@@ -246,76 +356,17 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         print("Altura geométrica recebida:", altura)
         self.recalcular_sistema_completo()
 
-    @Slot()
-    def recalcular_sistema_completo(self):
-        """Função central que recalcula perdas, altura manométrica e gráficos."""
-        if not hasattr(self, 'perdas') or not self.diametro_tubulacao > 0:
-            return
-
-        perda_distribuida = 0.0
-        if self.comprimento_tubulacao_val > 0:
-            try:
-                if self.radioButton_10.isChecked():  # Darcy-Weisbach
-                    self.perdas.definir_material_darcy(self.darcy.currentText())
-                    perda_distribuida = self.perdas.calcular_perda_carga_darcy(
-                        self.comprimento_tubulacao_val
-                    )
-                elif self.radioButton_9.isChecked():  # Hazen-Williams
-                    self.perdas.definir_material_hazen(self.hazen_will.currentText())
-                    perda_distribuida = self.perdas.calcular_perda_carga_hazen_williams(
-                        self.comprimento_tubulacao_val
-                    )
-            except (ValueError, AttributeError):
-                perda_distribuida = 0.0
-
-        # --- 2. Perdas totais e altura manométrica ---
-        self.perdas_totais = perda_distribuida + self.localizadas
-        self.calcular_potencia()
-        self.perdas_resul.setText(f"{self.perdas_totais:.3f} {self.comprimento_box.currentText()}")
-       # self.velocidade_resul.setText(f"{self.perdas.calcular_velocidade:.3f} {self.comprimento_box.currentText()}")
-        print(f"Perdas totais: {self.perdas_totais:.8f} m")
-        self.calcular_altura_manometrica()
-
-        # --- 3. Atualização dos gráficos ---
-        self.atualizar_graficos_curvas()
+    def enviar_js(self):
+        """Envia dados de entrada (vazão, tempo) para o JavaScript."""
+        self.exibir_dados_calculados()
+        self.dados.enviar_dados(self.vazao, self.tempo, self.altura_manometrica_ex, self.potencia_exe, self.view)
     
-    def calcular_potencia(self):
-        """Calcula a potencia em KW"""
-        self.potencia_requerida = self._diametro.calcular_potencia(self.altura_manometrica, self.vazao)
-        self.label_19.setText(f"{self.potencia_requerida:.3f} {self.potencia_box.currentText()}")
-        print("Potência calculada:", self.potencia_requerida, "KW")
+    def enviar_unidades_js(self):
+        """Envia unidades selecionadas para o JavaScript."""
+        self.unidades_exibicao()
+        self.dados.enviar_unidades(self.unidade_vazao, self.unidade_diametro, self.unidade_altura, self.unidade_potencia, self.view)
 
-    def calcular_altura_manometrica(self):
-        """Calcula a altura manométrica."""
-        self.altura_manometrica = self.altura_geometrica_val + self.perdas_totais
-        self.label_18.setText(f"{self.altura_manometrica:.3f} {self.comprimento_box.currentText()}")
-        print("Altura manométrica calculada:", self.altura_manometrica)
-
-    # ==========================================================
-    #                 GRÁFICOS
-    # ==========================================================
-    def inicializar_graficos(self):
-        self.grafico_altura = Grafico()
-        self.grafico_potencia = Grafico()
-        self.grafico_rendimento = Grafico()
-        self.grafico_npsh = Grafico()
-
-
-        for layout in [self.altura.layout(), self.potencia.layout(), self.rendimento.layout()]:
-            if layout is not None:
-                while layout.count():
-                    child = layout.takeAt(0)
-                    if child.widget():
-                        child.widget().deleteLater()
-        
-    
-        QVBoxLayout(self.altura).addWidget(self.grafico_altura)
-        QVBoxLayout(self.potencia).addWidget(self.grafico_potencia)
-        QVBoxLayout(self.rendimento).addWidget(self.grafico_rendimento)
-        QVBoxLayout(self.npsh_2).addWidget(self.grafico_npsh) 
-
-        self.mudanca_dinamica_perdas_carga()
-        self.atualizar_graficos_curvas()
+    # ================== MÉTODOS DE GRÁFICOS ==================
 
     def atualizar_graficos_curvas(self):
         """
@@ -323,37 +374,33 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         """
         try:
             # ==============================
-            # 1. PARÂMETROS DE ENTRADA (EM SI)
+            # 1. PARÂMETROS DE ENTRADA
             # ==============================
             vazao_sistema_m3s = self.vazao if self.vazao > 1e-9 else 0.001
             altura_manometrica_m = self.altura_manometrica if self.altura_manometrica > 1e-9 else 0.1
             altura_geometrica_m = self.altura_geometrica_val
 
             # ==============================
-            # 2. GERAR PONTOS PARA O EIXO DA VAZÃO (EM SI)
+            # 2. GERAR PONTOS PARA O EIXO DA VAZÃO
             # ==============================
             q_max_m3s = vazao_sistema_m3s * 1.5
             q_plot_m3s = np.linspace(1e-9, q_max_m3s, 200)
 
             # ==============================
-            # 3. CÁLCULO DAS CURVAS (TUDO EM SI)
+            # 3. CÁLCULO DAS CURVAS
             # ==============================
             # A. Curva do Sistema (H = H_geom + K * Q²)
-            # K (coeficiente de perda)  K = (H_mano - H_geom) / Q²
             coef_perda = (altura_manometrica_m - altura_geometrica_m) / (vazao_sistema_m3s ** 2)
             H_sistema_m = altura_geometrica_m + coef_perda * q_plot_m3s ** 2
 
             # B. Curva da Bomba Simulada (Parábola H = H0 - A*Q²)
-            # Fazemos a bomba passar pelo ponto de operação do sistema (vazao, altura_manometrica)
             H0_bomba_m = altura_manometrica_m * 1.3  # Altura de shutoff (Q=0) um pouco acima
-            # A = (H0 - H_nominal) / Q_nominal²
             A_bomba = (H0_bomba_m - altura_manometrica_m) / (vazao_sistema_m3s ** 2)
             H_bomba_m = np.clip(H0_bomba_m - A_bomba * q_plot_m3s ** 2, 0, None)
 
             # C. Curva de Rendimento Simulada (η)
             eta_max = 0.75 # Ponto de melhor eficiência
-            # A curva de rendimento é uma parábola invertida centrada na vazão do sistema
-            k_rendimento = (eta_max - 0.1) / (vazao_sistema_m3s ** 2) # Assume rendimento baixo no início
+            k_rendimento = (eta_max - 0.1) / (vazao_sistema_m3s ** 2)
             eta_plot = np.clip(eta_max - k_rendimento * (q_plot_m3s - vazao_sistema_m3s)**2, 0.1, eta_max)
 
             # D. Curva de Potência (P = ρ*g*Q*H / η)
@@ -361,13 +408,19 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             self.peso_especifico = self.rho * g  # kg/m³ * m/s² = N/m³
             potencia_plot_watt = (self.peso_especifico * q_plot_m3s * H_bomba_m) / eta_plot
             
+            # E. Curva de NPSH Requerido (NPSHr) Simulada
+            npsh_min = 1.5 # m
+            npsh_max = 5.0 # m
+            npsh_plot_m = npsh_min + (npsh_max - npsh_min) * (q_plot_m3s / q_max_m3s)**2
+
             # ==============================
-            # 4. PONTO DE OPERAÇÃO (JÁ CALCULADO)
+            # 4. PONTO DE OPERAÇÃO
             # ==============================
             q_op_m3s = vazao_sistema_m3s
             h_op_m = altura_manometrica_m
             p_op_watt = np.interp(q_op_m3s, q_plot_m3s, potencia_plot_watt)
             eta_op = np.interp(q_op_m3s, q_plot_m3s, eta_plot)
+            npsh_op_m = np.interp(q_op_m3s, q_plot_m3s, npsh_plot_m)
 
             # ==============================
             # 5. CONVERSÕES DE UNIDADES PARA EXIBIÇÃO
@@ -381,20 +434,12 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             H_sistema_exibir = self.conversor.converter_comprimento(H_sistema_m, "m", u_h)
             potencia_exibir = self.conversor.converter_potencia(potencia_plot_watt, "watt", u_p)
             rendimento_exibir = eta_plot * 100
+            npsh_exibir = self.conversor.converter_comprimento(npsh_plot_m, "m", u_h)
 
             q_op_exibir = self.conversor.converter_vazao(q_op_m3s, "m³/s", u_q)
             h_op_exibir = self.conversor.converter_comprimento(h_op_m, "m", u_h)
             p_op_exibir = self.conversor.converter_potencia(p_op_watt, "watt", u_p)
             eta_op_exibir = eta_op * 100
-
-            # --- D. Curva de NPSH Requerido (NPSHr) Simulada ---
-            npsh_min = 1.5 # m
-            npsh_max = 5.0 # m
-            npsh_plot_m = npsh_min + (npsh_max - npsh_min) * (q_plot_m3s / q_max_m3s)**2
-            npsh_op_m = np.interp(q_op_m3s, q_plot_m3s, npsh_plot_m)
-
-            # Conversão de unidades
-            npsh_exibir = self.conversor.converter_comprimento(npsh_plot_m, "m", u_h)
             npsh_op_exibir = self.conversor.converter_comprimento(npsh_op_m, "m", u_h)
 
             # ==============================
@@ -434,13 +479,11 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
                 titulo="NPSH Requerido vs. Vazão"
             )
 
-
         except Exception as e:
             logger.error(f"Erro ao atualizar gráficos de simulação: {e}", exc_info=True)
-    
-    # ==========================================================
-    #                 Dados para Exibicao
-    # =========================================================
+
+    # ================== MÉTODOS DE EXIBIÇÃO DE DADOS ==================
+
     def exibir_dados_calculados(self):
         """Atualiza os resultados em SI para outras unidades."""
         try:
@@ -466,42 +509,22 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             pass
 
     def unidades_exibicao(self):
-        """"Retorna as unidades atualmente selecionadas."""
+        """Retorna as unidades atualmente selecionadas."""
         self.unidade_vazao = self.icone_2.currentText()
         self.unidade_diametro = self.diametro_box.currentText()
         self.unidade_altura = self.altura_box.currentText()
         self.unidade_potencia = self.potencia_box.currentText()
 
-    # ==========================================================
-    #                 INTEGRAÇÃO COM JAVASCRIPT
-    # ==========================================================
-    def enviar_js(self):
-        """Envia dados de entrada (vazão, tempo) para o JavaScript."""
-        self.exibir_dados_calculados()
-        self.dados.enviar_dados(self.vazao, self.tempo, self.altura_manometrica_ex, self.potencia_exe, self.view)
-    
-    def enviar_unidades_js(self):
-        """Envia unidades selecionadas para o JavaScript."""
-        self.unidades_exibicao()
-        self.dados.enviar_unidades(self.unidade_vazao, self.unidade_diametro, self.unidade_altura, self.unidade_potencia, self.view)
+    # ================== MÉTODOS DE MAPA E PESQUISA ==================
 
-    def mudanca_dinamica_perdas_carga(self):
-        """Alterna entre lista de materiais Darcy e Hazen conforme opção selecionada."""
-        self.darcy.setVisible(self.radioButton_10.isChecked())
-        self.hazen_will.setVisible(self.radioButton_9.isChecked())
-
-    # ==========================================================
-    #                 PESQUISA (MAPA)
-    # ==========================================================
     def pesquisa_mapa(self):
         """Executa pesquisa no mapa via JS."""
         texto = self.pesquisa_line.text()
         pesquisa = f"pesquisar_lugar('{texto}')"
         self.view.page().runJavaScript(pesquisa)
 
-    # ==========================================================
-    #                EXPORTAÇÃO PARA PDF
-    # ==========================================================
+    # ================== MÉTODOS DE EXPORTAÇÃO ==================
+
     def gerar_pdf(self):
         """Gera o relatório em PDF com os dados atuais."""
         try:
@@ -535,10 +558,10 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             QMessageBox.critical(self, 'ERRO', f'Erro ao gerar PDF devido a {e}')
 
     def gerar_csv(self):
+        """Gera relatório em formato CSV com os dados atuais."""
         try:
             material = self.darcy.currentText() if self.radioButton_10.isChecked() else self.hazen_will.currentText()
             
-            # Dados do dimensionamento que aparecem no relatorio .xlsv
             dados_relatorio = {
                 'Vazão': (f"{self.vazao_ex:.3f}", f'{self.icone_2.currentText()}'),
                 'Tempo de funcionamento': (f"{self.tempo:.1f}", 'horas'),
@@ -551,7 +574,6 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
                 'Material da Tubulação': (material, None),
             }
             
-
             csv_exporter = CSV()
             
             # Adicionar metadados
@@ -564,6 +586,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             csv_exporter.adicionar_secao("DADOS DO SISTEMA DE BOMBEAMENTO")
             csv_exporter.adicionar_conjunto_dados(dados_relatorio)
             csv_exporter.adicionar_secao("GRÁFICOS DE CURVAS DA BOMBA - SIMULAÇÃO")
+            
             # Gerar CSV
             sucesso = csv_exporter.exportar("relatorio_bombeamento.csv")        
             if sucesso:
@@ -574,14 +597,13 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             return sucesso
             
         except Exception as e:
-            QMessageBox.criical(self, "Erro", f"Ocorreu um erro ao gerar o .xlsv: {str(e)}")
+            QMessageBox.critical(self, "Erro", f"Ocorreu um erro ao gerar o .xlsv: {str(e)}")
             return False
-        
-    # =========================================================
-    #               Histórico de Cálculos
-    # =========================================================
+
+    # ================== MÉTODOS DE HISTÓRICO ==================
+
     def salvar_historico(self):
-        """Salva o estado atual do cálculo"""
+        """Salva o estado atual do cálculo no histórico."""
         dados_calculo = {
             "Vazao_total": self.vazao,
             "Diametro": self.diametro_tubulacao,
@@ -596,7 +618,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             QMessageBox.information(self, "Sucesso", "Histórico salvo com sucesso!")
 
     def carregar_historico(self):
-        """Carrega um estado anterior de cálculo"""
+        """Carrega um estado anterior de cálculo do histórico."""
         dados = self.historico_manager.carregar_historico()
         if dados:
             # Atualiza os valores na interface
@@ -628,47 +650,49 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             self.recalcular_sistema_completo()
             
             QMessageBox.information(self, "Sucesso", "Histórico carregado com sucesso!")
-    
-    def selecionar_melhor_bomba(self):
 
+    # ================== MÉTODOS DE SELEÇÃO DE BOMBA ==================
+
+    def selecionar_melhor_bomba(self):
+        """
+        Seleciona e exibe a melhor bomba para os parâmetros atuais do sistema.
+        """
         if not hasattr(self, 'gestor_db') or not self.gestor_db:
             self._nenhuma_bomba_encontrada("Base de dados não disponível.")
             return
 
         try:
-            vazao_m3h = self.conversor.converter_vazao(self.vazao, self.icone_2.currentText(), 'm³/h')
+            # Converter para unidades usadas no banco de dados
+            vazao_m3h = self.conversor.converter_vazao(self.vazao_geral, self.icone_2.currentText(), 'm³/h')
             altura_m = self.altura_manometrica
+            logger.info(f"A vazao nominal e de {vazao_m3h} e a altura manometrica e de {altura_m}")
 
+            # Buscar a melhor bomba
             bomba = self.gestor_db.selecionar_melhor_bomba(vazao_m3h, altura_m)
 
             if not bomba:
-                self._nenhuma_bomba_encontrada("Nenhuma bomba compatível encontrada na faixa de busca.")
+                self._nenhuma_bomba_encontrada("Nenhuma bomba compatível encontrada nos critérios de busca.")
                 return
 
+            # Exibir a bomba encontrada
             self._exibir_bomba(bomba)
 
         except Exception as e:
             logger.error(f"Erro no processo de seleção de bomba: {e}", exc_info=True)
             self._nenhuma_bomba_encontrada("Ocorreu um erro inesperado.")
 
-    def _exibir_bomba_atual(self):
+    def _exibir_bomba(self, bomba: dict):
         """
-        Função auxiliar para mostrar a bomba selecionada na UI,
-        incluindo o carregamento da imagem da web.
+        Exibe os dados de uma única bomba na interface.
         """
-        if not self.bombas_sugeridas or self.indice_bomba_atual >= len(self.bombas_sugeridas):
-            return
-
-        bomba = self.bombas_sugeridas[self.indice_bomba_atual]
-        score = bomba.get('score', 0)
-        
-        self.label_12.setText(f"Sugestão ({self.indice_bomba_atual + 1}/{len(self.bombas_sugeridas)}) - Score: {score:.2f}")
+        self.label_12.setText("Melhor Bomba Encontrada")
 
         self.modelo.setText(f"<b>{bomba['fabricante']}</b> - {bomba['modelo']}")
         self.potencia_3.setText(f"<b>Potência:</b> {bomba['potencia_nominal_kW']} kW")
         self.vazao_label.setText(f"<b>Vazão Nominal:</b> {bomba['caudal_nominal_m3h']} m³/h")
         self.altura_3.setText(f"<b>Altura Nominal:</b> {bomba['altura_nominal_m']} m")
 
+        # Carregar imagem
         caminho_imagem = bomba.get('caminho_imagem', '')
         self.label_10.setText("A carregar imagem...") 
 
@@ -684,37 +708,25 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
                     logger.warning("URL do Google Drive mal formatado.")
                     self.label_10.setPixmap(QPixmap(u":/img/infeliz.png").scaled(250, 250, Qt.KeepAspectRatio))
             else:
-
                 request = QNetworkRequest(QUrl(caminho_imagem))
                 self._imagem_request_label = self.label_10
                 self.network_manager.get(request)
         else:
             logger.warning("Caminho da imagem não é um URL válido.")
             self.label_10.setPixmap(QPixmap(u":/img/infeliz.png").scaled(250, 250, Qt.KeepAspectRatio))
-        
+
     def _nenhuma_bomba_encontrada(self, motivo: str):
         """Mostra estado quando nenhuma bomba é encontrada"""
         logger.info(motivo)
-        self.label_12.setText("Sugestões")
-        self.modelo.setText("Nenhuma bomba encontrada")
-        self.material.setText(f"<i>Motivo: {motivo}</i>")
-        
-        self.modelo.clear()
-        self.material.clear()
-        self.vazao_label.clear()
-        self.altura_3.clear()
-        self.potencia_3.clear()
-        self.label_10.clear()
-
+        self.label_12.setText("Sugestão de Bomba")
         self.modelo.setText("Nenhuma bomba encontrada")
         self.vazao_label.setText("--")
         self.altura_3.setText("--")
         self.potencia_3.setText("--")
-        self.material.setText("--")
-        self.label_10.setPixmap(QPixmap(r"img\infeliz.png").scaled(150, 150, Qt.KeepAspectRatio))
+        self.label_10.setPixmap(QPixmap(u":/img/infeliz.png").scaled(150, 150, Qt.KeepAspectRatio))
 
     def _on_image_downloaded(self, reply):
-        """Callback quando o QNetworkAccessManager termina o download"""
+        """Callback quando o QNetworkAccessManager termina o download da imagem."""
         if self._imagem_request_label is None:
             return
 
@@ -731,9 +743,16 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
         self._imagem_request_label = None
         reply.deleteLater()
-         
+
+    # ================== MÉTODOS DE INTERFACE ==================
+
+    def mudanca_dinamica_perdas_carga(self):
+        """Alterna entre lista de materiais Darcy e Hazen conforme opção selecionada."""
+        self.darcy.setVisible(self.radioButton_10.isChecked())
+        self.hazen_will.setVisible(self.radioButton_9.isChecked())
+
     def novo_projecto(self):
-        """Reseta a aplicação para um novo projeto, limpando todos os dados"""
+        """Reseta a aplicação para um novo projeto, limpando todos os dados."""
         reply = QMessageBox.question(
             self, 
             "Novo Projeto",
@@ -777,17 +796,14 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             
         except Exception as e:
             QMessageBox.critical(self, "Erro", f"Erro ao criar novo projeto: {str(e)}")
-    
-    
-    # ==========================================================
-    #                 CONFIGURAÇÕES
-    # ==========================================================
+
+    # ================== MÉTODOS DE CONFIGURAÇÕES ==================
+
     def salvar_configuracoes(self):
         """Salva estado da janela e widgets."""
         self.config.salvar_geometria_janela(self)
         self.config.salvar_estado_splitter(self.splitter_2, "splitter_principal")
         self.config.salvar_estado_splitter(self.splitter, "splitter_mapa_perfil")
-        #self.config.salvar_texto_lineedit(self.Vazao_2, "vazao_valor")
         self.config.salvar_indice_combobox(self.icone_2, "vazao_unidade_indice")
         self.config.restaurar_indice_combobox(self.caudal_box, "vazao_unidade_indice")
         self.config.salvar_texto_combobox(self.darcy, "darcy_material_texto")
@@ -798,15 +814,13 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.config.restaurar_geometria_janela(self)
         self.config.restaurar_estado_splitter(self.splitter_2, "splitter_principal")
         self.config.restaurar_estado_splitter(self.splitter, "splitter_mapa_perfil")
-        #self.config.restaurar_texto_lineedit(self.Vazao_2, "vazao_valor")
         self.config.restaurar_indice_combobox(self.icone_2, "vazao_unidade_indice")
         self.config.restaurar_indice_combobox(self.caudal_box, "vazao_unidade_indice")
         self.config.restaurar_texto_combobox(self.darcy, "darcy_material_texto")
         self.config.restaurar_texto_combobox(self.hazen_will, "hazen_material_texto")
 
-    # ==========================================================
-    #                 EVENTOS
-    # ==========================================================
+    # ================== EVENTOS ==================
+
     def closeEvent(self, event):
         """Salva configurações antes de fechar a janela."""
         self.salvar_configuracoes()
