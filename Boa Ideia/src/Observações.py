@@ -5,10 +5,8 @@ from PySide6.QtCore import QThread, Signal
 class Observacoes(QThread):
     resultado = Signal(str)
 
-    def __init__(self, vazao, altura, marca ,modelo,  parent=None):
+    def __init__(self, marca ,modelo,  parent=None):
         super().__init__(parent)
-        self.vazao = vazao
-        self.altura = altura
         self.marca = marca
         self.modelo = modelo
         
@@ -18,10 +16,7 @@ class Observacoes(QThread):
         prompt = f"""
 
             Forneça observações técnicas e práticas sobre a bomba hidráulica da marca {self.marca}, 
-            modelo {self.modelo}, considerando os seguintes parâmetros de operação: 
-            - Vazão: {self.vazao} 
-            - Altura manométrica: {self.altura} 
-
+            modelo {self.modelo} fabricante {self.marca}
             Inclua nas observações:  
             1. Possíveis aplicações da bomba (setores, usos específicos).  
             2. Limitações ou cuidados de operação.  
@@ -32,12 +27,13 @@ class Observacoes(QThread):
 
         try:
             resposta = client.chat.completions.create(
-                model="gpt-4o-mini",
+                model="gpt-4.1-mini",    
                 messages=[
-                    {"role": "system", "content": "Você é um especialista em Bombas Hidraulicas Centrifugas."},
+                    {"role": "system", "content": "Você é um engenheiro hidráulico especializado em bombas."},
                     {"role": "user", "content": prompt}
                 ],
-                max_tokens=1500
+                temperature=0.4,            
+                max_tokens=600       
             )
 
             conteudo = resposta.choices[0].message.content

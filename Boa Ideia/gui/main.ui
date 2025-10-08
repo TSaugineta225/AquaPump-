@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>994</width>
-    <height>632</height>
+    <height>665</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -538,7 +538,7 @@ QPushButton {
              <x>0</x>
              <y>0</y>
              <width>169</width>
-             <height>287</height>
+             <height>320</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_4">
@@ -1807,7 +1807,7 @@ border:None
                     <x>0</x>
                     <y>0</y>
                     <width>256</width>
-                    <height>287</height>
+                    <height>247</height>
                    </rect>
                   </property>
                   <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -2421,7 +2421,7 @@ QPushButton:hover {
                  <x>0</x>
                  <y>0</y>
                  <width>168</width>
-                 <height>135</height>
+                 <height>538</height>
                 </rect>
                </property>
                <layout class="QVBoxLayout" name="verticalLayout_14">
@@ -3422,6 +3422,18 @@ border: None;
                         <verstretch>0</verstretch>
                        </sizepolicy>
                       </property>
+                      <property name="minimumSize">
+                       <size>
+                        <width>200</width>
+                        <height>300</height>
+                       </size>
+                      </property>
+                      <property name="maximumSize">
+                       <size>
+                        <width>16777215</width>
+                        <height>16777215</height>
+                       </size>
+                      </property>
                       <property name="styleSheet">
                        <string notr="true">    border: 1px solid rgba(140, 175, 255, 35);
 border-radius: 4px;</string>
@@ -3548,6 +3560,54 @@ border-radius: 4px;</string>
                    </property>
                   </widget>
                  </item>
+                 <item>
+                  <layout class="QHBoxLayout" name="horizontalLayout_28">
+                   <property name="spacing">
+                    <number>0</number>
+                   </property>
+                   <item alignment="Qt::AlignmentFlag::AlignRight">
+                    <widget class="QLabel" name="label_15">
+                     <property name="styleSheet">
+                      <string notr="true">font-size:8px;
+color:gray;
+border:none
+</string>
+                     </property>
+                     <property name="text">
+                      <string>Observações by</string>
+                     </property>
+                    </widget>
+                   </item>
+                   <item>
+                    <widget class="QLabel" name="label_16">
+                     <property name="minimumSize">
+                      <size>
+                       <width>20</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                     <property name="maximumSize">
+                      <size>
+                       <width>20</width>
+                       <height>20</height>
+                      </size>
+                     </property>
+                     <property name="styleSheet">
+                      <string notr="true">border:none</string>
+                     </property>
+                     <property name="text">
+                      <string/>
+                     </property>
+                     <property name="pixmap">
+                      <pixmap resource="../img/img.qrc">:/img/gpt_icon.png</pixmap>
+                     </property>
+                     <property name="scaledContents">
+                      <bool>true</bool>
+                     </property>
+                    </widget>
+                   </item>
+                  </layout>
+                 </item>
                 </layout>
                </widget>
               </item>
@@ -3591,7 +3651,7 @@ border:none</string>
 border:none</string>
                   </property>
                   <property name="text">
-                   <string>Anterior</string>
+                   <string>Adicionar no Relatório</string>
                   </property>
                  </widget>
                 </item>

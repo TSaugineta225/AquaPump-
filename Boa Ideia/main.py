@@ -1,5 +1,6 @@
-import sys
 import os
+import re
+import sys
 import json
 import logging
 import img.img_rc
@@ -72,7 +73,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     """
     Classe principal da aplicação AquaPump para dimensionamento de sistemas de bombeamento.
     """
-
+    bomba_encontrada = Signal(dict)
     def __init__(self, parent=None):
         """Inicializa a janela principal e todos os seus componentes."""
         super().__init__(parent)
@@ -124,6 +125,9 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.atualizar_graficos_curvas()
         self.mudanca_dinamica_perdas_carga()
 
+        # ---------- Inicialização de pequenos sinais ------
+        self.pequeno_sinal()
+        
     # ================== MÉTODOS DE INICIALIZAÇÃO ==================
 
     def _inicializar_classes_auxiliares(self):
@@ -148,6 +152,9 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
         # Atualizar parâmetros iniciais
         self.atualizar_parametros_entrada()
+        
+    def pequeno_sinal(self):
+        self.bomba_encontrada.connect(self.iniciar_consulta)
 
     def _configurar_validadores(self):
         """Configura validadores para campos de entrada numéricos."""
@@ -298,6 +305,20 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     @Slot()
     def recalcular_sistema_completo(self):
         """Função central que recalcula perdas, altura manométrica e gráficos."""
+        if self.vazao <= 1e-9:
+            """Quando vazao zera existem varios erros (singular matrix, oque o odeio) esta condicao tenta corrigir essa parte"""
+
+            self.perdas_carga = 0
+            self.altura_manometrica = self.altura_geometrica_val
+            self.potencia_requerida = 0
+
+            self.perdas_resul.setText(f"0.000 {self.comprimento_box.currentText()}")
+            self.label_18.setText(f"{self.altura_geometrica_val:.3f} {self.comprimento_box.currentText()}")
+            self.label_19.setText(f"0.000 {self.potencia_box.currentText()}")
+
+            self.atualizar_graficos_curvas()
+            return
+        
         if not hasattr(self, 'perdas') or not self.diametro_tubulacao > 0:
             return
 
@@ -599,7 +620,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         except Exception as e:
             QMessageBox.critical(self, "Erro", f"Ocorreu um erro ao gerar o .xlsv: {str(e)}")
             return False
-
+        
     # ================== MÉTODOS DE HISTÓRICO ==================
 
     def salvar_historico(self):
@@ -676,6 +697,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
             # Exibir a bomba encontrada
             self._exibir_bomba(bomba)
+            self.bomba_encontrada.emit(bomba)
 
         except Exception as e:
             logger.error(f"Erro no processo de seleção de bomba: {e}", exc_info=True)
@@ -691,6 +713,10 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.potencia_3.setText(f"<b>Potência:</b> {bomba['potencia_nominal_kW']} kW")
         self.vazao_label.setText(f"<b>Vazão Nominal:</b> {bomba['caudal_nominal_m3h']} m³/h")
         self.altura_3.setText(f"<b>Altura Nominal:</b> {bomba['altura_nominal_m']} m")
+
+        # Variaveis para posterior uso
+        self.modelo_bomba = bomba["modelo"]
+        self.fabricante_bomba = bomba["fabricante"]
 
         # Carregar imagem
         caminho_imagem = bomba.get('caminho_imagem', '')
@@ -743,6 +769,30 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
         self._imagem_request_label = None
         reply.deleteLater()
+    
+    # ================== MÉTODOS DE PESQUISA DE OBSERVAÇÕES ====
+    def formatar_texto(self, text):
+         text = re.sub(r'\*\*(.*?)\*\*', r'<b>\1</b>', text)
+         return text
+    
+    def iniciar_consulta(self):
+        self.thread = Observacoes(self.modelo_bomba, self.fabricante_bomba)
+        self.thread.resultado.connect(self.mostrar_resultado)
+        self.thread.finished.connect(self.on_finished)
+        self.thread.start()
+        self.textEdit.setText("Consultando...")
+    
+    def on_finished(self):
+        self.thread.deleteLater()
+        self.thread = None
+
+    def mostrar_resultado(self, conteudo):
+        if not conteudo:
+            self.textEdit.setText("**Consultando ...**")
+            return
+        
+        self.textEdit.setHtml(self.formatar_texto(conteudo))
+        self.textEdit.setText(conteudo)
 
     # ================== MÉTODOS DE INTERFACE ==================
 
@@ -828,10 +878,9 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             self.gestor_db.fechar()
         super().closeEvent(event)
 
-
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    #app.setStyleSheet(qdarkstyle.load_stylesheet())
     window = MainWindow()
+    #app.setStyleSheet(qdarkstyle.load_stylesheet())
     window.show()
     sys.exit(app.exec())

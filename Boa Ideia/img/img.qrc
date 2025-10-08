@@ -1,5 +1,6 @@
 <RCC>
   <qresource prefix="img">
+    <file>gpt_icon.png</file>
     <file>TS.png</file>
     <file>logo.png</file>
     <file>logo_principal.png</file>

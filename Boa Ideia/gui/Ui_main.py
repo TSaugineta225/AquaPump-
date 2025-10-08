@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'mainsDYDqJ.ui'
+## Form generated from reading UI file 'maineQVbtS.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -28,7 +28,7 @@ class Ui_AquaPump(object):
     def setupUi(self, AquaPump):
         if not AquaPump.objectName():
             AquaPump.setObjectName(u"AquaPump")
-        AquaPump.resize(994, 632)
+        AquaPump.resize(994, 665)
         AquaPump.setStyleSheet(u"/* --------- QWidget (Geral) --------- */\n"
 "QWidget {\n"
 "    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
@@ -398,7 +398,7 @@ class Ui_AquaPump(object):
         self.scrollArea.setWidgetResizable(True)
         self.scrollAreaWidgetContents = QWidget()
         self.scrollAreaWidgetContents.setObjectName(u"scrollAreaWidgetContents")
-        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 169, 287))
+        self.scrollAreaWidgetContents.setGeometry(QRect(0, 0, 169, 320))
         self.verticalLayout_4 = QVBoxLayout(self.scrollAreaWidgetContents)
         self.verticalLayout_4.setObjectName(u"verticalLayout_4")
         self.projecto_2 = QPushButton(self.scrollAreaWidgetContents)
@@ -1090,7 +1090,7 @@ class Ui_AquaPump(object):
         self.scrollArea_2.setWidgetResizable(True)
         self.scrollAreaWidgetContents_2 = QWidget()
         self.scrollAreaWidgetContents_2.setObjectName(u"scrollAreaWidgetContents_2")
-        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 256, 287))
+        self.scrollAreaWidgetContents_2.setGeometry(QRect(0, 0, 256, 247))
         self.verticalLayout_10 = QVBoxLayout(self.scrollAreaWidgetContents_2)
         self.verticalLayout_10.setSpacing(2)
         self.verticalLayout_10.setObjectName(u"verticalLayout_10")
@@ -1445,7 +1445,7 @@ class Ui_AquaPump(object):
         self.scrollArea_3.setWidgetResizable(True)
         self.scrollAreaWidgetContents_3 = QWidget()
         self.scrollAreaWidgetContents_3.setObjectName(u"scrollAreaWidgetContents_3")
-        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 168, 135))
+        self.scrollAreaWidgetContents_3.setGeometry(QRect(0, 0, 168, 538))
         self.verticalLayout_14 = QVBoxLayout(self.scrollAreaWidgetContents_3)
         self.verticalLayout_14.setSpacing(10)
         self.verticalLayout_14.setObjectName(u"verticalLayout_14")
@@ -2051,6 +2051,8 @@ class Ui_AquaPump(object):
         self.label_10.setObjectName(u"label_10")
         sizePolicy.setHeightForWidth(self.label_10.sizePolicy().hasHeightForWidth())
         self.label_10.setSizePolicy(sizePolicy)
+        self.label_10.setMinimumSize(QSize(200, 300))
+        self.label_10.setMaximumSize(QSize(16777215, 16777215))
         self.label_10.setStyleSheet(u"    border: 1px solid rgba(140, 175, 255, 35);\n"
 "border-radius: 4px;")
         self.splitter_4.addWidget(self.label_10)
@@ -2122,6 +2124,31 @@ class Ui_AquaPump(object):
         self.textEdit.setAcceptRichText(True)
 
         self.verticalLayout_34.addWidget(self.textEdit)
+
+        self.horizontalLayout_28 = QHBoxLayout()
+        self.horizontalLayout_28.setSpacing(0)
+        self.horizontalLayout_28.setObjectName(u"horizontalLayout_28")
+        self.label_15 = QLabel(self.groupBox_3)
+        self.label_15.setObjectName(u"label_15")
+        self.label_15.setStyleSheet(u"font-size:8px;\n"
+"color:gray;\n"
+"border:none\n"
+"")
+
+        self.horizontalLayout_28.addWidget(self.label_15, 0, Qt.AlignmentFlag.AlignRight)
+
+        self.label_16 = QLabel(self.groupBox_3)
+        self.label_16.setObjectName(u"label_16")
+        self.label_16.setMinimumSize(QSize(20, 20))
+        self.label_16.setMaximumSize(QSize(20, 20))
+        self.label_16.setStyleSheet(u"border:none")
+        self.label_16.setPixmap(QPixmap(u":/img/gpt_icon.png"))
+        self.label_16.setScaledContents(True)
+
+        self.horizontalLayout_28.addWidget(self.label_16)
+
+
+        self.verticalLayout_34.addLayout(self.horizontalLayout_28)
 
 
         self.verticalLayout_35.addWidget(self.groupBox_3)
@@ -2327,6 +2354,8 @@ class Ui_AquaPump(object):
         self.groupBox_3.setTitle(QCoreApplication.translate("AquaPump", u" Observa\u00e7\u00f5es da bomba Selecionada ", None))
         self.textEdit.setMarkdown("")
         self.textEdit.setPlaceholderText(QCoreApplication.translate("AquaPump", u"Clique em Seleccionar para obter as observa\u00e7\u00f5es da Bomba", None))
+        self.label_15.setText(QCoreApplication.translate("AquaPump", u"Observa\u00e7\u00f5es by", None))
+        self.label_16.setText("")
 #if QT_CONFIG(tooltip)
         self.voltar_2.setToolTip(QCoreApplication.translate("AquaPump", u"Voltar no Dimensionamento", None))
 #endif // QT_CONFIG(tooltip)
@@ -2338,7 +2367,7 @@ class Ui_AquaPump(object):
 #if QT_CONFIG(tooltip)
         self.anterior.setToolTip(QCoreApplication.translate("AquaPump", u"Associar diferentes bombas", None))
 #endif // QT_CONFIG(tooltip)
-        self.anterior.setText(QCoreApplication.translate("AquaPump", u"Anterior", None))
+        self.anterior.setText(QCoreApplication.translate("AquaPump", u"Adicionar no Relat\u00f3rio", None))
 #if QT_CONFIG(tooltip)
         self.proxima.setToolTip(QCoreApplication.translate("AquaPump", u"Proxima Proposta", None))
 #endif // QT_CONFIG(tooltip)

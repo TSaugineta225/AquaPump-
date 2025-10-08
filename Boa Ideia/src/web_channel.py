@@ -33,6 +33,11 @@ class Dados():
         )
         print(f"Unidades enviadas para a página web: {self.unidade_1}, {self.unidade_2}, {self.unidade_3}, {self.unidade_4}")
 
+class Outros_dados():
+    @Slot(str)
+    def mensagem_recebida(self, msg):
+        QMessageBox.Error(None, "Erro", msg)
+
 class Altura_Geometrica (QObject):
     altura_recebido = Signal(float)
     def __init__(self):
