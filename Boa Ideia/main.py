@@ -28,7 +28,6 @@ from matplotlib import pyplot as plt
 import numpy as np
 import CoolProp.CoolProp as CP
 from scipy.constants import g
-import qdarkstyle
 
 # ================== Importacoes Locais (GUI) ==================
 from gui.Ui_main import Ui_AquaPump
@@ -280,15 +279,23 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         print(f"Área da seção calculada: {self._diametro.area_seccao():.6f}")
         
     def perdas_carga(self):
-        """Instancia a classe de Perdas com os parâmetros atuais."""
-        vazao_m3s = self.vazao
-        self.perdas = Perdas(
-            vazao_m3s,
-            self.diametro_tubulacao,
-            self._diametro.area_seccao(),
-            self.darcy.currentText(),
-            self.hazen_will.currentText()
-        )
+        """Instancia a classe de Perdas com os parâmetros atuais de forma segura."""
+        vazao_m3s = max(self.vazao, 1e-9)  # Garantir vazão mínima
+        diametro_seguro = max(self.diametro_tubulacao, 0.001)  # Diâmetro mínimo de 1mm
+        area_segura = max(self._diametro.area_seccao(), 1e-6)  # Área mínima
+        
+        try:
+            self.perdas = Perdas(
+                vazao_m3s,
+                diametro_seguro,
+                area_segura,
+                self.darcy.currentText(),
+                self.hazen_will.currentText()
+            )
+        except Exception as e:
+            logger.error(f"Erro ao instanciar classe Perdas: {e}")
+            # Fallback: criar instância com valores padrão seguros
+            self.perdas = Perdas(0.001, 0.1, 0.007854, self.darcy.currentText(), self.hazen_will.currentText())
 
     def calcular_potencia(self):
         """Calcula a potencia em KW."""
@@ -305,26 +312,30 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     @Slot()
     def recalcular_sistema_completo(self):
         """Função central que recalcula perdas, altura manométrica e gráficos."""
-        if self.vazao <= 1e-9:
-            """Quando vazao zera existem varios erros (singular matrix, oque o odeio) esta condicao tenta corrigir essa parte"""
-
-            self.perdas_carga = 0
+        # Verificação mais robusta para evitar cálculos com valores inválidos
+        if self.vazao <= 1e-9 or self.diametro_tubulacao <= 1e-6:
+            """Quando vazao ou diâmetro são muito pequenos, evitamos cálculos numéricos instáveis"""
+            self.perdas_totais = 0.0
             self.altura_manometrica = self.altura_geometrica_val
-            self.potencia_requerida = 0
+            self.potencia_requerida = 0.0
 
             self.perdas_resul.setText(f"0.000 {self.comprimento_box.currentText()}")
             self.label_18.setText(f"{self.altura_geometrica_val:.3f} {self.comprimento_box.currentText()}")
             self.label_19.setText(f"0.000 {self.potencia_box.currentText()}")
 
-            self.atualizar_graficos_curvas()
+            # Atualizar gráficos com valores seguros
+            try:
+                self.atualizar_graficos_curvas()
+            except Exception as e:
+                logger.warning(f"Erro ao atualizar gráficos com valores mínimos: {e}")
             return
         
-        if not hasattr(self, 'perdas') or not self.diametro_tubulacao > 0:
+        if not hasattr(self, 'perdas') or not self.diametro_tubulacao > 1e-6:
+            logger.warning("Parâmetros insuficientes para cálculo de perdas")
             return
 
-        # 1. Calcular perdas distribuídas
         perda_distribuida = 0.0
-        if self.comprimento_tubulacao_val > 0:
+        if self.comprimento_tubulacao_val > 1e-6:  # Evitar comprimentos muito pequenos
             try:
                 if self.radioButton_10.isChecked():  # Darcy-Weisbach
                     self.perdas.definir_material_darcy(self.darcy.currentText())
@@ -336,18 +347,29 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
                     perda_distribuida = self.perdas.calcular_perda_carga_hazen_williams(
                         self.comprimento_tubulacao_val
                     )
-            except (ValueError, AttributeError):
+            except (ValueError, AttributeError, ZeroDivisionError) as e:
+                logger.warning(f"Erro no cálculo de perdas distribuídas: {e}")
                 perda_distribuida = 0.0
 
         # 2. Calcular perdas totais e altura manométrica
-        self.perdas_totais = perda_distribuida + self.localizadas
-        self.calcular_potencia()
-        self.perdas_resul.setText(f"{self.perdas_totais:.3f} {self.comprimento_box.currentText()}")
-        print(f"Perdas totais: {self.perdas_totais:.8f} m")
-        self.calcular_altura_manometrica()
+        try:
+            self.perdas_totais = perda_distribuida + self.localizadas
+            # Garantir que as perdas não sejam negativas
+            self.perdas_totais = max(0.0, self.perdas_totais)
+            
+            self.calcular_potencia()
+            self.perdas_resul.setText(f"{self.perdas_totais:.3f} {self.comprimento_box.currentText()}")
+            logger.info(f"Perdas totais calculadas: {self.perdas_totais:.6f} m")
+            self.calcular_altura_manometrica()
 
-        # 3. Atualizar gráficos
-        self.atualizar_graficos_curvas()
+            # 3. Atualizar gráficos
+            self.atualizar_graficos_curvas()
+            
+        except Exception as e:
+            logger.error(f"Erro no cálculo do sistema completo: {e}")
+            # Fallback para valores seguros
+            self.perdas_totais = 0.0
+            self.altura_manometrica = self.altura_geometrica_val
 
     # ================== MÉTODOS DE COMUNICAÇÃO COM JAVASCRIPT ==================
 
@@ -391,15 +413,19 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
     def atualizar_graficos_curvas(self):
         """
-        Atualiza TODOS os gráficos de SIMULAÇÃO, garantindo cálculos estáveis e consistentes.
+        Atualiza TODOS os gráficos de SIMULAÇÃO com proteção contra erros numéricos.
         """
         try:
             # ==============================
-            # 1. PARÂMETROS DE ENTRADA
+            # 1. PARÂMETROS DE ENTRADA SEGUROS
             # ==============================
-            vazao_sistema_m3s = self.vazao if self.vazao > 1e-9 else 0.001
-            altura_manometrica_m = self.altura_manometrica if self.altura_manometrica > 1e-9 else 0.1
-            altura_geometrica_m = self.altura_geometrica_val
+            vazao_sistema_m3s = max(self.vazao, 1e-6) if hasattr(self, 'vazao') else 0.001
+            altura_manometrica_m = max(self.altura_manometrica, 0.1) if hasattr(self, 'altura_manometrica') else 1.0
+            altura_geometrica_m = max(self.altura_geometrica_val, 0.0) if hasattr(self, 'altura_geometrica_val') else 0.0
+
+            # Limitar valores extremos que podem causar instabilidade
+            vazao_sistema_m3s = min(vazao_sistema_m3s, 100.0)  # Limite máximo de 100 m³/s
+            altura_manometrica_m = min(altura_manometrica_m, 500.0)  # Limite máximo de 500 m
 
             # ==============================
             # 2. GERAR PONTOS PARA O EIXO DA VAZÃO
@@ -501,7 +527,20 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             )
 
         except Exception as e:
-            logger.error(f"Erro ao atualizar gráficos de simulação: {e}", exc_info=True)
+            logger.error(f"Erro crítico ao atualizar gráficos: {e}", exc_info=True)
+            # Fallback: gráficos vazios em caso de erro
+            self._limpar_graficos_emergencia()
+
+    def _limpar_graficos_emergencia(self):
+        """Limpa todos os gráficos em caso de erro crítico."""
+        try:
+            for grafico in [self.grafico_altura, self.grafico_potencia, self.grafico_rendimento, self.grafico_npsh]:
+                grafico.ax.clear()
+                grafico.ax.grid(True, linestyle='--', linewidth=0.4, alpha=0.6)
+                grafico.ax.set_title("Gráfico temporariamente indisponível")
+                grafico.canvas.draw()
+        except Exception as e:
+            logger.error(f"Erro ao limpar gráficos de emergência: {e}")
 
     # ================== MÉTODOS DE EXIBIÇÃO DE DADOS ==================
 

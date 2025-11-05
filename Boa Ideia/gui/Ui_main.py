@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 ################################################################################
-## Form generated from reading UI file 'maineQVbtS.ui'
+## Form generated from reading UI file 'maincKtRSk.ui'
 ##
 ## Created by: Qt User Interface Compiler version 6.9.2
 ##
@@ -1117,7 +1117,7 @@ class Ui_AquaPump(object):
         self.scrollArea_5.setWidgetResizable(True)
         self.scrollAreaWidgetContents_5 = QWidget()
         self.scrollAreaWidgetContents_5.setObjectName(u"scrollAreaWidgetContents_5")
-        self.scrollAreaWidgetContents_5.setGeometry(QRect(0, 0, 239, 203))
+        self.scrollAreaWidgetContents_5.setGeometry(QRect(0, -63, 239, 203))
         self.verticalLayout_12 = QVBoxLayout(self.scrollAreaWidgetContents_5)
         self.verticalLayout_12.setSpacing(10)
         self.verticalLayout_12.setObjectName(u"verticalLayout_12")
@@ -1188,11 +1188,11 @@ class Ui_AquaPump(object):
 
         self.horizontalLayout_15 = QHBoxLayout()
         self.horizontalLayout_15.setObjectName(u"horizontalLayout_15")
-        self.label_2 = QLabel(self.scrollAreaWidgetContents_5)
-        self.label_2.setObjectName(u"label_2")
-        self.label_2.setMinimumSize(QSize(150, 0))
+        self.perdas = QLabel(self.scrollAreaWidgetContents_5)
+        self.perdas.setObjectName(u"perdas")
+        self.perdas.setMinimumSize(QSize(150, 0))
 
-        self.horizontalLayout_15.addWidget(self.label_2)
+        self.horizontalLayout_15.addWidget(self.perdas)
 
         self.perdas_resul = QLabel(self.scrollAreaWidgetContents_5)
         self.perdas_resul.setObjectName(u"perdas_resul")
@@ -1269,11 +1269,11 @@ class Ui_AquaPump(object):
         self.verticalLayout_40.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout_31 = QHBoxLayout()
         self.horizontalLayout_31.setObjectName(u"horizontalLayout_31")
-        self.label_21 = QLabel(self.janela_graficos)
-        self.label_21.setObjectName(u"label_21")
-        self.label_21.setStyleSheet(u"color: rgb(181, 181, 181);")
+        self.label_2 = QLabel(self.janela_graficos)
+        self.label_2.setObjectName(u"label_2")
+        self.label_2.setStyleSheet(u"color: rgb(181, 181, 181);")
 
-        self.horizontalLayout_31.addWidget(self.label_21)
+        self.horizontalLayout_31.addWidget(self.label_2)
 
         self.horizontalSpacer_9 = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
 
@@ -2271,14 +2271,14 @@ class Ui_AquaPump(object):
         self.seccao_resul.setText(QCoreApplication.translate("AquaPump", u"-- m", None))
         self.label.setText(QCoreApplication.translate("AquaPump", u"Velocidade:", None))
         self.velocidade_resul.setText(QCoreApplication.translate("AquaPump", u"-- m/s", None))
-        self.label_2.setText(QCoreApplication.translate("AquaPump", u"Perdas de Carga Totais:", None))
+        self.perdas.setText(QCoreApplication.translate("AquaPump", u"Perdas de Carga Totais:", None))
         self.perdas_resul.setText(QCoreApplication.translate("AquaPump", u"-- m", None))
         self.label_5.setText(QCoreApplication.translate("AquaPump", u"Altura Manometrica:", None))
         self.label_18.setText(QCoreApplication.translate("AquaPump", u"-- m", None))
         self.label_13.setText(QCoreApplication.translate("AquaPump", u"Pot\u00eancia:", None))
         self.label_19.setText(QCoreApplication.translate("AquaPump", u"-- kw", None))
         self.graficos.setText(QCoreApplication.translate("AquaPump", u"Gr\u00e1ficos", None))
-        self.label_21.setText(QCoreApplication.translate("AquaPump", u" Curva H vs Q (Altura vs Vaz\u00e3o) ", None))
+        self.label_2.setText(QCoreApplication.translate("AquaPump", u" Curva H vs Q (Altura vs Vaz\u00e3o) ", None))
 #if QT_CONFIG(tooltip)
         self.definicoes_direita_3.setToolTip(QCoreApplication.translate("AquaPump", u"Alterne o grafico exibido", None))
 #endif // QT_CONFIG(tooltip)

@@ -1,7 +1,11 @@
 import math
+import logging
 from typing import Optional
 from CoolProp.CoolProp import PropsSI
 from scipy.constants import g
+
+# Configurar logging
+logger = logging.getLogger(__name__)
 
 class Perdas:
     def __init__(self, vazao_m3s: Optional[float] = None, 
@@ -11,8 +15,9 @@ class Perdas:
                 material_hazen: Optional[str] = None,
                 gravidade_ms2: Optional[float] = g):
         
-        self.diametro_m = diametro_m
-        self.area = area
+        # Valores padrão seguros para evitar erros de inicialização
+        self.diametro_m = diametro_m if diametro_m is not None and diametro_m > 0 else 0.1
+        self.area = area if area is not None and area > 0 else 0.007854  # Área padrão para diâmetro 0.1m
         self.vazao_m3s = vazao_m3s
         self.gravidade_ms2 = gravidade_ms2
 
@@ -84,16 +89,34 @@ class Perdas:
 
         self.acessorios_k = acessorios_dict
 
+    # ---------- Método para atualizar parâmetros ----------
+    def atualizar_parametros(self, diametro_m: float = None, area: float = None, vazao_m3s: float = None):
+        """Atualiza os parâmetros principais para recálculo."""
+        if diametro_m is not None and diametro_m > 0:
+            self.diametro_m = diametro_m
+        if area is not None and area > 0:
+            self.area = area
+        if vazao_m3s is not None:
+            self.vazao_m3s = vazao_m3s
+            if self.area and self.area > 0:
+                self.calcular_velocidade()
+
     # ---------- Cálculos hidráulicos ----------
 
-
     def calcular_velocidade(self):
-        if self.vazao_m3s is None:
-            raise ValueError("Forneça a vazão.")
-        self.velocidade_ms = self.vazao_m3s / self.area
-        if self.velocidade_ms <= 0:
-            self.velocidade_ms = 1e-6  
-        return self.velocidade_ms
+        """Calcula velocidade com proteção contra divisão por zero."""
+        if self.vazao_m3s is None or self.area <= 1e-9:
+            self.velocidade_ms = 1e-6  # Velocidade mínima para evitar problemas
+            return self.velocidade_ms
+            
+        try:
+            self.velocidade_ms = self.vazao_m3s / self.area
+            # Limitar velocidade a um valor mínimo seguro
+            self.velocidade_ms = max(self.velocidade_ms, 1e-6)
+            return self.velocidade_ms
+        except ZeroDivisionError:
+            self.velocidade_ms = 1e-6
+            return self.velocidade_ms
 
     def calcular_viscosidade_cinematica(self):
         T = 293.15
@@ -103,7 +126,10 @@ class Perdas:
         return viscosidade_dinamica / densidade
 
     def calcular_numero_reynolds(self):
-        return (self.velocidade_ms * self.diametro_m) / self.calcular_viscosidade_cinematica()
+        try:
+            return (self.velocidade_ms * self.diametro_m) / self.calcular_viscosidade_cinematica()
+        except (ValueError, ZeroDivisionError):
+            return 1e6  # Valor padrão seguro
 
     def calcular_fator_atrito_churchill(self):
         if self.material_darcy not in self._rugosidade_darcy_mm():
@@ -116,24 +142,98 @@ class Perdas:
         return 8 * ((8 / Re)**12 + (A + B)**(-1.5))**(1/12)
 
     def calcular_perda_carga_darcy(self, comprimento_m: Optional[float] = None):
-        f = self.calcular_fator_atrito_churchill()
-        return f * (comprimento_m / self.diametro_m) * (self.velocidade_ms**2 / (2 * self.gravidade_ms2))
+        """Calcula perda de carga usando Darcy-Weisbach com proteção contra erros."""
+        try:
+            # Validações de segurança
+            if comprimento_m is None or comprimento_m <= 1e-6:
+                return 0.0
+                
+            if self.diametro_m <= 1e-6 or self.vazao_m3s <= 1e-9:
+                return 0.0
+                
+            f = self.calcular_fator_atrito_churchill()
+            velocidade = self.calcular_velocidade()
+            
+            # Cálculo seguro
+            perda = f * (comprimento_m / self.diametro_m) * (velocidade**2 / (2 * self.gravidade_ms2))
+            
+            # Garantir resultado válido
+            if math.isnan(perda) or math.isinf(perda) or perda < 0:
+                return 0.0
+                
+            return perda
+            
+        except Exception as e:
+            logger.warning(f"Erro no cálculo Darcy-Weisbach: {e}")
+            return 0.0
 
     def calcular_perdas_localizadas(self):
         total_k = 0
         for acessorio, qtd in self.acessorios_k.items():
             if acessorio not in self._fator_localizadas():
-                raise ValueError(f"Acessório '{acessorio}' inválido.")
+                logger.warning(f"Acessório '{acessorio}' não encontrado na base de fatores.")
+                continue
             total_k += self._fator_localizadas()[acessorio] * qtd
-        return total_k * (self.velocidade_ms**2 / (2 * self.gravidade_ms2))
+        try:
+            return total_k * (self.velocidade_ms**2 / (2 * self.gravidade_ms2))
+        except (ValueError, ZeroDivisionError):
+            return 0.0
 
     def calcular_perda_carga_hazen_williams(self, comprimento_m: Optional[float] = None):
+        """
+        Calcula perda de carga usando Hazen-Williams com proteção completa contra erros numéricos.
+        """
+        # VALIDAÇÃO ROBUSTA - Verifica todos os parâmetros críticos
         if self.material_hazen not in self._fator_c_hazen_williams():
-            raise ValueError(f"Material '{self.material_hazen}' inválido.")
+            logger.warning(f"Material '{self.material_hazen}' inválido para Hazen-Williams.")
+            return 0.0
+        
+        # Proteção contra valores zero ou negativos
+        if comprimento_m is None or comprimento_m <= 1e-6:
+            return 0.0  # Sem comprimento, sem perda
+        
+        if self.diametro_m is None or self.diametro_m <= 1e-6:
+            logger.warning(f"Diâmetro inválido para cálculo: {self.diametro_m}")
+            return 0.0
+        
+        if self.vazao_m3s is None or self.vazao_m3s < 1e-9:
+            return 0.0  # Vazão insignificante, perda zero
+
         c = self._fator_c_hazen_williams()[self.material_hazen]
+        
+        # Proteção adicional contra coeficiente C zero ou negativo
+        if c <= 1e-6:
+            logger.warning(f"Coeficiente C inválido: {c}")
+            return 0.0
+        
         K = 10.675
         d = self.diametro_m
-        return comprimento_m * (K / d**4.87) * (self.vazao_m3s / c)**1.852
+        
+        # CÁLCULO SEGURO com tratamento de exceções
+        try:
+            # Garante que o diâmetro seja um valor mínimo seguro
+            d_seguro = max(d, 1e-4)  # Diâmetro mínimo de 0.1mm para evitar underflow
+            
+            termo_diametro = d_seguro ** 4.87
+            # Evita underflow em vazões muito pequenas
+            vazao_segura = max(self.vazao_m3s, 1e-9)
+            termo_vazao_coeficiente = (vazao_segura / c) ** 1.852
+            
+            perda_carga = comprimento_m * (K / termo_diametro) * termo_vazao_coeficiente
+            
+            # Verifica se o resultado é numérico válido e não negativo
+            if math.isnan(perda_carga) or math.isinf(perda_carga) or perda_carga < 0:
+                logger.warning(f"Resultado numérico inválido: {perda_carga}")
+                return 0.0
+                
+            return perda_carga
+            
+        except (ZeroDivisionError, OverflowError, ValueError) as e:
+            logger.warning(f"Erro numérico no cálculo Hazen-Williams: {e}")
+            return 0.0
+        except Exception as e:
+            logger.error(f"Erro inesperado no cálculo Hazen-Williams: {e}")
+            return 0.0
      
     # ---------- Bases de dados ----------
     @staticmethod

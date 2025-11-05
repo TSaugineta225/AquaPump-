@@ -80,6 +80,9 @@ class ConexoesUI:
         self.parent.Vazao_2.editingFinished.connect(self.parent.enviar_js)
         self.parent.Vazao.editingFinished.connect(self.parent.enviar_js)
 
+        self.parent.Vazao_2.textEdited.connect(self.parent.enviar_js)
+        self.parent.Vazao.textEdited.connect(self.parent.enviar_js)
+
         self.parent.grafico_icon.clicked.connect(self.parent.enviar_js)
         self.parent.grafico.clicked.connect(self.parent.enviar_js)
 
@@ -95,6 +98,9 @@ class ConexoesUI:
         """Conecta sinais para atualização das unidades (JavaScript)."""
         self.parent.Vazao_2.editingFinished.connect(self.parent.enviar_unidades_js)
         self.parent.Vazao.editingFinished.connect(self.parent.enviar_unidades_js)
+
+        self.parent.Vazao_2.textEdited.connect(self.parent.enviar_unidades_js)
+        self.parent.Vazao.textEdited.connect(self.parent.enviar_unidades_js)
 
         self.parent.grafico_icon.clicked.connect(self.parent.enviar_unidades_js)
         self.parent.grafico.clicked.connect(self.parent.enviar_unidades_js)

@@ -38,9 +38,10 @@ class GestorDatabase:
         if not self.conexao:
             logger.error("A conexão com o banco de dados não está ativa.")
             return None
-            
+
+        print("\n--- INICIANDO NOVA BUSCA DE BOMBA ---")
+        print(f"--> PONTO DE OPERAÇÃO REQUERIDO: Vazão = {vazao_m3h:.2f} m³/h, Altura = {altura_m:.2f} m") 
         # Tolerâncias mais realistas (50% para vazão, 30% para altura)
-        # Busca em múltiplas faixas progressivamente mais amplas
         faixas_tolerancia = [
             (0.8, 1.2, 0.9, 1.1),    # Faixa 1: ±20% vazão, ±10% altura
             (0.7, 1.3, 0.85, 1.15),  # Faixa 2: ±30% vazão, ±15% altura  
@@ -48,12 +49,20 @@ class GestorDatabase:
             (0.5, 1.5, 0.75, 1.25)   # Faixa 4: ±50% vazão, ±25% altura
         ]
         
-        for tolerancia in faixas_tolerancia:
-            vaz_min, vaz_max, alt_min, alt_max = tolerancia
+        for i, tolerancia in enumerate(faixas_tolerancia):
+            vaz_min_f, vaz_max_f, alt_min_f, alt_max_f = tolerancia
+
+            limite_vazao_min = vazao_m3h * vaz_min_f
+            limite_vazao_max = vazao_m3h * vaz_max_f
+            limite_altura_min = altura_m * alt_min_f
+            limite_altura_max = altura_m * alt_max_f
+
+            print(f"\n[TENTATIVA {i+1}]")
+            print(f"  - Procurando Vazão entre: {limite_vazao_min:.2f} e {limite_vazao_max:.2f} m³/h")
+            print(f"  - Procurando Altura entre: {limite_altura_min:.2f} e {limite_altura_max:.2f} m")
             
             query = """
                 SELECT *,
-                       -- Critério de pontuação melhorado (pesos relativos)
                        (ABS(caudal_nominal_m3h - ?) / ? * 0.6 + 
                         ABS(altura_nominal_m - ?) / ? * 0.4) as score
                 FROM Bombas
@@ -69,23 +78,27 @@ class GestorDatabase:
             try:
                 cursor = self.conexao.cursor()
                 cursor.execute(query, (
-                    vazao_m3h, vazao_m3h,  # Para cálculo do score
-                    altura_m, altura_m,     # Para cálculo do score  
-                    vazao_m3h * vaz_min, vazao_m3h * vaz_max,
-                    altura_m * alt_min, altura_m * alt_max
+                    vazao_m3h, vazao_m3h,
+                    altura_m, altura_m,
+                    limite_vazao_min, limite_vazao_max,
+                    limite_altura_min, limite_altura_max
                 ))
                 
                 resultado = cursor.fetchone()
                 if resultado:
+                    print(f"  --> SUCESSO! Bomba encontrada nesta faixa.")
+                    print("---------------------------------------\n")
                     bomba = dict(resultado)
-                    bomba['score'] = resultado['score']
-                    bomba['faixa_tolerancia'] = f"Vazão: {vaz_min*100:.0f}%-{vaz_max*100:.0f}%, Altura: {alt_min*100:.0f}%-{alt_max*100:.0f}%"
+                    bomba['faixa_tolerancia'] = f"Vazão: {vaz_min_f*100:.0f}%-{vaz_max_f*100:.0f}%, Altura: {alt_min_f*100:.0f}%-{alt_max_f*100:.0f}%"
                     return bomba
+                else:
+                    print(f"  --> Nenhuma bomba encontrada nesta faixa. A tentar a próxima.")
                     
             except Exception as e:
                 logger.error(f"Erro ao buscar bomba na faixa {tolerancia}: {e}")
                 continue
         
+        print("\n--- FIM DA BUSCA: Nenhuma bomba encontrada em todas as faixas. ---\n")
         return None
 
     def fechar(self):
