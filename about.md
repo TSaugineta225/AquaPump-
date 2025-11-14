@@ -7,11 +7,16 @@ Software de Código aberto de dimensionamento e selecção de bombas hidraulicas
 
     Entradas de dados -- (Vazão, tempo de funcionamento da bomba, tracado da tubulacao, acessorios de Tubulacao)
     Saidas/Output -- (Potência da bomba; rendimento; perdas de carga, 
+    
 <img width="765" height="480" alt="image" src="https://github.com/user-attachments/assets/c5b8f34c-5b19-46da-b49a-379c6b3c2772" />
+Figura_1: Esquema de funcionamento do AquaPump
 
 **Interfaces**
+
  *Janela Principal*
  <img width="886" height="472" alt="image" src="https://github.com/user-attachments/assets/09b81201-23c5-4c8e-854d-8db7400bd88e" />
+    Figura_2: Janela Principal do AquaPump
+ 
  1.	Menus superiores (da esquerda à direita):
     •	Menu “Arquivo” – Contém opções relacionadas à gestão de ficheiros, como criar novo projeto, abrir, salvar e fechar o programa;
     •	Menu “Editar” – Disponibiliza ferramentas para acessar as configurações do programa;
@@ -44,6 +49,7 @@ Software de Código aberto de dimensionamento e selecção de bombas hidraulicas
 
 *Janela de Configurações*
 <img width="886" height="473" alt="image" src="https://github.com/user-attachments/assets/c689eb6e-785a-4878-94e9-e819cd37a156" />
+Figura_3: Janela das Configurações do AquaPump
 
 1.	Padrão de Unidades Preferencial – Secção destinada à seleção do sistema de unidades a ser utilizado em todo o projeto. O utilizador pode escolher entre:
    •	Sistema Internacional (SI / Métrico) – usa unidades como metros (m), litros por segundo (L/s), etc.
