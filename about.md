@@ -1,7 +1,7 @@
 **AquaPump**
 
 
-Software de Código aberto de dimensionamento e selecção de bombas hidraulicas centrífugas
+Software de Código aberto de dimensionamento e selecção de bombas hidraulicas centrífugas desenvolvido na linguagem Python usando o PySide6 como biblioteca para interface, assim como foi implementado mapas do LeafLet num arquivo HTML 
 
 **Funcionalidades**
 
