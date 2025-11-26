@@ -1,18 +1,31 @@
-**AquaPump**
+## AquaPump
+
+### 1. Visão geral
+
+AquaPump é um software de código aberto para o dimensionamento e selecção
+de bombas hidráulicas centrífugas, desenvolvido em Python.
+A ferramenta integra cálculos hidráulicos e visualização geoespacial
+para apoiar decisões técnicas em sistemas de abastecimento de água e irrigação.
 
 
-Software de Código aberto de dimensionamento e selecção de bombas hidraulicas centrífugas desenvolvido na linguagem Python usando o PySide6 como biblioteca para interface, assim como foi implementado mapas do LeafLet num arquivo HTML 
+### 2. Funcionalidades
 
-**Funcionalidades**
+- Dimensionamento hidráulico de sistemas de bombeamento
+- Cálculo da altura manométrica total
+- Estimativa de perdas de carga na tubulação(distribuidas e localizadas)
+- Visualização de traçados hidráulicos em mapa(Com Leaflet)
+- Geração de curvas do sistema e da bomba
+- Apoio à selecção de bombas centrífugas
+
 
     Entradas de dados -- (Vazão, tempo de funcionamento da bomba, tracado da tubulacao, acessorios de Tubulacao)
-    Saidas/Output -- (Potência da bomba; rendimento; perdas de carga, 
+    Saidas/Output -- (Potência da bomba; rendimento; perdas de carga) 
     
 <img width="765" height="480" alt="image" src="https://github.com/user-attachments/assets/c5b8f34c-5b19-46da-b49a-379c6b3c2772" />
 
     Figura_1: Esquema de funcionamento do AquaPump
 
-**Interfaces**
+### 3. Interfaces do Utilizador
 
  *Janela Principal*
  
@@ -84,6 +97,92 @@ Software de Código aberto de dimensionamento e selecção de bombas hidraulicas
 
 **5.	Botão “Aplicar”** – Guarda e implementa as alterações de unidades ou preferências definidas pelo utilizador.
 
+### 4. Requisitos do Sistema
+
+#### Sistema Operacional
+- Windows 10 ou Windows 11 (64 bits)
+
+#### Processador, Memória e Gráficos
+
+**Mínimo:**
+- Processador: Dual-core 64 bits  
+  - Intel Core i3 (1ª–3ª geração)  
+  - AMD Athlon / A6
+- Memória: 4 GB RAM
+- Gráficos: suporte a OpenGL 2.0
+
+**Recomendado:**
+- Processador: Quad-core  
+  - Intel Core i5 / Ryzen 5 ou superior
+- Arquitetura: 64 bits
+- Memória: 8 GB RAM ou mais
+- Gráficos:
+  - Intel HD Graphics 4000 ou superior  
+  - Qualquer GPU dedicada (NVIDIA / AMD)
+ 
+### 5. Instalação
+
+    git clone https://github.com/TSaugineta225/AquaPump-.git
+    cd AquaPump
+    pip install -r requirements.txt
+    python main.py
+
+### 6. Utilização básica
+> Como usar em 5 passos.
+
+1. Definir os parâmetros hidráulicos do sistema
+2. Traçar a tubulação no mapa
+3. Seleccionar materiais e acessórios
+4. Executar os cálculos hidráulicos
+5. Analisar os resultados e a recomendação da bomba
+
+### 7. Tecnologias utilizadas
+
+    Python 3.13
+    PySide6
+    Qt WebEngine
+    Leaflet.js
+    NumPy
+    SciPy
+    Matplotlib
+    GeoPy
+    ReportLab
+    coolprop
+
+
+### 8. Estrutura do Projecto
+    
+    AquaPump/
+    │
+    ├── src/             
+    │    ├── __init__.py
+    ├── gui/         
+    ├── calculos/   
+    ├── data/         
+    ├── img/            
+    ├── main.py
+    ├── requirements.txt   
+    ├── LICENSE            
+    ├── README.md          
+
+
+
+### 9. Limitações Actuais
+1.    A base de dados, embora funcional, é um protótipo e necessita de um processo de atualização contínuo para se manter relevante;
+  
+3.    O software na sua versão 1.0 foca-se em bombas centrífugas únicas, não abordando cenários mais complexos como a associação de bombas ou a análise de redes de distribuição, que representam um caminho claro para trabalhos futuros;
+  
+5.    Adicionalmente, fenómenos transientes como o golpe de aríete não foram modelados e constituem uma área de expansão de alta complexidade e valor para futuras versões do software.
+
+### 10. Estado do projecto e roadmap
+
+- Versão actual: 1.0.0
+- Estável para uso académico
+- Futuras versões: associação de bombas, análise de redes, fenómenos transientes
+
+### 11. Licença
+
+Este projecto é distribuído sob a licença MIT.
 
 
 
