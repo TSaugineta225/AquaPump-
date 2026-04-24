@@ -9,67 +9,89 @@ tags:
   - irrigation
 authors:
   - name: Tenerife Saugineta
-    orcid: 0009-0007-4292-7508
     corresponding: true
+    orcid: 0009-0000-3033-8908
     affiliation: 1
 affiliations:
   - name: Divisão de Agricultura, Instituto Superior Politécnico de Gaza, Moçambique
     index: 1
 date: 27 November 2025
+doi: 10.5281/zenodo.19712947
+url: https://github.com/TSaugineta225/AquaPump-.git
 bibliography: paper.bib
 ---
 
 # Summary
 
-The sizing and selection of hydraulic pumps are critical processes in engineering that directly impact the energy efficiency and operational costs of pumping systems. However, the complexity of manual calculations and the dependence on manufacturer-specific software, which limits options to their own product lines, represent significant obstacles to optimized and independent selection.
+The sizing and selection of hydraulic pumps are critical processes that directly impact the energy efficiency and operational costs of pumping systems. However, the complexity of manual calculations and the dependence on manufacturer-specific software, which restricts recommendations to a single product line, represent significant obstacles to optimized and independent selection.
 
-`AquaPump` is an open-source Python software designed to optimize the sizing and selection of centrifugal pumps. It performs precise hydraulic sizing (calculating manometric head, pipe diameter, and power requirements) and assists in the efficient choice of equipment from multiple manufacturers by consulting a local, updatable database. The software automates the calculation of distributed and localized head losses, graphically simulates the system and pump characteristic curves, and suggests the most suitable equipment based on the operating point.
+`AquaPump` is an open-source Python software designed to optimize the sizing and selection of centrifugal pumps. It performs precise hydraulic sizing—calculating manometric head, pipe diameter, and power requirements—and assists in the efficient choice of equipment from multiple manufacturers through a local, updatable database. The software automates the computation of distributed and localized head losses, simulates system and pump characteristic curves, and suggests the most suitable pump based on the operating point. An integrated map interface allows users to trace pipelines, automatically extracting topographic profiles and distances.
 
 # Statement of need
 
-Accurately sizing hydraulic pumps for irrigation and water supply systems is a complex, repetitive, and time-consuming task [@ferreira:2022; @vernillo:2024]. Existing commercial solutions, such as `KSB EasySelect` [@ksb:2025] and `Wilo-Select 5` [@wilo:2025], are robust but inherently limited, as they exclusively recommend equipment from their own catalogs. This restricts engineers from performing a truly independent, comparative, and cost-effective analysis.
+Accurately sizing hydraulic pumps for irrigation, water supply, and industrial systems is a repetitive and error-prone task when performed manually [@ferreira:2022; @vernillo:2024]. Existing commercial solutions, such as `KSB EasySelect` [@ksb:2025] and `Wilo-Select 5` [@wilo:2025], are robust but inherently limited to the manufacturer's own catalog. This forces engineers who need cross-brand comparisons to rely on generic tools like Excel spreadsheets or scripts, a process that can take over 30 minutes per scenario and demands specialized expertise [@torres:2022].
 
-Manual calculations using Excel or tools like Scilab [@torres:2022] are viable but require significant time and expertise, taking upwards of 30 minutes per scenario. `AquaPump` addresses this gap by providing a dedicated, interactive, and independent tool. It reduces the sizing process from approximately 30 minutes to under 2 minutes, with less than 1% variation compared to manual calculation methods. Its integrated map interface (via Leaflet.js) allows for the visual tracing of pipelines to automatically obtain topographic profiles and distances, bridging the gap between geospatial data and hydraulic design.
+`AquaPump` addresses this gap by providing a dedicated, interactive tool that reduces the full sizing process to approximately two minutes, with less than 1% variation compared to manual calculations. Its integrated Leaflet‑based map, combined with elevation APIs, bridges the gap between geospatial data and hydraulic design—a feature not available in conventional pump selection software. By bundling a database of commercially available pumps in Mozambique, the software transforms into a practical, ready‑to‑use decision‑making aid for local engineers.
 
 # State of the field
 
-The primary tools in the industry for pump selection are the proprietary catalogs of manufacturers like KSB and Wilo. While highly accurate for their specific machines, they do not support cross-manufacturer comparisons. Generic academic tools exist (e.g., Scilab scripts, Excel spreadsheets), but they often lack a user-friendly interface and integrated databases.
+The primary tools for pump selection are the proprietary catalogs of manufacturers such as KSB and Wilo. While highly accurate for their specific equipment, they do not allow cross‑manufacturer comparisons. In academic and field practice, engineers often rely on spreadsheets or scientific calculators, which are flexible but lack integration, automation, and visual feedback. Open‑source hydraulic packages like `EPANET` focus on network analysis rather than the pump selection workflow, and scripting environments like `Scilab` [@scarabellot:2018] require significant user effort to match the level of interactivity and graphical output.
 
-`AquaPump` is not the only open-source tool for hydraulic calculations (e.g., `EPANET` for network analysis), but it fills a specific niche by focusing exclusively on the pump selection process with a direct link to a local market database. It was built from the ground up to provide a modern GUI (via PySide6), interactive geospatial mapping, and multi-manufacturer recommendation logic, features not commonly found in existing open-source alternatives for this specific application.
+`AquaPump` fills a specific niche by targeting the pump selection process exclusively. It provides a modern graphical interface, a manufacturer‑independent recommendation system, and an integrated mapping module—all features absent from the current open‑source alternatives for this specific application.
 
 # Software design
 
-`AquaPump` is built with a modular architecture to separate the calculation logic from the user interface:
+`AquaPump` follows a modular architecture that separates the hydraulic calculation engine from the user interface:
 
-1.  **Calculation Engine (`perdas_cargas.py`, `dimensionamento_tubulação.py`):** Implements the Darcy-Weisbach equation with the Churchill friction factor model and the Hazen-Williams formula for distributed head losses, alongside localized loss calculations. It leverages `CoolProp` for fluid properties and `NumPy`/`SciPy` for efficient numerical computation.
-2.  **Geospatial Module (`index.html`, `web_channel.py`):** Integrates a Leaflet.js map through a `QWebEngineView`. Communication between Python and JavaScript is handled via `QWebChannel`, allowing the software to capture user-drawn polylines, calculate distances, and fetch elevation data via the Open-Elevation API to determine the geometric head.
-3.  **Recommendation System (`gestor_database.py`):** Consults a local SQLite database containing specifications of 21 commercially available pump models in Mozambique. The selection algorithm uses a scoring function based on flow rate and head, with progressive tolerance bands to find the most efficient match.
-4.  **User Interface and Reporting (`main.py`, `pdf_gen.py`, `csv_gen.py`):** The GUI is built with `PySide6` and styled with QSS. The software can export technical reports in both PDF (via `ReportLab`) and XLSX (via `pandas`/`openpyxl`), featuring embedded tables and dynamic graphs of the pump curves (H-Q, P-Q, η-Q) generated with `Matplotlib`.
+1. **Hydraulic engine** (`perdas_cargas.py`, `dimensionamento_tubulação.py`): Implements the Darcy‑Weisbach equation with the Churchill friction factor and the Hazen‑Williams formula for distributed losses, as well as localized head losses via K‑factors. Fluid properties are obtained from `CoolProp`, and numerical operations rely on `NumPy` and `SciPy`.
+
+2. **Geospatial module** (`index.html`, `web_channel.py`): Embeds a Leaflet map inside a `QWebEngineView`. Bidirectional communication via `QWebChannel` enables the capture of user‑drawn polylines, distance calculations, and elevation queries using the Open‑Elevation API, which directly feed the geometric head into the hydraulic computation.
+
+3. **Recommendation system** (`gestor_database.py`): A local SQLite database stores technical specifications of 21 commercially available pump models. The selection algorithm scores candidates using flow rate and head, applying progressive tolerance bands to identify the most efficient match.
+
+4. **User interface and reporting** (`main.py`, `pdf_gen.py`, `csv_gen.py`): Built with `PySide6` and styled with QSS. The interface features real‑time updates of calculated values and dynamically generated pump curves (H–Q, P–Q, η–Q) using `Matplotlib`. Reports are exported as PDF (via `ReportLab`) or XLSX (via `pandas`/`openpyxl`), including tables, graphs, and metadata.
 
 # Research impact statement
 
-The `AquaPump` prototype has demonstrated its effectiveness in a case study for an irrigation system. The time to perform a complete sizing was reduced from over 30 minutes to approximately 2 minutes, with a numerical accuracy within 1% of values calculated in Microsoft Excel. Its application is not only in research but also in professional practice, particularly in contexts like Mozambique, where access to a wide range of suppliers is critical. By integrating a local database of pumps, `AquaPump` transforms from a purely theoretical tool into a practical decision-making aid for engineers in the field.
+The effectiveness of `AquaPump` was validated through a case study simulating an irrigation system. The software achieved a deviation of less than 1% relative to the same calculations performed in Microsoft Excel, while reducing the total sizing time from over 30 minutes to roughly 2 minutes. Beyond speed and accuracy, the tool has practical relevance in Mozambique, where the integrated local pump database enables engineers to make informed choices without being limited to a single supplier. This combination of validated correctness, time efficiency, and local applicability makes `AquaPump` a valuable asset for both educational and professional use.
 
 # Mathematics
 
-Single dollars ($) are required for inline mathematics, e.g., the manometric head $H_m$ is the sum of the geometric head $H_g$ and the total head loss $\Delta h$.
+The hydraulic calculations rely on the Darcy‑Weisbach equation for distributed head loss, using the Churchill explicit formulation for the friction factor $f$ [@baptista:2014]:
 
-The core of the hydraulic calculation is the dimensionless friction factor $f$ from the Colebrook-White equation or the explicit Churchill equation:
-\begin{equation}\label{eq:churchill}
+\begin{equation}
 f = 8 \left[ \left( \frac{8}{Re} \right)^{12} + \frac{1}{(A + B)^{1.5}} \right]^{1/12}
+\label{eq:churchill}
 \end{equation}
-where $Re$ is the Reynolds number and $A$ and $B$ are functions of $Re$ and the relative roughness $\varepsilon/D$ [@baptista:2014]. The total manometric head is then calculated as $H_m = H_g + \Delta h_{distributed} + \Delta h_{localized}$.
 
-# Figures
+where $A = \left[ 2.457 \ln \left( \left( \frac{7}{Re} \right)^{0.9} + 0.27 \frac{\varepsilon}{D} \right) \right]^{16}$,
+$B = \left( \frac{37530}{Re} \right)^{16}$,
+$Re$ is the Reynolds number, and $\varepsilon/D$ the relative roughness.
 
-![The AquaPump graphical user interface showing the integrated map, input fields, real-time calculation results, and dynamically generated pump curves.\label{fig:interface}](figure.png)
+The total manometric head $H_m$ is then obtained by summing the geometric head $H_g$ and all head losses:
+
+\begin{equation}
+H_m = H_g + \Delta h_{\text{distributed}} + \Delta h_{\text{localized}}
+\label{eq:manometric}
+\end{equation}
+
+The Hazen‑Williams formula is used as an alternative for certain pipe materials:
+
+\begin{equation}
+\Delta H = 10.675 \, L \, D^{-4.87} \left( \frac{Q}{C} \right)^{1.852}
+\label{eq:hazen}
+\end{equation}
+
+where $C$ is the pipe coefficient and $Q$ the flow rate.
 
 # AI usage disclosure
 
-No generative AI tools were used in the development of this software, the writing of this manuscript, or the preparation of supporting materials.
+During the development of this software and the preparation of this manuscript, AI-based tools were used solely for the following purposes:
+- Review of code for bug detection and correction.
+
+All AI-generated suggestions were critically evaluated by the author to ensure correctness and alignment with the project's objectives. No content was generated autonomously; final decisions and implementations were always made by the human author.
 
 # Acknowledgements
 
 We acknowledge the contributions and supervision of Dr. Eng. Lateiro Salvador de Sousa and M. Eng. Nélia Dalúvia Rafael during the genesis of this project at the Instituto Superior Politécnico de Gaza.
 
-# References
