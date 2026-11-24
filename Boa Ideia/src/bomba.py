@@ -1,23 +1,11 @@
-"""Modelação computacional de bombas centrífugas.
+"""Modelo de bombas centrífugas para o AquaPump.
 
-Unidades internas (SI):
-    Q      [m³/s]   vazão volumétrica
-    H      [m]      altura manométrica
-    P      [W]      potência no eixo
-    η      [-]      rendimento (fração, NÃO %)
-    NPSHr  [m]      NPSH requerido
-    N      [rpm]    rotação
-    D      [mm]     diâmetro do rotor
+Unidades internas SI:
+    Q [m³/s], H [m], P_shaft [W], eta [-], NPSHr [m].
 
-Interface pública (partilhada com AssociacaoBombas):
-    definir_dados, ajustar_curvas
-    H_de_Q, P_de_Q, eta_de_Q, npsh_de_Q, Q_de_H
-    Q_min, Q_max, H_shutoff, curva
-    com_rotacao, com_diametro  (leis de afinidade)
-    ponto_operacao              (cruza com H_sistema(Q))
-    to_dict, from_dict, salvar_json, carregar_json
+A API pública da versão anterior é mantida. As curvas passam a usar
+interpolação PCHIP (shape-preserving), sem extrapolação silenciosa.
 """
-
 from __future__ import annotations
 
 import json
@@ -26,32 +14,39 @@ from typing import Callable, Optional
 import numpy as np
 from CoolProp.CoolProp import PropsSI
 from scipy.constants import g as G_CONST
+from scipy.interpolate import PchipInterpolator
 from scipy.optimize import brentq
 
-__all__ = [
-    "Bomba", "BombaError",
-    "encontrar_ponto_operacao", "para_plot",
-]
+__all__ = ["Bomba", "BombaError", "encontrar_ponto_operacao", "para_plot"]
 
 FLUIDO_PADRAO = "Water"
-T_PADRAO = 293.15        # K   (20 °C)
-P_PADRAO = 101325.0      # Pa  (1 atm)
-GRAUS_PADRAO = {"H": 2, "P": 3, "eta": 3, "npsh": 2}
+T_PADRAO = 293.15
+P_PADRAO = 101325.0
 
 
 class BombaError(ValueError):
-    """Erro de domínio no modelo de bombas."""
+    """Erro de domínio ou de dados no modelo da bomba."""
 
 
-# =====================================================================
-# Bomba individual
-# =====================================================================
+def _array_1d(
+    nome: str, valores, tamanho: int | None = None, allow_nan: bool = False
+) -> np.ndarray:
+    try:
+        arr = np.asarray(valores, dtype=float)
+    except (TypeError, ValueError) as exc:
+        raise BombaError(f"'{nome}' deve conter valores numéricos.") from exc
+    if arr.ndim != 1 or arr.size < 2:
+        raise BombaError(f"'{nome}' deve ser um vector 1-D com pelo menos 2 pontos.")
+    if tamanho is not None and arr.size != tamanho:
+        raise BombaError(f"'{nome}' deve ter {tamanho} valores, mas tem {arr.size}.")
+    if np.any(np.isinf(arr)) or (not allow_nan and np.any(np.isnan(arr))):
+        raise BombaError(f"'{nome}' contém valores NaN ou infinitos.")
+    return arr.copy()
+
+
 class Bomba:
-    """Modelo completo de uma bomba centrífuga."""
+    """Representa uma bomba centrífuga através das curvas do fabricante."""
 
-    # ------------------------------------------------------------------ #
-    # Construção
-    # ------------------------------------------------------------------ #
     def __init__(
         self,
         nome: str = "Bomba",
@@ -61,154 +56,210 @@ class Bomba:
         rpm: Optional[float] = None,
         diametro_rotor_mm: Optional[float] = None,
     ):
-        self.nome = nome
-        self.fluido = fluido
+        self.nome = str(nome)
+        self.fluido = str(fluido)
         self.T = float(T)
         self.P = float(P)
+        if not np.isfinite(self.T) or self.T <= 0:
+            raise BombaError("A temperatura absoluta deve ser positiva e finita.")
+        if not np.isfinite(self.P) or self.P <= 0:
+            raise BombaError("A pressão absoluta deve ser positiva e finita.")
         self.rpm = None if rpm is None else float(rpm)
         self.diametro_rotor_mm = (
             None if diametro_rotor_mm is None else float(diametro_rotor_mm)
         )
+        if self.rpm is not None and (not np.isfinite(self.rpm) or self.rpm <= 0):
+            raise BombaError("A rotação deve ser positiva e finita.")
+        if self.diametro_rotor_mm is not None and (
+            not np.isfinite(self.diametro_rotor_mm) or self.diametro_rotor_mm <= 0
+        ):
+            raise BombaError("O diâmetro do rotor deve ser positivo e finito.")
 
-        # Propriedades do fluido
-        self.rho = float(PropsSI("D", "T", T, "P", P, fluido))
-        self.mu = float(PropsSI("V", "T", T, "P", P, fluido))
-        self.P_vapor = float(PropsSI("P", "T", T, "Q", 0, fluido))
+        try:
+            self.rho = float(PropsSI("D", "T", self.T, "P", self.P, self.fluido))
+            self.mu = float(PropsSI("V", "T", self.T, "P", self.P, self.fluido))
+            self.P_vapor = float(PropsSI("P", "T", self.T, "Q", 0, self.fluido))
+        except Exception as exc:
+            raise BombaError(
+                f"Não foi possível obter as propriedades do fluido '{self.fluido}': {exc}"
+            ) from exc
+        if not all(np.isfinite(v) and v > 0 for v in (self.rho, self.mu)):
+            raise BombaError("As propriedades calculadas do fluido são inválidas.")
         self.g = float(G_CONST)
 
-        # Dados experimentais
         self._Q: Optional[np.ndarray] = None
         self._H: Optional[np.ndarray] = None
         self._P: Optional[np.ndarray] = None
         self._eta: Optional[np.ndarray] = None
         self._npsh_r: Optional[np.ndarray] = None
-
-        # Coeficientes polinomiais
+        # Mantém-se o nome _coef para reduzir o impacto nas integrações antigas.
+        # Os valores são agora interpoladores PCHIP, não coeficientes polinomiais.
         self._coef = {"H": None, "P": None, "eta": None, "npsh": None}
-        self._graus = dict(GRAUS_PADRAO)
 
-    # ------------------------------------------------------------------ #
-    # Entrada de dados
-    # ------------------------------------------------------------------ #
     def definir_dados(
-        self,
-        Q,
-        H=None,
-        P=None,
-        eta=None,
-        npsh_r=None,
-        ajustar: bool = True,
+        self, Q, H=None, P=None, eta=None, npsh_r=None, ajustar: bool = True
     ) -> "Bomba":
-        """Define os pontos da curva do fabricante.
+        """Define os pontos das curvas do fabricante.
 
-        Q e H são obrigatórios. Se for fornecida apenas uma das duplas
-        (P, eta), a outra é deduzida via `P = ρ g Q H / η`.
-
-        η pode vir em % (max > 1.5) ou em fração — é normalizada para fração.
+        ``P`` representa potência no eixo [W]. ``eta`` pode ser fornecido em
+        fracção ou percentagem. Se apenas P ou eta for fornecido, a outra
+        grandeza é estimada a partir de rho*g*Q*H.
         """
-        Q = np.asarray(Q, dtype=float)
-        if Q.ndim != 1 or Q.size < 2:
-            raise BombaError("Q deve ser vetor 1-D com pelo menos 2 pontos.")
-        if np.any(Q < 0):
-            raise BombaError("Q não pode ter valores negativos.")
-        if np.any(np.diff(Q) <= 0):
-            raise BombaError("Q deve ser estritamente crescente.")
+        q = _array_1d("Q", Q)
+        if np.any(q < 0):
+            raise BombaError("A vazão não pode ser negativa.")
+        if np.any(np.diff(q) <= 0):
+            raise BombaError("Q deve ser estritamente crescente e sem duplicados.")
+        if H is None:
+            raise BombaError("A curva de altura manométrica H(Q) é obrigatória.")
+        h = _array_1d("H", H, q.size)
+        if np.any(h < 0):
+            raise BombaError("A altura manométrica não pode ser negativa.")
 
-        self._Q = Q
-        self._H = None if H is None else np.asarray(H, dtype=float)
-        self._P = None if P is None else np.asarray(P, dtype=float)
-        self._eta = None if eta is None else np.asarray(eta, dtype=float)
-        self._npsh_r = None if npsh_r is None else np.asarray(npsh_r, dtype=float)
+        p = None if P is None else _array_1d("P", P, q.size, allow_nan=True)
+        e = None if eta is None else _array_1d("eta", eta, q.size, allow_nan=True)
+        n = None if npsh_r is None else _array_1d("NPSHr", npsh_r, q.size, allow_nan=True)
+        if p is not None and np.any(p[np.isfinite(p)] < 0):
+            raise BombaError("A potência no eixo não pode ser negativa.")
+        if n is not None and np.any(n[np.isfinite(n)] < 0):
+            raise BombaError("O NPSH requerido não pode ser negativo.")
+        if e is not None:
+            # Mantém compatibilidade com a detecção automática anterior.
+            finite_eta = e[np.isfinite(e)]
+            if finite_eta.size == 0:
+                raise BombaError("A curva de rendimento não contém valores válidos.")
+            if np.max(finite_eta) > 1.5:
+                e = e / 100.0
+            finite_eta = e[np.isfinite(e)]
+            if np.any(finite_eta < 0) or np.any(finite_eta > 1.02):
+                raise BombaError("O rendimento deve estar entre 0 e 1 (ou 0 e 100%).")
+            e = np.where(np.isfinite(e), np.minimum(e, 1.0), np.nan)
 
-        for nome, arr in (
-            ("H", self._H), ("P", self._P),
-            ("eta", self._eta), ("npsh_r", self._npsh_r),
-        ):
-            if arr is not None and arr.shape != Q.shape:
-                raise BombaError(f"Array '{nome}' com forma diferente de Q.")
-
+        self._Q, self._H = q, h
+        self._P, self._eta, self._npsh_r = p, e, n
         self._completar_grandezas()
         if ajustar:
             self.ajustar_curvas()
         return self
 
     def _completar_grandezas(self) -> None:
-        """Deduz P a partir de η (ou vice‑versa) quando só uma está presente."""
-        if self._H is None:
+        if self._Q is None or self._H is None:
             return
-        P_hid = self.rho * self.g * self._Q * self._H  # potência hidráulica
-
-        if self._eta is not None and np.nanmax(self._eta) > 1.5:
-            self._eta = self._eta / 100.0  # veio em %
-
+        p_hid = self.rho * self.g * self._Q * self._H
         if self._eta is not None and self._P is None:
-            with np.errstate(divide="ignore", invalid="ignore"):
-                self._P = np.where(self._eta > 0, P_hid / self._eta, np.nan)
+            valid = np.isfinite(self._eta) & (self._eta > 1e-12)
+            self._P = np.divide(
+                p_hid, self._eta,
+                out=np.full_like(p_hid, np.nan, dtype=float),
+                where=valid,
+            )
         elif self._P is not None and self._eta is None:
-            with np.errstate(divide="ignore", invalid="ignore"):
-                self._eta = np.where(self._P > 0, P_hid / self._P, np.nan)
+            valid = np.isfinite(self._P) & (self._P > 1e-12)
+            self._eta = np.divide(
+                p_hid, self._P,
+                out=np.full_like(p_hid, np.nan, dtype=float),
+                where=valid,
+            )
+            finite_eta = self._eta[np.isfinite(self._eta)]
+            if finite_eta.size and np.any(finite_eta > 1.02):
+                raise BombaError(
+                    "Os dados de potência implicam rendimento superior a 100%; "
+                    "verifique a curva de potência no eixo."
+                )
 
-    # ------------------------------------------------------------------ #
-    # Ajuste de curvas
-    # ------------------------------------------------------------------ #
     def ajustar_curvas(self, graus: Optional[dict] = None) -> None:
-        """Ajusta polinómios a cada grandeza disponível."""
-        if graus:
-            self._graus.update(graus)
-        if self._Q is None:
+        """Cria interpoladores PCHIP sem oscilações artificiais de polinómios globais.
+
+        ``graus`` é aceite por compatibilidade com chamadas antigas, mas não
+        altera o grau: PCHIP é uma interpolação local por troços.
+        """
+        if self._Q is None or self._H is None:
             return
-
-        for nome, dados in (
-            ("H", self._H), ("P", self._P),
-            ("eta", self._eta), ("npsh", self._npsh_r),
-        ):
-            if dados is None:
-                self._coef[nome] = None
+        dados = {
+            "H": self._H,
+            "P": self._P,
+            "eta": self._eta,
+            "npsh": self._npsh_r,
+        }
+        self._coef = {k: None for k in dados}
+        for nome, valores in dados.items():
+            if valores is None:
                 continue
-            mask = np.isfinite(dados)
-            if mask.sum() < 2:
-                self._coef[nome] = None
+            mask = np.isfinite(valores)
+            if int(mask.sum()) < 2:
                 continue
-            grau = min(self._graus[nome], int(mask.sum()) - 1)
-            self._coef[nome] = np.polyfit(self._Q[mask], dados[mask], grau)
+            self._coef[nome] = PchipInterpolator(
+                self._Q[mask], valores[mask], extrapolate=False
+            )
 
-    # ------------------------------------------------------------------ #
-    # Consulta de valores
-    # ------------------------------------------------------------------ #
-    def _avaliar(self, grandeza: str, Q) -> np.ndarray:
-        coef = self._coef[grandeza]
-        if coef is None:
-            nome_attr = "npsh_r" if grandeza == "npsh" else grandeza.upper()
-            raise BombaError(f"Curva '{nome_attr}' não disponível.")
-        return np.polyval(coef, Q)
+    def tem_grandeza(self, grandeza: str) -> bool:
+        chave = "npsh" if grandeza in ("npsh", "npsh_r") else grandeza
+        return self._coef.get(chave) is not None
 
-    def H_de_Q(self, Q):      return self._avaliar("H", Q)
-    def P_de_Q(self, Q):      return self._avaliar("P", Q)
-    def eta_de_Q(self, Q):    return self._avaliar("eta", Q)
-    def npsh_de_Q(self, Q):   return self._avaliar("npsh", Q)
+    def _avaliar(self, grandeza: str, Q):
+        chave = "npsh" if grandeza == "npsh_r" else grandeza
+        interpolador = self._coef.get(chave)
+        if interpolador is None:
+            rotulo = "NPSHr" if chave == "npsh" else chave.upper()
+            raise BombaError(f"Curva '{rotulo}' não disponível.")
+        if self._Q is None:
+            raise BombaError("A bomba ainda não tem dados definidos.")
+        q = np.asarray(Q, dtype=float)
+        if not np.all(np.isfinite(q)):
+            raise BombaError("A vazão de consulta deve ser finita.")
+        tol = max(1e-12, (self._Q[-1] - self._Q[0]) * 1e-10)
+        if np.any(q < self._Q[0] - tol) or np.any(q > self._Q[-1] + tol):
+            raise BombaError(
+                f"Vazão fora da curva de '{self.nome}': intervalo válido "
+                f"[{self._Q[0]:.6g}, {self._Q[-1]:.6g}] m³/s."
+            )
+        q = np.clip(q, self._Q[0], self._Q[-1])
+        result = np.asarray(interpolador(q), dtype=float)
+        return float(result) if result.ndim == 0 else result
+
+    def H_de_Q(self, Q):
+        return self._avaliar("H", Q)
+
+    def P_de_Q(self, Q):
+        return self._avaliar("P", Q)
+
+    def eta_de_Q(self, Q):
+        return self._avaliar("eta", Q)
+
+    def npsh_de_Q(self, Q):
+        return self._avaliar("npsh", Q)
 
     def Q_de_H(self, H_alvo):
-        """Inverte H(Q). Devolve Q=0 quando H ≥ H_shutoff."""
+        """Inverte H(Q); exige uma curva de altura monotonicamente decrescente.
+
+        Fora da faixa de altura medida, devolve o caudal de extremidade mais
+        próximo, sem extrapolar a curva do fabricante.
+        """
         if self._Q is None:
             raise BombaError("Bomba sem dados definidos.")
+        scalar = np.ndim(H_alvo) == 0
+        h_targets = np.atleast_1d(np.asarray(H_alvo, dtype=float))
+        if not np.all(np.isfinite(h_targets)):
+            raise BombaError("A altura de consulta deve ser finita.")
+        q_dense = np.linspace(self.Q_min(), self.Q_max(), 1000)
+        h_dense = np.asarray(self.H_de_Q(q_dense), dtype=float)
+        scale = max(1.0, float(np.max(np.abs(h_dense))))
+        if np.any(np.diff(h_dense) > scale * 1e-7):
+            raise BombaError(
+                "A curva H(Q) não é monotonicamente decrescente; "
+                "não é possível inverter H para Q sem ambiguidade."
+            )
+        # np.interp requer abcissas crescentes. Inverter Q e H e retirar
+        # alturas repetidas de patamares.
+        h_up = h_dense[::-1]
+        q_up = q_dense[::-1]
+        h_unique, first = np.unique(h_up, return_index=True)
+        q_unique = q_up[first]
+        result = np.interp(h_targets, h_unique, q_unique)
+        result = np.where(h_targets >= h_unique[-1], self.Q_min(), result)
+        result = np.where(h_targets <= h_unique[0], self.Q_max(), result)
+        return float(result[0]) if scalar else result
 
-        escalar = np.ndim(H_alvo) == 0
-        H_alvo_arr = np.atleast_1d(np.asarray(H_alvo, dtype=float))
-
-        Q_dense = np.linspace(0.0, float(self._Q.max()), 1000)
-        H_dense = self.H_de_Q(Q_dense)
-
-        ordem = np.argsort(H_dense)
-        H_sorted, Q_sorted = H_dense[ordem], Q_dense[ordem]
-
-        Q = np.interp(H_alvo_arr, H_sorted, Q_sorted)
-        Q = np.where(H_alvo_arr >= H_sorted[-1], 0.0, Q)
-
-        return float(Q[0]) if escalar else Q
-
-    # ------------------------------------------------------------------ #
-    # Metadados
-    # ------------------------------------------------------------------ #
     def Q_min(self) -> float:
         if self._Q is None:
             raise BombaError("Bomba sem dados definidos.")
@@ -220,140 +271,135 @@ class Bomba:
         return float(self._Q.max())
 
     def H_shutoff(self) -> float:
+        if not np.isclose(self.Q_min(), 0.0, atol=1e-12):
+            raise BombaError(
+                "A curva do fabricante não inclui Q=0; não é possível "
+                "determinar H de fecho sem extrapolar."
+            )
         return float(self.H_de_Q(0.0))
 
     def Q_bep(self) -> Optional[float]:
-        """Vazão no ponto de melhor eficiência (se η disponível)."""
-        if self._eta is None:
+        if not self.tem_grandeza("eta"):
             return None
-        idx = int(np.nanargmax(self._eta))
-        return float(self._Q[idx])
+        q = np.linspace(self.Q_min(), self.Q_max(), 2000)
+        eta = np.asarray(self.eta_de_Q(q), dtype=float)
+        valid = np.isfinite(eta)
+        if not np.any(valid):
+            return None
+        return float(q[np.flatnonzero(valid)[np.argmax(eta[valid])]])
 
     def curva(self, n_pontos: int = 200) -> dict:
-        """Devolve um dict {Q, H, [P], [eta], [npsh_r]} pronto para plot."""
-        Q = np.linspace(self.Q_min(), self.Q_max(), n_pontos)
-        out = {"Q": Q, "H": self.H_de_Q(Q)}
-        if self._coef["P"]    is not None: out["P"]       = self.P_de_Q(Q)
-        if self._coef["eta"]  is not None: out["eta"]     = self.eta_de_Q(Q)
-        if self._coef["npsh"] is not None: out["npsh_r"]  = self.npsh_de_Q(Q)
+        if not isinstance(n_pontos, int) or n_pontos < 2:
+            raise BombaError("n_pontos deve ser um inteiro igual ou superior a 2.")
+        q = np.linspace(self.Q_min(), self.Q_max(), n_pontos)
+        out = {"Q": q, "H": self.H_de_Q(q)}
+        if self.tem_grandeza("P"):
+            out["P"] = self.P_de_Q(q)
+        if self.tem_grandeza("eta"):
+            out["eta"] = self.eta_de_Q(q)
+        if self.tem_grandeza("npsh"):
+            out["npsh_r"] = self.npsh_de_Q(q)
         return out
 
-    # ------------------------------------------------------------------ #
-    # Leis de afinidade
-    # ------------------------------------------------------------------ #
     def com_rotacao(self, nova_rpm: float) -> "Bomba":
-        """Aplica as leis de afinidade para mudança de rotação.
-
-            Q₂/Q₁ = N₂/N₁     H₂/H₁ = (N₂/N₁)²     P₂/P₁ = (N₂/N₁)³
-            NPSHr₂/NPSHr₁ = (N₂/N₁)²              η (pontos homólogos) ≈ const
-        """
         if self.rpm is None or self.rpm <= 0:
             raise BombaError("Rotação original não definida (rpm).")
-        if nova_rpm <= 0:
-            raise BombaError("Nova rotação deve ser positiva.")
-        r = nova_rpm / self.rpm
+        if not np.isfinite(nova_rpm) or nova_rpm <= 0:
+            raise BombaError("Nova rotação deve ser positiva e finita.")
+        r = float(nova_rpm) / self.rpm
         return self._replicar_afinidade(
-            r, rotulo=f"{self.nome} @ {nova_rpm:.0f} rpm", rpm=nova_rpm
+            r, rotulo=f"{self.nome} @ {nova_rpm:.0f} rpm", rpm=float(nova_rpm)
         )
 
     def com_diametro(self, novo_D_mm: float) -> "Bomba":
-        """Aplica as leis de afinidade por trim do rotor (válidas ~ 0.8–1.0·D)."""
         if self.diametro_rotor_mm is None or self.diametro_rotor_mm <= 0:
             raise BombaError("Diâmetro do rotor original não definido.")
-        if novo_D_mm <= 0:
-            raise BombaError("Novo diâmetro deve ser positivo.")
-        razao = novo_D_mm / self.diametro_rotor_mm
+        if not np.isfinite(novo_D_mm) or novo_D_mm <= 0:
+            raise BombaError("Novo diâmetro deve ser positivo e finito.")
+        razao = float(novo_D_mm) / self.diametro_rotor_mm
         if not (0.75 <= razao <= 1.0):
-            # Não é erro fatal, mas as leis perdem precisão
-            print(
-                f"[Bomba] Aviso: trim {razao:.2f} fora do recomendado "
-                "(0.8–1.0) — resultados aproximados."
+            # Mantém-se o aviso: as leis para corte do rotor são aproximações.
+            import warnings
+            warnings.warn(
+                f"Trim de rotor {razao:.2f} fora do intervalo recomendado "
+                "(0.75–1.00); resultados aproximados.", RuntimeWarning,
             )
         return self._replicar_afinidade(
             razao, rotulo=f"{self.nome} @ Ø{novo_D_mm:.0f} mm",
-            diametro_rotor_mm=novo_D_mm,
+            diametro_rotor_mm=float(novo_D_mm),
         )
 
     def _replicar_afinidade(self, r: float, rotulo: str, **kwargs) -> "Bomba":
+        if self._Q is None or self._H is None:
+            raise BombaError("Defina primeiro as curvas da bomba.")
         nova = Bomba(
             nome=rotulo, fluido=self.fluido, T=self.T, P=self.P,
             rpm=kwargs.get("rpm", self.rpm),
-            diametro_rotor_mm=kwargs.get("diametro_rotor_mm",
-                                         self.diametro_rotor_mm),
+            diametro_rotor_mm=kwargs.get("diametro_rotor_mm", self.diametro_rotor_mm),
         )
-        Q2 = self._Q * r
-        H2 = self._H * r ** 2 if self._H is not None else None
-        P2 = self._P * r ** 3 if self._P is not None else None
-        eta2 = self._eta.copy() if self._eta is not None else None
-        npsh2 = self._npsh_r * r ** 2 if self._npsh_r is not None else None
-
-        nova.definir_dados(Q2, H2, P=P2, eta=eta2, npsh_r=npsh2)
+        q2 = self._Q * r
+        h2 = self._H * r**2
+        p2 = None if self._P is None else self._P * r**3
+        eta2 = None if self._eta is None else self._eta.copy()
+        npsh2 = None if self._npsh_r is None else self._npsh_r * r**2
+        nova.definir_dados(q2, h2, P=p2, eta=eta2, npsh_r=npsh2)
         return nova
 
-    # ------------------------------------------------------------------ #
-    # NPSH disponível
-    # ------------------------------------------------------------------ #
     def npsh_disponivel(
         self,
         P_entrada_Pa: Optional[float] = None,
         H_succao_m: float = 0.0,
         perdas_succao_m: float = 0.0,
     ) -> float:
-        """NPSHa = (P_entrada - P_vapor)/(ρ g) + H_succao - h_perdas_succao."""
-        P_ent = self.P if P_entrada_Pa is None else float(P_entrada_Pa)
-        return (
-            (P_ent - self.P_vapor) / (self.rho * self.g)
-            + H_succao_m - perdas_succao_m
-        )
+        """Calcula NPSHa, usando pressão absoluta na entrada da bomba."""
+        p_in = self.P if P_entrada_Pa is None else float(P_entrada_Pa)
+        hs = float(H_succao_m)
+        hl = float(perdas_succao_m)
+        if not all(np.isfinite(v) for v in (p_in, hs, hl)) or p_in <= 0 or hl < 0:
+            raise BombaError("Dados inválidos para o cálculo de NPSHa.")
+        return float((p_in - self.P_vapor) / (self.rho * self.g) + hs - hl)
 
-    # ------------------------------------------------------------------ #
-    # Ponto de operação (delega ao utilitário genérico)
-    # ------------------------------------------------------------------ #
     def ponto_operacao(
         self, H_sistema_fn: Callable[[float], float],
         Q_intervalo: Optional[tuple[float, float]] = None,
     ) -> dict:
         return encontrar_ponto_operacao(self, H_sistema_fn, Q_intervalo)
 
-    # ------------------------------------------------------------------ #
-    # Serialização
-    # ------------------------------------------------------------------ #
     def to_dict(self) -> dict:
-        d = {
-            "tipo": "Bomba",
-            "nome": self.nome,
-            "fluido": self.fluido,
-            "T": self.T, "P": self.P,
-            "rpm": self.rpm,
+        data = {
+            "tipo": "Bomba", "nome": self.nome, "fluido": self.fluido,
+            "T": self.T, "P": self.P, "rpm": self.rpm,
             "diametro_rotor_mm": self.diametro_rotor_mm,
         }
         if self._Q is not None:
-            d["Q"] = self._Q.tolist()
-            d["H"] = None if self._H is None else self._H.tolist()
-            d["P_shaft"] = None if self._P is None else self._P.tolist()
-            d["eta"] = None if self._eta is None else self._eta.tolist()
-            d["npsh_r"] = (
-                None if self._npsh_r is None else self._npsh_r.tolist()
-            )
-        return d
+            def serializar(arr):
+                if arr is None:
+                    return None
+                return [float(v) if np.isfinite(v) else None for v in arr]
+            data.update({
+                "Q": serializar(self._Q),
+                "H": serializar(self._H),
+                "P_shaft": serializar(self._P),
+                "eta": serializar(self._eta),
+                "npsh_r": serializar(self._npsh_r),
+            })
+        return data
 
     @classmethod
-    def from_dict(cls, d: dict) -> "Bomba":
-        b = cls(
-            nome=d.get("nome", "Bomba"),
-            fluido=d.get("fluido", FLUIDO_PADRAO),
-            T=d.get("T", T_PADRAO), P=d.get("P", P_PADRAO),
-            rpm=d.get("rpm"),
-            diametro_rotor_mm=d.get("diametro_rotor_mm"),
+    def from_dict(cls, data: dict) -> "Bomba":
+        if not isinstance(data, dict):
+            raise BombaError("Os dados da bomba devem ser um objecto/dicionário.")
+        bomba = cls(
+            nome=data.get("nome", "Bomba"), fluido=data.get("fluido", FLUIDO_PADRAO),
+            T=data.get("T", T_PADRAO), P=data.get("P", P_PADRAO),
+            rpm=data.get("rpm"), diametro_rotor_mm=data.get("diametro_rotor_mm"),
         )
-        if "Q" in d and d["Q"] is not None:
-            b.definir_dados(
-                d["Q"], d.get("H"),
-                P=d.get("P_shaft"),
-                eta=d.get("eta"),
-                npsh_r=d.get("npsh_r"),
+        if data.get("Q") is not None:
+            bomba.definir_dados(
+                data["Q"], data.get("H"), P=data.get("P_shaft"),
+                eta=data.get("eta"), npsh_r=data.get("npsh_r"),
             )
-        return b
+        return bomba
 
     def salvar_json(self, caminho: str) -> None:
         with open(caminho, "w", encoding="utf-8") as f:
@@ -364,151 +410,129 @@ class Bomba:
         with open(caminho, "r", encoding="utf-8") as f:
             return cls.from_dict(json.load(f))
 
-    # ------------------------------------------------------------------ #
     def __repr__(self) -> str:
-        return (
-            f"Bomba(nome={self.nome!r}, "
-            f"Q=[{self.Q_min():.3g}, {self.Q_max():.3g}] m³/s)"
-        )
+        return f"Bomba(nome={self.nome!r}, Q=[{self.Q_min():.3g}, {self.Q_max():.3g}] m³/s)"
 
 
-# =====================================================================
-# Utilitários de ponto de operação (funcionam para Bomba E AssociacaoBombas)
-# =====================================================================
 def encontrar_ponto_operacao(
     elemento, H_sistema_fn: Callable[[float], float],
     Q_intervalo: Optional[tuple[float, float]] = None,
 ) -> dict:
-    """Interseção entre a curva H(Q) do elemento e a curva do sistema.
+    """Determina a intersecção entre H_bomba(Q) e H_sistema(Q).
 
-    Parameters
-    ----------
-    elemento : Bomba | AssociacaoBombas
-        Objeto com `Q_min()`, `Q_max()`, `H_de_Q`, opcionalmente
-        `P_de_Q`, `eta_de_Q`, `npsh_de_Q`.
-    H_sistema_fn : Callable[[float], float]
-        Curva do sistema `H = H_sist(Q)`.
-    Q_intervalo : (float, float), opcional
-        Restrição adicional ao intervalo de busca.
-
-    Returns
-    -------
-    dict com chaves:
-        Q, H           — coordenadas do ponto de operação
-        P              — potência no eixo (W)        [se disponível]
-        eta            — rendimento (-)               [se disponível]
-        npsh_r         — NPSH requerido (m)           [se disponível]
-        Q_min, Q_max   — limites da curva do elemento
-        avisos         — lista de strings
+    Para o caso normal (curva da bomba decrescente e curva do sistema
+    crescente) existe uma única raiz. Se houver várias, é escolhida a
+    primeira intersecção estável, com a diferença H_bomba-H_sistema a
+    passar de positiva para negativa.
     """
-    q_lo = elemento.Q_min()
-    q_hi = elemento.Q_max()
+    if not callable(H_sistema_fn):
+        raise BombaError("H_sistema_fn deve ser uma função chamada com Q.")
+    q_lo, q_hi = float(elemento.Q_min()), float(elemento.Q_max())
     if Q_intervalo is not None:
-        q_lo = max(q_lo, Q_intervalo[0])
-        q_hi = min(q_hi, Q_intervalo[1])
-    if q_lo >= q_hi:
-        raise BombaError("Intervalo de busca vazio.")
+        if len(Q_intervalo) != 2:
+            raise BombaError("Q_intervalo deve conter (Q_min, Q_max).")
+        a, b = map(float, Q_intervalo)
+        if not np.isfinite(a) or not np.isfinite(b) or a >= b:
+            raise BombaError("Q_intervalo inválido.")
+        q_lo, q_hi = max(q_lo, a), min(q_hi, b)
+    if not np.isfinite(q_lo + q_hi) or q_lo >= q_hi:
+        raise BombaError("Intervalo de procura vazio ou inválido.")
 
-    Q_grid = np.linspace(q_lo, q_hi, 400)
-    H_b = np.atleast_1d(elemento.H_de_Q(Q_grid))
-    H_s = np.array([float(H_sistema_fn(q)) for q in Q_grid], dtype=float)
-    dif = H_b - H_s
+    q_grid = np.linspace(q_lo, q_hi, 1201)
+    try:
+        h_pump = np.asarray(elemento.H_de_Q(q_grid), dtype=float)
+        h_system = np.asarray([float(H_sistema_fn(float(q))) for q in q_grid])
+    except Exception as exc:
+        raise BombaError(f"Falha ao avaliar a curva do sistema ou da bomba: {exc}") from exc
+    if h_pump.shape != q_grid.shape or not np.all(np.isfinite(h_pump)) or not np.all(np.isfinite(h_system)):
+        raise BombaError("As curvas contêm resultados inválidos ou não finitos.")
+    diff = h_pump - h_system
+    scale = max(1.0, float(np.max(np.abs(h_pump))), float(np.max(np.abs(h_system))))
+    tol = scale * 1e-9
 
-    Q_op = None
-    for i in range(len(dif) - 1):
-        if dif[i] == 0.0:
-            Q_op = float(Q_grid[i]); break
-        if dif[i] * dif[i + 1] < 0.0:
-            Q_op = float(brentq(
-                lambda q: float(elemento.H_de_Q(q)) - H_sistema_fn(q),
-                Q_grid[i], Q_grid[i + 1],
-            ))
-            break
-    if Q_op is None:
-        raise BombaError(
-            "Sem interseção no intervalo — bomba e sistema não se cruzam."
-        )
-
-    H_op = float(elemento.H_de_Q(Q_op))
-
-    resultado = {
-        "Q": Q_op,
-        "H": H_op,
-        "Q_min": elemento.Q_min(),
-        "Q_max": elemento.Q_max(),
-        "avisos": [],
-    }
-    for grandeza in ("P", "eta", "npsh"):
-        try:
-            resultado[grandeza if grandeza != "npsh" else "npsh_r"] = float(
-                elemento._avaliar(grandeza, Q_op)
+    roots: list[tuple[float, bool]] = []
+    for i in range(len(q_grid) - 1):
+        if abs(diff[i]) <= tol:
+            stable = i == 0 or diff[i - 1] >= diff[i + 1]
+            roots.append((float(q_grid[i]), stable))
+        elif diff[i] > 0 and diff[i + 1] < 0:
+            root = brentq(
+                lambda q: float(elemento.H_de_Q(q)) - float(H_sistema_fn(q)),
+                float(q_grid[i]), float(q_grid[i + 1]), xtol=1e-12, rtol=1e-10,
             )
-        except (BombaError, AttributeError):
+            roots.append((float(root), True))
+        elif diff[i] < 0 and diff[i + 1] > 0:
+            root = brentq(
+                lambda q: float(elemento.H_de_Q(q)) - float(H_sistema_fn(q)),
+                float(q_grid[i]), float(q_grid[i + 1]), xtol=1e-12, rtol=1e-10,
+            )
+            roots.append((float(root), False))
+    if abs(diff[-1]) <= tol:
+        roots.append((float(q_grid[-1]), False))
+
+    # Remove raízes duplicadas detectadas em pontos consecutivos da grelha.
+    roots_unique: list[tuple[float, bool]] = []
+    for root, stable in roots:
+        if not roots_unique or abs(root - roots_unique[-1][0]) > max(1e-10, (q_hi - q_lo) * 1e-7):
+            roots_unique.append((root, stable))
+        elif stable and not roots_unique[-1][1]:
+            roots_unique[-1] = (root, stable)
+    stable_roots = [r for r in roots_unique if r[1]]
+    if stable_roots:
+        q_op = stable_roots[0][0]
+    elif roots_unique:
+        q_op = roots_unique[0][0]
+    else:
+        # Verifica se existe tangência muito próxima, sem mudança de sinal.
+        idx = int(np.argmin(np.abs(diff)))
+        if abs(diff[idx]) <= scale * 1e-6:
+            q_op = float(q_grid[idx])
+        else:
+            raise BombaError(
+                "Não foi encontrada intersecção entre a curva da bomba e a "
+                "curva do sistema no intervalo de vazão válido."
+            )
+
+    h_op = float(elemento.H_de_Q(q_op))
+    result = {
+        "Q": q_op, "H": h_op, "Q_min": elemento.Q_min(),
+        "Q_max": elemento.Q_max(), "avisos": [],
+    }
+    getters = {"P": "P_de_Q", "eta": "eta_de_Q", "npsh": "npsh_de_Q"}
+    for grandeza, chave in (("P", "P"), ("eta", "eta"), ("npsh", "npsh_r")):
+        try:
+            if hasattr(elemento, "tem_grandeza") and not elemento.tem_grandeza(grandeza):
+                continue
+            getter = getattr(elemento, getters[grandeza])
+            value = float(getter(q_op))
+            if np.isfinite(value):
+                result[chave] = value
+        except (BombaError, AttributeError, TypeError, ValueError):
             pass
 
-    # Aviso BEP (só para Bomba individual)
-    if isinstance(elemento, Bomba) and elemento._eta is not None:
-        Q_bep = elemento.Q_bep()
-        if Q_bep is not None:
-            if Q_op < 0.5 * Q_bep:
-                resultado["avisos"].append(
-                    f"Operação < 50% do BEP ({Q_bep*3600:.1f} m³/h)"
-                )
-            elif Q_op > 1.2 * Q_bep:
-                resultado["avisos"].append(
-                    f"Operação > 120% do BEP ({Q_bep*3600:.1f} m³/h)"
-                )
-    return resultado
+    if hasattr(elemento, "Q_bep"):
+        q_bep = elemento.Q_bep()
+        if q_bep is not None and q_bep > 0:
+            if q_op < 0.5 * q_bep:
+                result["avisos"].append(f"Operação abaixo de 50% do BEP ({q_bep * 3600:.2f} m³/h).")
+            elif q_op > 1.2 * q_bep:
+                result["avisos"].append(f"Operação acima de 120% do BEP ({q_bep * 3600:.2f} m³/h).")
+    if np.isclose(q_op, q_lo, rtol=0, atol=1e-10) or np.isclose(q_op, q_hi, rtol=0, atol=1e-10):
+        result["avisos"].append("Ponto de operação no limite da faixa de dados da curva.")
+    return result
 
 
-# =====================================================================
-# Adaptador para curvas_bomba.plotar_dados
-# =====================================================================
 def para_plot(
-    elemento, grandeza: str = "H",
-    label: Optional[str] = None, cor: Optional[str] = None,
-    n_pontos: int = 200,
+    elemento, grandeza: str = "H", label: Optional[str] = None,
+    cor: Optional[str] = None, n_pontos: int = 200,
 ) -> dict:
-    """Devolve {'x', 'y', 'label', 'cor'} compatível com `Grafico.plotar_dados`."""
-    c = elemento.curva(n_pontos)
-    chave = "npsh_r" if grandeza == "npsh" else grandeza
-    if chave not in c:
+    """Adapta uma curva ao formato esperado por ``Grafico.plotar_dados``."""
+    curva = elemento.curva(n_pontos)
+    chave = "npsh_r" if grandeza in ("npsh", "npsh_r") else grandeza
+    if chave not in curva:
         raise BombaError(f"Grandeza '{grandeza}' não disponível.")
     return {
-        "x": c["Q"], "y": c[chave],
+        "x": curva["Q"], "y": curva[chave],
         "label": label or getattr(elemento, "nome", grandeza),
         "cor": cor or "#1f77b4",
     }
-
-
-# =====================================================================
-# Smoke test
-# =====================================================================
-if __name__ == "__main__":
-    # Curva típica de bomba (30 m³/h nominal)
-    Q = np.array([0, 5, 10, 15, 20]) / 3600.0     # m³/h → m³/s
-    H = np.array([45, 43, 38, 30, 15])
-    eta = np.array([0, 35, 55, 60, 40]) / 100.0
-    NPSH = np.array([1.5, 2.0, 2.5, 3.5, 5.0])
-
-    b = Bomba("Demo", rpm=3500)
-    b.definir_dados(Q, H, eta=eta, npsh_r=NPSH)
-
-    print(b)
-    print(f"  H_shutoff  = {b.H_shutoff():.2f} m")
-    print(f"  Q_BEP      = {b.Q_bep()*3600:.2f} m³/h")
-    print(f"  NPSHa@20°C = {b.npsh_disponivel():.2f} m")
-
-    # Lei de afinidade
-    b2 = b.com_rotacao(2900)
-    print(b2)
-    print(f"  H_shutoff  = {b2.H_shutoff():.2f} m  "
-          f"(esperado ≈ {b.H_shutoff()*(2900/3500)**2:.2f})")
-
-    # Curva do sistema: H = 10 + K·Q² com K = 5e5
-    H_sist = lambda q: 10.0 + 5e5 * q * q
-    op = b.ponto_operacao(H_sist)
-    print(f"Ponto de operação: Q = {op['Q']*3600:.2f} m³/h  "
-          f"H = {op['H']:.2f} m  η = {op.get('eta', 0)*100:.1f}%")
-    if op["avisos"]:
-        print("  Avisos:", op["avisos"])

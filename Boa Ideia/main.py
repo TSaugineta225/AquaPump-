@@ -15,7 +15,9 @@ from PySide6.QtGui import (
 )
 from PySide6.QtWidgets import (
     QApplication, QWidget, QLabel, QMenu, QCompleter, QToolButton,
-    QMessageBox, QFileDialog, QVBoxLayout, QSizePolicy
+    QMessageBox, QFileDialog, QVBoxLayout, QSizePolicy,
+    QDialog, QDialogButtonBox, QFormLayout, QLineEdit, QComboBox,
+    QListWidget, QListWidgetItem, QAbstractItemView, QPushButton
 )
 from PySide6.QtWebChannel import QWebChannel
 from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineProfile
@@ -55,6 +57,11 @@ from calculos.perdas_cargas import Perdas
 from calculos.curvas_bomba import Grafico
 from calculos.unidades import ConversorUnidades
 from calculos.dimensionamento_tubulação import Tubulacao
+from src.modelo_hidraulico import ModeloHidraulico, ErroModeloHidraulico
+
+# Os modelos de bombas são importados de forma diferida na inicialização do
+# módulo de associações, para que a aplicação base continue a abrir mesmo
+# quando esses ficheiros ainda não foram instalados.
 
 # ================== Logging Configuration ==================
 logging.basicConfig(level=logging.INFO)
@@ -77,6 +84,10 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         """Inicializa a janela principal e todos os seus componentes."""
         super().__init__(parent)
         self.setupUi(self)
+        self.modelo_hidraulico_dados = None
+        self.modelo_hidraulico_resultado = None
+        self.modelo_hidraulico_erro = None
+        self.modelo_hidraulico_perfil = None
 
         # ================== INICIALIZAÇÃO DE ATRIBUTOS ==================
         
@@ -119,8 +130,9 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         # ---------- Conexões de Sinais ----------
         self._configurar_conexoes()
         
-        # ---------- Inicialização de Gráficos ----------
+        # ---------- Inicialização de Gráficos e Associações ----------
         self._inicializar_graficos()
+        self._inicializar_gestor_bombas()
         self.atualizar_graficos_curvas()
         self.mudanca_dinamica_perdas_carga()
 
@@ -179,6 +191,9 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.altura_geometrica_channel = Altura_Geometrica()
         self.comprimento_tubulacao_channel = Dimensao_Tubulacao()
         self.acessorios_channel = Acessorios_sistema()
+        self.acessorios_channel.modelo.connect(self.receber_modelo_hidraulico)
+        self.altura_geometrica_channel.altura_recebida.connect(self.receber_altura)
+        self.comprimento_tubulacao_channel.comprimento_recebido.connect(self.receber_comprimento)
         self.dados = Dados()
 
         # Configuração do WebChannel
@@ -208,27 +223,354 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.conexoes = ConexoesUI(
             parent=self, menu=self.menu, animacoes=self.animações, configuracoes=self.config
         )
+        # O menu original expõe apenas os três primeiros gráficos, apesar de
+        # a UI já possuir seis páginas no stackedWidget_3.
+        # A substituição é feita no objecto de menu, sem editar o código gerado.
+        self.menu.menu_selecao_graficos = self._menu_selecao_graficos_completo
 
     def _inicializar_graficos(self):
-        """Inicializa e configura todos os gráficos da aplicação."""
+        """Inicializa os quatro gráficos actuais e os dois de associação."""
         self.grafico_altura = Grafico()
         self.grafico_potencia = Grafico()
         self.grafico_rendimento = Grafico()
         self.grafico_npsh = Grafico()
+        self.grafico_serie = Grafico()
+        self.grafico_paralelo = Grafico()
 
-        # Limpar layouts existentes
-        for layout in [self.altura.layout(), self.potencia.layout(), self.rendimento.layout()]:
-            if layout is not None:
+        destinos = (
+            (self.altura, self.grafico_altura),
+            (self.potencia, self.grafico_potencia),
+            (self.rendimento, self.grafico_rendimento),
+            (self.npsh_2, self.grafico_npsh),
+            (self.serie, self.grafico_serie),
+            (self.paralelo, self.grafico_paralelo),
+        )
+
+        for container, grafico in destinos:
+            layout = container.layout()
+            if layout is None:
+                layout = QVBoxLayout(container)
+            else:
                 while layout.count():
-                    child = layout.takeAt(0)
-                    if child.widget():
-                        child.widget().deleteLater()
-        
-        # Adicionar gráficos aos layouts
-        QVBoxLayout(self.altura).addWidget(self.grafico_altura)
-        QVBoxLayout(self.potencia).addWidget(self.grafico_potencia)
-        QVBoxLayout(self.rendimento).addWidget(self.grafico_rendimento)
-        QVBoxLayout(self.npsh_2).addWidget(self.grafico_npsh)
+                    item = layout.takeAt(0)
+                    widget = item.widget()
+                    if widget is not None:
+                        widget.deleteLater()
+            layout.setContentsMargins(0, 0, 0, 0)
+            layout.setSpacing(0)
+            layout.addWidget(grafico)
+
+    def _inicializar_gestor_bombas(self):
+        """Liga o motor de associação aos dois espaços de gráfico existentes.
+
+        O gestor recebe ui=None de propósito: os cálculos principais e os
+        resultados apresentados no painel continuam sob responsabilidade do
+        MainWindow. Assim evitamos duplicar sinais e sobrescrever resultados.
+        """
+        try:
+            from src.bomba import Bomba as BombaModel
+            from src.gestor_bombas import GestorBombas as GestorBombasModel
+
+            self._BombaModel = BombaModel
+            self.gestor_bombas = GestorBombasModel(
+                ui=None,
+                parent=self,
+                carregar_demo=False,
+                construir_graficos=False,
+                conectar_sinais=False,
+            )
+            self.gestor_bombas.graficos = {
+                "serie": self.grafico_serie,
+                "paralelo": self.grafico_paralelo,
+            }
+            self.acessorios_lista = []
+            self._acessorios_gestor_sincronizados = None
+            self._criar_controlos_gestor_bombas()
+            self._sincronizar_gestor_bombas()
+        except Exception as exc:
+            self.gestor_bombas = None
+            self._BombaModel = None
+            logger.exception("Não foi possível inicializar o gestor de associações: %s", exc)
+            QMessageBox.warning(
+                self,
+                "Associação de bombas",
+                "O módulo de associação não foi iniciado. Verifique os módulos "
+                "src/bomba.py, src/associacao_bombas.py e src/gestor_bombas.py.\n\n"
+                f"Detalhe: {exc}",
+            )
+
+    def _criar_controlos_gestor_bombas(self):
+        """Acrescenta controlos ao cabeçalho já existente, sem alterar Ui_main.py."""
+        layout = getattr(self, "horizontalLayout_31", None)
+        if layout is None:
+            logger.warning("Não foi encontrado o cabeçalho dos gráficos para inserir os controlos.")
+            return
+
+        self.btn_adicionar_bomba = QPushButton("Adicionar bomba", self.janela_graficos)
+        self.btn_adicionar_bomba.setToolTip(
+            "Introduzir os pontos das curvas fornecidas pelo fabricante"
+        )
+        self.btn_associar_bombas = QPushButton("Associar bombas", self.janela_graficos)
+        self.btn_associar_bombas.setToolTip(
+            "Seleccionar duas ou mais bombas e criar uma associação em série ou paralelo"
+        )
+        self.btn_adicionar_bomba.clicked.connect(self._adicionar_bomba_ui)
+        self.btn_associar_bombas.clicked.connect(self._criar_associacao_ui)
+
+        # O layout tem: título, espaçador e botão de selecção de gráficos.
+        # Inserimos os novos controlos antes do espaçador.
+        layout.insertWidget(1, self.btn_adicionar_bomba)
+        layout.insertWidget(2, self.btn_associar_bombas)
+
+    def _menu_selecao_graficos_completo(self):
+        """Menu para as seis páginas que já existem em Ui_main.py."""
+        menu = QMenu(self)
+        paginas = (
+            ("Curva H vs Q (Altura vs Vazão)", 0),
+            ("Curva de Potência vs Vazão", 1),
+            ("Curva de Rendimento vs Vazão", 2),
+            ("NPSH requerido vs Vazão", 3),
+            ("Associação em Série", 4),
+            ("Associação em Paralelo", 5),
+        )
+        for titulo, indice in paginas:
+            acao = QAction(titulo, self)
+            acao.triggered.connect(
+                lambda checked=False, i=indice, t=titulo: self._selecionar_pagina_grafico(i, t)
+            )
+            menu.addAction(acao)
+        return menu
+
+    def _selecionar_pagina_grafico(self, indice: int, titulo: str):
+        self.label_2.setText(titulo)
+        self.stackedWidget_3.setCurrentIndex(indice)
+
+    @staticmethod
+    def _ler_lista_numerica(texto: str, nome: str, obrigatoria: bool = True):
+        """Lê números separados por ponto e vírgula ou espaços; aceita vírgula decimal."""
+        texto = str(texto or "").strip()
+        if not texto:
+            if obrigatoria:
+                raise ValueError(f"Preencha a lista de {nome}.")
+            return None
+        partes = [p for p in re.split(r"[;\s]+", texto) if p]
+        try:
+            valores = [float(p.replace(",", ".")) for p in partes]
+        except ValueError as exc:
+            raise ValueError(
+                f"A lista de {nome} contém um valor não numérico. "
+                "Use ponto e vírgula ou espaços para separar os valores."
+            ) from exc
+        if len(valores) < 2:
+            raise ValueError(f"A lista de {nome} deve conter pelo menos dois pontos.")
+        if not np.all(np.isfinite(valores)):
+            raise ValueError(f"A lista de {nome} contém valores inválidos.")
+        return np.asarray(valores, dtype=float)
+
+    def _adicionar_bomba_ui(self):
+        """Regista uma bomba a partir dos pontos das curvas do fabricante."""
+        if self.gestor_bombas is None:
+            QMessageBox.warning(self, "Associação", "O gestor de bombas não está disponível.")
+            return
+
+        dialogo = QDialog(self)
+        dialogo.setWindowTitle("Adicionar curva de uma bomba")
+        dialogo.setMinimumWidth(430)
+        raiz = QVBoxLayout(dialogo)
+        formulario = QFormLayout()
+
+        campos = {
+            "nome": QLineEdit(),
+            "rpm": QLineEdit("3500"),
+            "q": QLineEdit(),
+            "h": QLineEdit(),
+            "eta": QLineEdit(),
+            "npsh": QLineEdit(),
+        }
+        campos["q"].setPlaceholderText("0; 5; 10; 15; 20  (m³/h)")
+        campos["h"].setPlaceholderText("40; 38; 34; 27; 15  (m)")
+        campos["eta"].setPlaceholderText("0; 35; 55; 68; 45  (%) — opcional")
+        campos["npsh"].setPlaceholderText("1,5; 1,8; 2,4; 3,5; 5  (m) — opcional")
+        campos["nome"].setPlaceholderText("Fabricante / modelo")
+
+        formulario.addRow("Nome / modelo:", campos["nome"])
+        formulario.addRow("Rotação (rpm):", campos["rpm"])
+        formulario.addRow("Caudais (m³/h):", campos["q"])
+        formulario.addRow("Alturas (m):", campos["h"])
+        formulario.addRow("Rendimento (%):", campos["eta"])
+        formulario.addRow("NPSH requerido (m):", campos["npsh"])
+        raiz.addLayout(formulario)
+        nota = QLabel(
+            "Introduza os pontos na mesma ordem. Use ponto e vírgula ou espaços "
+            "como separador. A vazão é convertida internamente para m³/s."
+        )
+        nota.setWordWrap(True)
+        raiz.addWidget(nota)
+        botoes = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+        )
+        botoes.accepted.connect(dialogo.accept)
+        botoes.rejected.connect(dialogo.reject)
+        raiz.addWidget(botoes)
+
+        if dialogo.exec() != QDialog.DialogCode.Accepted:
+            return
+
+        try:
+            nome = campos["nome"].text().strip()
+            if not nome:
+                raise ValueError("Indique o nome ou modelo da bomba.")
+            texto_rpm = campos["rpm"].text().strip()
+            rpm = float(texto_rpm.replace(",", ".")) if texto_rpm else None
+            caudais = self._ler_lista_numerica(campos["q"].text(), "caudais")
+            alturas = self._ler_lista_numerica(campos["h"].text(), "alturas")
+            rendimentos = self._ler_lista_numerica(
+                campos["eta"].text(), "rendimentos", obrigatoria=False
+            )
+            npsh = self._ler_lista_numerica(
+                campos["npsh"].text(), "NPSH", obrigatoria=False
+            )
+
+            bomba = self._BombaModel(nome=nome, rpm=rpm)
+            bomba.definir_dados(
+                Q=caudais / 3600.0,
+                H=alturas,
+                eta=rendimentos,
+                npsh_r=npsh,
+            )
+            self.gestor_bombas.adicionar_bomba(bomba)
+            QMessageBox.information(
+                self, "Bomba adicionada", f"A curva de '{nome}' foi adicionada ao projecto."
+            )
+        except Exception as exc:
+            QMessageBox.warning(self, "Dados da bomba inválidos", str(exc))
+
+    def _criar_associacao_ui(self):
+        """Cria uma associação simples a partir das bombas já introduzidas."""
+        if self.gestor_bombas is None:
+            QMessageBox.warning(self, "Associação", "O gestor de bombas não está disponível.")
+            return
+        if len(self.gestor_bombas.bombas) < 2:
+            QMessageBox.information(
+                self,
+                "Associar bombas",
+                "Introduza pelo menos duas bombas com as respectivas curvas antes de criar uma associação.",
+            )
+            return
+
+        dialogo = QDialog(self)
+        dialogo.setWindowTitle("Criar associação de bombas")
+        dialogo.setMinimumWidth(380)
+        raiz = QVBoxLayout(dialogo)
+        formulario = QFormLayout()
+        nome = QLineEdit("Associação personalizada")
+        tipo = QComboBox()
+        tipo.addItem("Série", "serie")
+        tipo.addItem("Paralelo", "paralelo")
+        formulario.addRow("Nome:", nome)
+        formulario.addRow("Tipo:", tipo)
+        raiz.addLayout(formulario)
+
+        lista = QListWidget()
+        lista.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
+        for indice, bomba in enumerate(self.gestor_bombas.bombas):
+            item = QListWidgetItem(f"{indice + 1}. {bomba.nome}")
+            item.setData(Qt.ItemDataRole.UserRole, indice)
+            lista.addItem(item)
+        raiz.addWidget(QLabel("Seleccione duas ou mais bombas:"))
+        raiz.addWidget(lista)
+
+        botoes = QDialogButtonBox(
+            QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel
+        )
+        botoes.accepted.connect(dialogo.accept)
+        botoes.rejected.connect(dialogo.reject)
+        raiz.addWidget(botoes)
+
+        if dialogo.exec() != QDialog.DialogCode.Accepted:
+            return
+
+        try:
+            indices = [item.data(Qt.ItemDataRole.UserRole) for item in lista.selectedItems()]
+            if len(indices) < 2:
+                raise ValueError("Seleccione pelo menos duas bombas.")
+            nome_associacao = nome.text().strip()
+            if not nome_associacao:
+                raise ValueError("Indique um nome para a associação.")
+            tipo_associacao = tipo.currentData()
+            self.gestor_bombas.criar_associacao(
+                nome_associacao, tipo_associacao, indices
+            )
+            pagina = 4 if tipo_associacao == "serie" else 5
+            titulo = "Associação em Série" if pagina == 4 else "Associação em Paralelo"
+            self._selecionar_pagina_grafico(pagina, titulo)
+            QMessageBox.information(
+                self, "Associação criada", f"'{nome_associacao}' foi criada com sucesso."
+            )
+        except Exception as exc:
+            QMessageBox.warning(self, "Não foi possível associar", str(exc))
+
+    def _sincronizar_gestor_bombas(self):
+        """Mantém a curva do sistema das associações alinhada com o dimensionamento.
+
+        Não escreve nos labels da janela nem executa o cálculo principal; apenas
+        actualiza os parâmetros usados pela curva do sistema nos gráficos de série
+        e paralelo.
+        """
+        gestor = getattr(self, "gestor_bombas", None)
+        if gestor is None:
+            return
+        # O gestor de curvas de bombas usa actualmente um único diâmetro e
+        # comprimento equivalentes. Não o alimentar com uma rede de vários
+        # troços evita apresentar uma curva do sistema tecnicamente enganadora.
+        modelo = getattr(self, "modelo_hidraulico_dados", None)
+        if isinstance(modelo, dict) and modelo.get("pipes"):
+            logger.info(
+                "Curva do sistema do gestor de bombas não sincronizada: "
+                "falta ainda adaptar o solver de bombas ao modelo multi-troço."
+            )
+            return
+        try:
+            parametros = {}
+            altura = max(0.0, float(self.altura_geometrica_val))
+            comprimento = max(0.0, float(self.comprimento_tubulacao_val))
+            if not np.isclose(gestor.H_geometrico, altura):
+                parametros["H_geometrico"] = altura
+            if not np.isclose(gestor.comprimento_m, comprimento):
+                parametros["comprimento_m"] = comprimento
+
+            diametro = float(self.diametro_tubulacao)
+            if np.isfinite(diametro) and diametro > 0 and not np.isclose(
+                gestor.perdas.diametro_m, diametro
+            ):
+                parametros["diametro_m"] = diametro
+
+            material_darcy = self.darcy.currentText().strip()
+            material_hazen = self.hazen_will.currentText().strip()
+            if material_darcy and gestor.material_darcy != material_darcy:
+                parametros["material"] = material_darcy
+            if material_hazen and gestor.material_hazen != material_hazen:
+                parametros["material_hazen"] = material_hazen
+
+            metodo = "darcy" if self.radioButton_10.isChecked() else "hazen"
+            if gestor.metodo_perdas != metodo:
+                parametros["metodo_perdas"] = metodo
+
+            tempo = float(self.tempo)
+            if np.isfinite(tempo) and 0 < tempo <= 24 and not np.isclose(
+                gestor.tempo_funcionamento_h, tempo
+            ):
+                parametros["tempo_funcionamento_h"] = tempo
+
+            acessorios = list(getattr(self, "acessorios_lista", []))
+            if self._acessorios_gestor_sincronizados != acessorios:
+                parametros["acessorios"] = acessorios
+                self._acessorios_gestor_sincronizados = list(acessorios)
+
+            if parametros:
+                gestor.configurar_sistema(**parametros)
+        except Exception as exc:
+            logger.warning("Não foi possível sincronizar a curva do sistema das associações: %s", exc)
 
     # ================== MÉTODOS DE CARREGAMENTO DE ARQUIVOS ==================
 
@@ -297,6 +639,17 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             # Fallback: criar instância com valores padrão seguros
             self.perdas = Perdas(0.001, 0.1, 0.007854, self.darcy.currentText(), self.hazen_will.currentText())
 
+        # A classe Perdas é recriada quando caudal/tempo mudam. Reaplicar a
+        # lista do editor evita perder acessórios e os K/DN definidos pelo utilizador.
+        acessorios_guardados = getattr(self, "acessorios_lista", None)
+        if acessorios_guardados is not None:
+            try:
+                self.perdas.definir_acessorios_lista(acessorios_guardados)
+                self.localizadas = self.perdas.calcular_perdas_localizadas()
+            except (TypeError, ValueError, AttributeError) as erro:
+                logger.warning("Não foi possível restaurar acessórios após actualizar parâmetros: %s", erro)
+                self.localizadas = 0.0
+
     def calcular_potencia(self):
         """Calcula a potencia em KW."""
         self.potencia_requerida = self._diametro.calcular_potencia(self.altura_manometrica, self.vazao)
@@ -309,76 +662,183 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.label_18.setText(f"{self.altura_manometrica:.3f} {self.comprimento_box.currentText()}")
         print("Altura manométrica calculada:", self.altura_manometrica)
 
+    def _enviar_perfil_hidraulico_js(self, resultado):
+        """Gera HGL/EGL com condições de fronteira explícitas e envia ao SVG."""
+        modelo = getattr(self, "modelo_hidraulico_dados", None)
+        if not isinstance(modelo, dict) or not isinstance(resultado, dict):
+            return
+
+        # A cota piezométrica inicial é uma condição de fronteira; nunca é
+        # inferida da altura geométrica ou da perda total.
+        cota_inicial = modelo.get("cota_piezometrica_inicial_m")
+        if cota_inicial is None:
+            cota_inicial = getattr(self, "cota_piezometrica_inicial_m", None)
+        if cota_inicial is None:
+            self.page.runJavaScript("window.limpar_perfil_hidraulico && window.limpar_perfil_hidraulico();")
+            return
+
+        try:
+            perfil = ModeloHidraulico.gerar_perfil_longitudinal(
+                modelo=modelo,
+                resultado=resultado,
+                cota_piezometrica_inicial_m=float(cota_inicial),
+            )
+            payload = json.dumps(perfil, ensure_ascii=False, allow_nan=False)
+            self.page.runJavaScript(
+                "window.receber_perfil_hidraulico && window.receber_perfil_hidraulico(" + payload + ");"
+            )
+            self.modelo_hidraulico_perfil = perfil
+        except (ErroModeloHidraulico, TypeError, ValueError, KeyError) as exc:
+            self.modelo_hidraulico_perfil = None
+            logger.info("Perfil hidráulico ainda não disponível: %s", exc)
+            self.page.runJavaScript("window.limpar_perfil_hidraulico && window.limpar_perfil_hidraulico();")
+
+    def _calcular_perdas_esquema_hidraulico(self):
+        """Calcula a linha principal por troços com DN e material próprios.
+
+        Devolve None quando o editor ainda não enviou troços, para manter o
+        fluxo legado (mapa + parâmetros globais) sem alterações.
+        """
+        modelo = getattr(self, "modelo_hidraulico_dados", None)
+        if not isinstance(modelo, dict) or not modelo.get("pipes"):
+            return None
+
+        metodo = "darcy" if self.radioButton_10.isChecked() else "hazen"
+        resultado = ModeloHidraulico.calcular(
+            modelo=modelo,
+            vazao_m3s=self.vazao,
+            metodo=metodo,
+            material_darcy_padrao=self.darcy.currentText(),
+            material_hazen_padrao=self.hazen_will.currentText(),
+        )
+        self.modelo_hidraulico_resultado = resultado
+        self.modelo_hidraulico_erro = None
+        self._enviar_perfil_hidraulico_js(resultado)
+        return resultado
+
     @Slot()
     def recalcular_sistema_completo(self):
-        """Função central que recalcula perdas, altura manométrica e gráficos."""
-        # Verificação mais robusta para evitar cálculos com valores inválidos
-        if self.vazao <= 1e-9 or self.diametro_tubulacao <= 1e-6:
-            """Quando vazao ou diâmetro são muito pequenos, evitamos cálculos numéricos instáveis"""
+        """Recalcula o sistema; usa o modelo por troços quando existe esquema."""
+        modelo_ativo = bool(
+            isinstance(getattr(self, "modelo_hidraulico_dados", None), dict)
+            and self.modelo_hidraulico_dados.get("pipes")
+        )
+
+        if self.vazao <= 1e-9 or (not modelo_ativo and self.diametro_tubulacao <= 1e-6):
             self.perdas_totais = 0.0
+            self.localizadas = 0.0
             self.altura_manometrica = self.altura_geometrica_val
             self.potencia_requerida = 0.0
-
             self.perdas_resul.setText(f"0.000 {self.comprimento_box.currentText()}")
             self.label_18.setText(f"{self.altura_geometrica_val:.3f} {self.comprimento_box.currentText()}")
             self.label_19.setText(f"0.000 {self.potencia_box.currentText()}")
-
-            # Atualizar gráficos com valores seguros
             try:
                 self.atualizar_graficos_curvas()
-            except Exception as e:
-                logger.warning(f"Erro ao atualizar gráficos com valores mínimos: {e}")
+            except Exception as exc:
+                logger.warning("Erro ao actualizar gráficos com valores mínimos: %s", exc)
+            self._sincronizar_gestor_bombas()
             return
-        
-        if not hasattr(self, 'perdas') or not self.diametro_tubulacao > 1e-6:
+
+        if not hasattr(self, "perdas") or (not modelo_ativo and self.diametro_tubulacao <= 1e-6):
             logger.warning("Parâmetros insuficientes para cálculo de perdas")
+            self._sincronizar_gestor_bombas()
             return
 
-        perda_distribuida = 0.0
-        if self.comprimento_tubulacao_val > 1e-6:  # Evitar comprimentos muito pequenos
-            try:
-                if self.radioButton_10.isChecked():  # Darcy-Weisbach
-                    self.perdas.definir_material_darcy(self.darcy.currentText())
-                    perda_distribuida = self.perdas.calcular_perda_carga_darcy(
-                        self.comprimento_tubulacao_val
-                    )
-                elif self.radioButton_9.isChecked():  # Hazen-Williams
-                    self.perdas.definir_material_hazen(self.hazen_will.currentText())
-                    perda_distribuida = self.perdas.calcular_perda_carga_hazen_williams(
-                        self.comprimento_tubulacao_val
-                    )
-            except (ValueError, AttributeError, ZeroDivisionError) as e:
-                logger.warning(f"Erro no cálculo de perdas distribuídas: {e}")
-                perda_distribuida = 0.0
-
-        # 2. Calcular perdas totais e altura manométrica
         try:
-            self.perdas_totais = perda_distribuida + self.localizadas
-            # Garantir que as perdas não sejam negativas
-            self.perdas_totais = max(0.0, self.perdas_totais)
-            
-            self.calcular_potencia()
-            self.perdas_resul.setText(f"{self.perdas_totais:.3f} {self.comprimento_box.currentText()}")
-            logger.info(f"Perdas totais calculadas: {self.perdas_totais:.6f} m")
-            self.calcular_altura_manometrica()
+            if modelo_ativo:
+                resultado = self._calcular_perdas_esquema_hidraulico()
+                perda_distribuida = resultado["perdas_distribuidas_m"]
+                self.localizadas = resultado["perdas_localizadas_m"]
+                self.comprimento_tubulacao_val = resultado["comprimento_total_m"]
+                linhas_tooltip = ["Perdas por troço:"]
+                for troco in resultado.get("trocos", []):
+                    linhas_tooltip.append(
+                        f"{troco['id']}: distribuída {troco['perda_distribuida_m']:.3f} m; "
+                        f"localizada {troco['perda_localizada_m']:.3f} m; "
+                        f"total {troco['perda_total_m']:.3f} m"
+                    )
+                linhas_tooltip.append(resultado.get("nota", ""))
+                self.perdas_resul.setToolTip("\n".join(linhas_tooltip))
+                for aviso in resultado.get("avisos", []):
+                    logger.warning("Modelo hidráulico: %s", aviso)
+            else:
+                self.perdas_resul.setToolTip("")
+                perda_distribuida = 0.0
+                if self.comprimento_tubulacao_val > 1e-6:
+                    if self.radioButton_10.isChecked():
+                        self.perdas.definir_material_darcy(self.darcy.currentText())
+                        perda_distribuida = self.perdas.calcular_perda_carga_darcy(
+                            self.comprimento_tubulacao_val
+                        )
+                    elif self.radioButton_9.isChecked():
+                        self.perdas.definir_material_hazen(self.hazen_will.currentText())
+                        perda_distribuida = self.perdas.calcular_perda_carga_hazen_williams(
+                            self.comprimento_tubulacao_val
+                        )
+                # Mantém o cálculo localizado do fluxo anterior.
+                self.localizadas = self.perdas.calcular_perdas_localizadas()
 
-            # 3. Atualizar gráficos
+            self.perdas_totais = max(0.0, perda_distribuida + self.localizadas)
+            self.calcular_potencia()
+            self.perdas_resul.setText(
+                f"{self.perdas_totais:.3f} {self.comprimento_box.currentText()}"
+            )
+            logger.info("Perdas totais calculadas: %.6f m", self.perdas_totais)
+            self.calcular_altura_manometrica()
             self.atualizar_graficos_curvas()
-            
-        except Exception as e:
-            logger.error(f"Erro no cálculo do sistema completo: {e}")
-            # Fallback para valores seguros
+
+        except (ErroModeloHidraulico, ValueError, TypeError, AttributeError, ZeroDivisionError) as exc:
+            self.modelo_hidraulico_erro = str(exc)
+            self.modelo_hidraulico_resultado = None
+            logger.error("Modelo hidráulico não calculado: %s", exc)
+            # Não publicar um resultado hidráulico fictício. O utilizador vê
+            # explicitamente que o esquema precisa de correcção.
+            self.perdas_totais = 0.0
+            self.localizadas = 0.0
+            self.altura_manometrica = 0.0
+            self.potencia_requerida = 0.0
+            self.perdas_resul.setText("Verificar esquema")
+            self.perdas_resul.setToolTip(f"Modelo hidráulico inválido: {exc}")
+            self.label_18.setText("Modelo inválido")
+            self.label_19.setText("—")
+            return
+        except Exception as exc:
+            logger.error("Erro no cálculo do sistema hidráulico: %s", exc, exc_info=True)
             self.perdas_totais = 0.0
             self.altura_manometrica = self.altura_geometrica_val
+            return
+
+        self._sincronizar_gestor_bombas()
 
     # ================== MÉTODOS DE COMUNICAÇÃO COM JAVASCRIPT ==================
+
+    @Slot('QVariant')
+    def receber_modelo_hidraulico(self, modelo):
+        """Recebe o esquema completo do editor SVG via QWebChannel."""
+        if not isinstance(modelo, dict):
+            logger.warning("O editor enviou um modelo hidráulico num formato inválido.")
+            return
+        pipes = modelo.get("pipes", [])
+        components = modelo.get("components", [])
+        if not isinstance(pipes, list) or not isinstance(components, list):
+            logger.warning("O modelo hidráulico contém listas inválidas.")
+            return
+        self.modelo_hidraulico_dados = modelo
+        self.acessorios_lista = list(components)
+        if hasattr(self, "perdas"):
+            try:
+                self.perdas.definir_acessorios_lista(self.acessorios_lista)
+            except Exception as exc:
+                logger.warning("Não foi possível sincronizar acessórios no cálculo legado: %s", exc)
+        self.recalcular_sistema_completo()
 
     @Slot(list)
     def definir_acessorios(self, lista):
         """Recebe a lista de acessórios do JS e recalcula o sistema."""
         if not hasattr(self, 'perdas'):
             return
-        self.perdas.definir_acessorios_lista(lista)
+        self.acessorios_lista = list(lista or [])
+        self.perdas.definir_acessorios_lista(self.acessorios_lista)
         try:
             self.localizadas = self.perdas.calcular_perdas_localizadas()
         except (ValueError, AttributeError):
@@ -493,37 +953,47 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             # 6. PLOTAGEM
             # ============================== 
             self.grafico_altura.plotar_dados(
-                tipo_grafico="Altura",
-                dados_curva1={"label": "Curva Bomba (Simulada)", "x": q_plot_exibir, "y": H_bomba_exibir},
-                dados_curva2={"label": "Curva Sistema", "x": q_plot_exibir, "y": H_sistema_exibir},
+                tipo_gráfico="Altura",
+                curvas=[
+                    {"label": "Curva Bomba (Simulada)", "x": q_plot_exibir, "y": H_bomba_exibir},
+                ],
+                curva_sistema={
+                    "label": "Curva Sistema", "x": q_plot_exibir, "y": H_sistema_exibir,
+                },
                 ponto_operacao={"x": q_op_exibir, "y": h_op_exibir},
-                unidade_vazao=u_q, unidade_y=u_h,
-                titulo="Altura vs. Vazão"
+                unidade_vazao=u_q, unidade_y=u_h, y_scale=1.0,
+                titulo="Altura vs. Vazão",
             )
 
             self.grafico_potencia.plotar_dados(
-                tipo_grafico="Potência",
-                dados_curva1={"label": "Potência Consumida", "x": q_plot_exibir, "y": potencia_exibir, "cor": "#2ca02c"},
+                tipo_gráfico="Potência",
+                curvas=[
+                    {"label": "Potência Consumida", "x": q_plot_exibir, "y": potencia_exibir, "cor": "#2ca02c"},
+                ],
                 ponto_operacao={"x": q_op_exibir, "y": p_op_exibir},
-                unidade_vazao=u_q, unidade_y=u_p,
-                titulo="Potência vs. Vazão"
+                unidade_vazao=u_q, unidade_y=u_p, y_scale=1.0,
+                titulo="Potência vs. Vazão",
             )
 
             self.grafico_rendimento.plotar_dados(
-                tipo_grafico="Rendimento",
-                dados_curva1={"label": "Rendimento", "x": q_plot_exibir, "y": rendimento_exibir, "cor": "#d62728"},
+                tipo_gráfico="Rendimento",
+                curvas=[
+                    {"label": "Rendimento", "x": q_plot_exibir, "y": rendimento_exibir, "cor": "#d62728"},
+                ],
                 ponto_operacao={"x": q_op_exibir, "y": eta_op_exibir},
-                unidade_vazao=u_q, unidade_y="%",
-                titulo="Rendimento vs. Vazão"
+                unidade_vazao=u_q, unidade_y="%", y_scale=1.0,
+                titulo="Rendimento vs. Vazão",
             )
-            
+
             # Plotagem do NPSH
             self.grafico_npsh.plotar_dados(
-                tipo_grafico="NPSH",
-                dados_curva1={"label": "NPSH Requerido (Simulado)", "x": q_plot_exibir, "y": npsh_exibir, "cor": "#9467bd"},
+                tipo_gráfico="NPSH",
+                curvas=[
+                    {"label": "NPSH Requerido (Simulado)", "x": q_plot_exibir, "y": npsh_exibir, "cor": "#9467bd"},
+                ],
                 ponto_operacao={"x": q_op_exibir, "y": npsh_op_exibir},
-                unidade_vazao=u_q, unidade_y=u_h,
-                titulo="NPSH Requerido vs. Vazão"
+                unidade_vazao=u_q, unidade_y=u_h, y_scale=1.0,
+                titulo="NPSH Requerido vs. Vazão",
             )
 
         except Exception as e:
@@ -868,6 +1338,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             self.localizadas = 0.0
             self.perdas_totais = 0.0
             self.altura_manometrica = 0.0
+            self.acessorios_lista = []
             
             # ---------- Reset das seleções ----------
             self.icone_2.setCurrentIndex(0)  # Primeira unidade de vazão
@@ -877,8 +1348,9 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             
             # ---------- Reset do mapa (via JavaScript) ----------
             self.view.page().runJavaScript("limpar_mapa();")
-            self.inicializar_graficos()
-            self.status_label.setText("Novo projeto iniciado")
+            if getattr(self, "gestor_bombas", None) is not None:
+                self.gestor_bombas.limpar_bombas()
+                self._acessorios_gestor_sincronizados = None
 
             self.atualizar_parametros_entrada()
             QMessageBox.information(self, "Novo Projeto", "Projeto reiniciado com sucesso!")

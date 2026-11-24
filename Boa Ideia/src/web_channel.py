@@ -1,76 +1,56 @@
-from PySide6.QtWidgets import QMessageBox
-from PySide6.QtCore import QObject, Slot, Signal, QUrl
-import json
+"""Objectos QWebChannel usados pelo editor hidráulico do AquaPump."""
+from __future__ import annotations
 
-class Dados():
-    def __init__(self):
-        self.valor_1 = 0
-        self.valor_2 = 0
-        self.valor_3 = 0
-        self.valor_4 = 0
+from PySide6.QtCore import QObject, Signal, Slot
 
-        self.unidade_1 = ''
-        self.unidade_2 = ''
-        self.unidade_3 = ''
-        self.unidade_4 = ''
 
-    def enviar_dados(self, vazão, diametro, altura, potencia, pagina):
-        self.valor_1 = float(vazão)
-        self.valor_2 = float(diametro)
-        self.valor_3 = float(altura)
-        self.valor_4 = float(potencia)
+class Dados(QObject):
+    """Envia valores e unidades da aplicação para as funções JS existentes."""
 
-        pagina.page().runJavaScript(f"receber_dados({self.valor_1}, {self.valor_2}, {self.valor_3}, {self.valor_4})")
-    
-    def enviar_unidades(self, unidade_vazao, unidade_diametro, unidade_altura, unidade_potencia, pagina):
-        self.unidade_1 = unidade_vazao
-        self.unidade_2 = unidade_diametro
-        self.unidade_3 = unidade_altura
-        self.unidade_4 = unidade_potencia
-
-        pagina.page().runJavaScript(
-            f"receber_unidades({json.dumps(self.unidade_1)}, {json.dumps(self.unidade_2)}, {json.dumps(self.unidade_3)}, {json.dumps(self.unidade_4)})"
+    def enviar_dados(self, vazao, tempo, altura, potencia, view):
+        valores = [float(vazao), float(tempo), float(altura), float(potencia)]
+        import json
+        payload = json.dumps(valores, allow_nan=False)
+        view.page().runJavaScript(
+            "(function(v){ if(window.receber_dados) window.receber_dados.apply(window,v); })(" + payload + ");"
         )
-        print(f"Unidades enviadas para a página web: {self.unidade_1}, {self.unidade_2}, {self.unidade_3}, {self.unidade_4}")
 
-class Outros_dados():
-    @Slot(str)
-    def mensagem_recebida(self, msg):
-        QMessageBox.Error(None, "Erro", msg)
+    def enviar_unidades(self, unidade_vazao, unidade_diametro, unidade_altura, unidade_potencia, view):
+        import json
+        valores = [str(unidade_vazao), str(unidade_diametro), str(unidade_altura), str(unidade_potencia)]
+        payload = json.dumps(valores, ensure_ascii=False)
+        view.page().runJavaScript(
+            "(function(v){ if(window.receber_unidades) window.receber_unidades.apply(window,v); })(" + payload + ");"
+        )
 
-class Altura_Geometrica (QObject):
-    altura_recebido = Signal(float)
-    def __init__(self):
-        super().__init__()
 
-        
+class Altura_Geometrica(QObject):
+    altura_recebida = Signal(float)
+
     @Slot(float)
-    def altura_(self, altura):
-        self.altura_recebido.emit(altura)
+    def altura_(self, valor):
+        self.altura_recebida.emit(float(valor))
 
-class Dimensao_Tubulacao (QObject):
+
+class Dimensao_Tubulacao(QObject):
     comprimento_recebido = Signal(float)
-    def __init__(self):
-        super().__init__()
 
     @Slot(float)
-    def comprimento_(self, comprimento):
-        self.comprimento_recebido.emit(comprimento)
+    def comprimento_(self, valor):
+        self.comprimento_recebido.emit(float(valor))
 
 
 class Acessorios_sistema(QObject):
-    lista = Signal(list)
+    """Recebe o modelo integral enviado por publishAccessories() no JavaScript."""
+    modelo = Signal(object)
 
-    def __init__(self):
-        super().__init__()
-    
-    @Slot(list)
+    @Slot('QVariant')
+    def modelo_hidraulico(self, modelo):
+        if isinstance(modelo, dict):
+            self.modelo.emit(modelo)
+
+    # Compatibilidade com a assinatura antiga do editor.
+    @Slot('QVariant')
     def lista_acessorios(self, lista):
-        self.lista.emit(lista)
-
-        
-
-       
-
-
-
+        if isinstance(lista, list):
+            self.modelo.emit({"pipes": [], "components": lista})
