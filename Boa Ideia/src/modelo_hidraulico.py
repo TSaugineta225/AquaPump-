@@ -203,19 +203,16 @@ class ModeloHidraulico:
         resultado: dict,
         cota_piezometrica_inicial_m: float,
     ) -> dict:
-        """Gera progressivas, cotas e linhas HGL/EGL para uma linha em série.
+        """Gera perfil longitudinal integrado com terreno, eixo, HGL/EGL e acessórios.
 
-        Cada troço deve fornecer cota_inicio_m e cota_fim_m (e, opcionalmente,
-        terreno_inicio_m e terreno_fim_m). A cota piezométrica inicial é uma
-        condição de fronteira fornecida pelo utilizador ou por um cálculo
-        de reservatório/bomba; nunca é estimada automaticamente.
-        As perdas localizadas de cada troço são representadas concentradas no
-        seu extremo de jusante nesta primeira versão.
+        O perfil geográfico é recebido do editor após consulta ao modelo digital
+        de elevação. A profundidade recebida representa a distância vertical
+        entre a superfície do terreno e o eixo da tubagem (não o recobrimento).
+        A progressiva geográfica é ajustada proporcionalmente ao comprimento
+        hidráulico total quando os dois comprimentos diferem.
         """
-        if not isinstance(modelo, dict) or not isinstance(resultado, dict):
+        if not isinstance(modelo, dict) or not isinstance(resultado, dict) or not resultado.get("valido"):
             raise ErroModeloHidraulico("Modelo ou resultado hidráulico inválido para gerar o perfil.")
-        if not resultado.get("valido"):
-            raise ErroModeloHidraulico("É necessário um resultado hidráulico válido antes de gerar o perfil.")
 
         hgl0 = cls._num(cota_piezometrica_inicial_m, "cota piezométrica inicial")
         pipes = modelo.get("pipes") or modelo.get("tubulacoes") or []
@@ -225,79 +222,134 @@ class ModeloHidraulico:
         if len(result_by_id) != len(oriented):
             raise ErroModeloHidraulico("O resultado não contém dados para todos os troços do perfil.")
 
-        pontos = []
-        progressiva = 0.0
-        egl = None
-        for index, (pipe, forward) in enumerate(oriented):
-            pipe_id = str(cls._obter(pipe, "id"))
-            trecho = result_by_id.get(pipe_id)
-            if trecho is None:
-                raise ErroModeloHidraulico(f"Não há resultado hidráulico para o troço {pipe_id}.")
-            z_start_key, z_end_key = (("cota_inicio_m", "cota_fim_m") if forward else ("cota_fim_m", "cota_inicio_m"))
-            terrain_start_key, terrain_end_key = (("terreno_inicio_m", "terreno_fim_m") if forward else ("terreno_fim_m", "terreno_inicio_m"))
-            z0 = cls._num(pipe.get(z_start_key), f"{z_start_key} do troço {pipe_id}")
-            z1 = cls._num(pipe.get(z_end_key), f"{z_end_key} do troço {pipe_id}")
-            terrain0 = pipe.get(terrain_start_key)
-            terrain1 = pipe.get(terrain_end_key)
-            terrain0 = cls._num(terrain0, f"{terrain_start_key} do troço {pipe_id}") if terrain0 is not None else None
-            terrain1 = cls._num(terrain1, f"{terrain_end_key} do troço {pipe_id}") if terrain1 is not None else None
+        components = modelo.get("components") or modelo.get("acessorios") or []
+        depth = cls._num(modelo.get("profundidade_eixo_m", 1.2), "profundidade até ao eixo", minimo=0.0)
+        geo = modelo.get("perfil_geografico") or []
+        if len(geo) < 2:
+            raise ErroModeloHidraulico("Obtenha primeiro pelo menos duas cotas do terreno no mapa.")
+        geo_points = []
+        for i, point in enumerate(geo):
+            geo_points.append((
+                cls._num(point.get("progressiva_m"), f"progressiva geográfica {i}"),
+                cls._num(point.get("terreno_m"), f"cota do terreno {i}"),
+            ))
+        geo_points.sort(key=lambda item: item[0])
+        geo_length = cls._num(modelo.get("comprimento_perfil_geografico_m", geo_points[-1][0]), "comprimento geográfico", minimo=0.001)
 
-            length = cls._num(trecho.get("comprimento_m"), f"comprimento calculado do troço {pipe_id}", minimo=0.001)
-            velocity = cls._num(trecho.get("velocidade_ms"), f"velocidade do troço {pipe_id}", minimo=0.0)
-            velocity_head = velocity**2 / (2.0 * 9.80665)
-            hdist = cls._num(trecho.get("perda_distribuida_m"), f"perda distribuída do troço {pipe_id}", minimo=0.0)
-            hlocal = cls._num(trecho.get("perda_localizada_m"), f"perda localizada do troço {pipe_id}", minimo=0.0)
+        # Construir cadeia hidráulica e eventos de perda localizada por posição.
+        segments = []
+        total_length = 0.0
+        accessory_events = []
+        warnings = []
+        for pipe, forward in oriented:
+            pid = str(cls._obter(pipe, "id"))
+            result_pipe = result_by_id[pid]
+            length = cls._num(result_pipe.get("comprimento_m"), f"comprimento do troço {pid}", minimo=0.001)
+            velocity = cls._num(result_pipe.get("velocidade_ms"), f"velocidade do troço {pid}", minimo=0.0)
+            hdist = cls._num(result_pipe.get("perda_distribuida_m"), f"perda distribuída do troço {pid}", minimo=0.0)
+            hlocal = cls._num(result_pipe.get("perda_localizada_m"), f"perda localizada do troço {pid}", minimo=0.0)
+            segments.append({"id": pid, "start": total_length, "end": total_length + length,
+                             "length": length, "velocity": velocity, "hdist": hdist, "hlocal": hlocal})
+            fittings = [c for c in components if str(cls._obter(c, "troco_id", "pipe_id", default="")) == pid]
+            k_values = [max(0.0, float(cls._obter(c, "coeficiente_k", "k", default=0.0) or 0.0)) for c in fittings]
+            k_total = sum(k_values)
+            for fitting, kval in zip(fittings, k_values):
+                raw_pos = cls._num(cls._obter(fitting, "posicao_m", "position_m", default=0.0), "posição do acessório", minimo=0.0)
+                local_pos = min(length, max(0.0, raw_pos))
+                if not forward:
+                    local_pos = length - local_pos
+                share = (kval / k_total) if k_total > 0 else (1.0 / len(fittings) if fittings else 0.0)
+                accessory_events.append({"progressiva_m": total_length + local_pos,
+                                         "perda_m": hlocal * share,
+                                         "nome": cls._obter(fitting, "nome", "tipo", default="Acessório"),
+                                         "troco_id": pid})
+            if hlocal > 0 and not fittings:
+                accessory_events.append({"progressiva_m": total_length + length, "perda_m": hlocal,
+                                         "nome": "Perda localizada agregada", "troco_id": pid})
+            total_length += length
 
-            if egl is None:
-                egl = hgl0 + velocity_head
-                hgl_start = hgl0
-            else:
-                # Na mudança de diâmetro, a EGL mantém-se (sem perda singular
-                # adicional modelada), mas a HGL muda com a carga de velocidade.
-                hgl_start = egl - velocity_head
-            pontos.append({
-                "progressiva_m": progressiva, "troco_id": pipe_id,
-                "cota_conduta_m": z0, "cota_terreno_m": terrain0,
-                "hgl_m": hgl_start, "egl_m": egl,
-                "pressao_estatica_m": hgl_start - z0,
-                "velocidade_ms": velocity,
-            })
+        scale = total_length / geo_length
+        if abs(scale - 1.0) > 0.02:
+            warnings.append("O comprimento do traçado geográfico difere mais de 2% do comprimento hidráulico; as cotas foram distribuídas proporcionalmente ao longo da cadeia.")
 
-            # Perda distribuída ao longo do troço; perda localizada concentrada
-            # no extremo de jusante, até existir posição longitudinal fiável.
-            egl -= hdist
-            progressiva += length
-            hgl_end = egl - velocity_head
-            pontos.append({
-                "progressiva_m": progressiva, "troco_id": pipe_id,
-                "cota_conduta_m": z1, "cota_terreno_m": terrain1,
-                "hgl_m": hgl_end, "egl_m": egl,
-                "pressao_estatica_m": hgl_end - z1,
-                "velocidade_ms": velocity,
-            })
-            egl -= hlocal
-            if hlocal > 0:
-                hgl_after_local = egl - velocity_head
-                pontos.append({
-                    "progressiva_m": progressiva, "troco_id": pipe_id,
-                    "cota_conduta_m": z1, "cota_terreno_m": terrain1,
-                    "hgl_m": hgl_after_local, "egl_m": egl,
-                    "pressao_estatica_m": hgl_after_local - z1,
-                    "velocidade_ms": velocity,
-                    "evento": "perda_localizada_agregada",
-                })
+        def terrain_at(chainage: float) -> float:
+            g = chainage / scale
+            if g <= geo_points[0][0]: return geo_points[0][1]
+            if g >= geo_points[-1][0]: return geo_points[-1][1]
+            for (d0, z0), (d1, z1) in zip(geo_points, geo_points[1:]):
+                if d0 <= g <= d1:
+                    ratio = (g - d0) / max(1e-12, d1 - d0)
+                    return z0 + ratio * (z1 - z0)
+            return geo_points[-1][1]
+
+        # Fricção distribuída é linear por troço; perdas singulares são aplicadas
+        # como saltos na posição de cada acessório.
+        event_map: dict[float, list[dict]] = {}
+        for event in accessory_events:
+            event_map.setdefault(round(event["progressiva_m"], 6), []).append(event)
+        chainages = {0.0, total_length}
+        for _, (d, _) in enumerate(geo_points): chainages.add(max(0.0, min(total_length, d * scale)))
+        for seg in segments: chainages.update((seg["start"], seg["end"]))
+        chainages.update(event_map.keys())
+        ordered_chainages = sorted(chainages)
+
+        def segment_at(s: float):
+            for seg in segments:
+                if seg["start"] - 1e-8 <= s <= seg["end"] + 1e-8:
+                    return seg
+            return segments[-1]
+
+        def distributed_loss_at(s: float) -> float:
+            loss = 0.0
+            for seg in segments:
+                if s >= seg["end"]:
+                    loss += seg["hdist"]
+                elif s > seg["start"]:
+                    loss += seg["hdist"] * ((s - seg["start"]) / seg["length"])
+                    break
+                else:
+                    break
+            return loss
+
+        event_loss_before = 0.0
+        points = []
+        for chainage in ordered_chainages:
+            seg = segment_at(chainage)
+            terrain = terrain_at(chainage)
+            pipe_axis = terrain - depth
+            velocity_head = seg["velocity"] ** 2 / (2.0 * 9.80665)
+            egl_before = hgl0 + (segments[0]["velocity"] ** 2 / (2.0 * 9.80665)) - distributed_loss_at(chainage) - event_loss_before
+            hgl_before = egl_before - velocity_head
+            points.append({"progressiva_m": chainage, "troco_id": seg["id"],
+                           "cota_terreno_m": terrain, "cota_conduta_m": pipe_axis,
+                           "hgl_m": hgl_before, "egl_m": egl_before,
+                           "pressao_estatica_m": hgl_before - pipe_axis,
+                           "velocidade_ms": seg["velocity"], "evento": "antes_acessorio" if round(chainage, 6) in event_map else None})
+            events_here = event_map.get(round(chainage, 6), [])
+            for event in events_here:
+                event_loss_before += event["perda_m"]
+                egl_after = egl_before - event_loss_before
+                hgl_after = egl_after - velocity_head
+                points.append({"progressiva_m": chainage, "troco_id": seg["id"],
+                               "cota_terreno_m": terrain, "cota_conduta_m": pipe_axis,
+                               "hgl_m": hgl_after, "egl_m": egl_after,
+                               "pressao_estatica_m": hgl_after - pipe_axis,
+                               "velocidade_ms": seg["velocity"], "evento": "perda_localizada",
+                               "acessorio": event["nome"], "perda_localizada_m": event["perda_m"]})
 
         return {
             "valido": True,
-            "unidades": {"distancia": "m", "cota": "m", "carga": "m"},
+            "unidades": {"distancia": "m", "cota": "m", "carga": "m", "pressao": "m.c.a."},
             "cota_piezometrica_inicial_m": hgl0,
-            "comprimento_total_m": progressiva,
-            "pontos": pontos,
-            "avisos": [
-                "As perdas localizadas estão agregadas no fim de cada troço; as posições individuais dos acessórios ainda não são usadas no perfil.",
-                "A HGL/EGL depende da cota piezométrica inicial fornecida; confirme a condição de fronteira e o sentido do escoamento.",
-                "A cota da conduta deve representar a linha de referência escolhida (eixo ou geratriz), de forma consistente.",
-            ],
+            "comprimento_total_m": total_length,
+            "profundidade_eixo_m": depth,
+            "pontos": points,
+            "acessorios": accessory_events,
+            "avisos": list(dict.fromkeys(warnings + [
+                "As cotas do terreno provêm de um modelo digital de elevação e não substituem levantamento topográfico.",
+                "A profundidade introduzida é medida até ao eixo da tubagem; não é o recobrimento até à geratriz superior.",
+                "A cota piezométrica inicial é uma condição de fronteira fornecida pelo utilizador; confirme o nível de água, bomba e sentido do escoamento.",
+            ])),
         }
 
     @classmethod

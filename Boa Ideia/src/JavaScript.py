@@ -173,8 +173,8 @@ button{cursor:pointer}
           <button class="canvas-tab active" id="tabSchematic" type="button">Esquema</button>
           <button class="canvas-tab" id="tabProfile" type="button">Perfil longitudinal</button>
           <div id="profileControls" style="display:none">
-            <label for="coverDepth">Profundidade do eixo</label>
-            <input id="coverDepth" type="number" min="0" max="100" step="0.1" value="1.2" title="Profundidade assumida do eixo abaixo do terreno, em metros">
+            <label for="coverDepth">Profundidade até ao eixo (m)</label>
+            <input id="coverDepth" type="number" min="0" max="100" step="0.1" value="1.2" title="Distância vertical entre o terreno e o eixo da tubagem, em metros">
             <label for="profileStep">Amostragem</label>
             <input id="profileStep" type="number" min="10" max="500" step="10" value="50" title="Espaçamento aproximado entre pontos de cota, em metros">
             <label for="initialHgl">HGL inicial (m)</label>
@@ -197,7 +197,7 @@ button{cursor:pointer}
         </div>
         <div id="profileWrap" style="display:none">
           <div id="profileSummary">O perfil será apresentado depois de desenhar uma conduta no mapa.</div>
-          <svg id="profileSvg" viewBox="0 0 1200 610" preserveAspectRatio="none" aria-label="Perfil longitudinal do terreno e do eixo indicativo da conduta"></svg>
+          <svg id="profileSvg" viewBox="0 0 1200 610" preserveAspectRatio="none" aria-label="Perfil longitudinal do terreno, eixo da tubagem, HGL, EGL e acessórios"></svg>
           <div id="profileEmpty">Desenhe uma conduta no mapa. O AquaPump recolherá cotas ao longo de todo o percurso para construir o perfil longitudinal.</div>
         </div>
       </main>
@@ -315,9 +315,13 @@ function publishAccessories(){
     };
   });
   const model = {
-    versao_esquema:1,
-    unidades:{comprimento:'m',diametro:'mm',caudal:'m3/s'},
-    pipes, components
+    versao_esquema:2,
+    unidades:{comprimento:'m',diametro:'mm',caudal:'m3/s',cota:'m'},
+    pipes, components,
+    perfil_geografico:state.profileReady ? state.profile.map(p=>({progressiva_m:Number(p.distance),latitude:Number(p.lat),longitude:Number(p.lng),terreno_m:Number(p.elevation)})) : [],
+    comprimento_perfil_geografico_m:Number(state.profileLengthM||0),
+    profundidade_eixo_m:Math.max(0,Number($('coverDepth')?.value)||0),
+    cota_piezometrica_inicial_m:$('initialHgl')?.value!=='' && Number.isFinite(Number($('initialHgl')?.value)) ? Number($('initialHgl').value) : null
   };
   const channel = state.bridge.acessorios;
   if (channel && typeof channel.modelo_hidraulico === 'function') {
@@ -617,6 +621,7 @@ $('coverDepth').addEventListener('change',()=>{
   const value=Number(input.value);
   if(!Number.isFinite(value)||value<0){input.value='1.2';}
   renderProfile();
+  publishAccessories();
 });
 $('profileStep').addEventListener('change',()=>{
   const input=$('profileStep');
@@ -636,6 +641,7 @@ $('initialHgl').addEventListener('change',()=>{
   state.hydraulicProfile=null;
   state.hydraulicProfileError='Cota piezométrica alterada. Solicite novo cálculo hidráulico para actualizar HGL/EGL.';
   renderProfile();
+  publishAccessories();
 });
 
 function renderProfile(){
@@ -698,6 +704,12 @@ function renderProfile(){
     const p=data[i];
     return `<circle cx="${x(p.distance)}" cy="${y(p.elevation)}" r="3.6" fill="#98784c"><title>Estaca ${p.distance.toFixed(1)} m · terreno ${p.elevation.toFixed(2)} m</title></circle>`;
   }).join('');
+  const accessoryMarkers=(state.hydraulicProfile?.acessorios||[]).map(item=>{
+    const chainage=Number(item.progressiva_m);
+    if(!Number.isFinite(chainage))return '';
+    const sample=data.reduce((best,p)=>Math.abs(p.distance-chainage)<Math.abs(best.distance-chainage)?p:best,data[0]);
+    return `<path d="M ${x(chainage)-5} ${y(sample.elevation)-12} l 5 -7 l 5 7 z" fill="#6b4ca5"><title>${esc(item.nome)} · progressiva ${chainage.toFixed(1)} m · perda ${Number(item.perda_m||0).toFixed(3)} m</title></path>`;
+  }).join('');
   const start=data[0],finish=data[data.length-1];
   const rise=finish.elevation-start.elevation;
   const ascent=data.slice(1).reduce((sum,p,i)=>sum+Math.max(0,p.elevation-data[i].elevation),0);
@@ -705,6 +717,9 @@ function renderProfile(){
   const avgSlope=state.profileLengthM>0?100*rise/state.profileLengthM:0;
   const actualSpacing=state.profileLengthM/Math.max(1,data.length-1);
   const zeroElevationCount=terrain.filter(value=>value===0).length;
+  const pressureValues=validHydraulic.map(p=>Number(p.pressao_estatica_m)).filter(Number.isFinite);
+  const minPressure=pressureValues.length?Math.min(...pressureValues):null;
+  const maxPressure=pressureValues.length?Math.max(...pressureValues):null;
   const legendY=25;
 
   svg.innerHTML=`
@@ -717,6 +732,7 @@ function renderProfile(){
     <line x1="${pad.l}" y1="${H-pad.b}" x2="${W-pad.r}" y2="${H-pad.b}" class="profile-axis"/>
     <line x1="${pad.l}" y1="${pad.t}" x2="${pad.l}" y2="${H-pad.b}" class="profile-axis"/>
     ${markers}
+    ${accessoryMarkers}
     <circle cx="${x(start.distance)}" cy="${y(start.elevation)}" r="5" fill="#98784c"><title>Início · cota ${start.elevation.toFixed(2)} m</title></circle>
     <circle cx="${x(finish.distance)}" cy="${y(finish.elevation)}" r="5" fill="#98784c"><title>Fim · cota ${finish.elevation.toFixed(2)} m</title></circle>
     <text x="${x(start.distance)+8}" y="${y(start.elevation)-12}" class="profile-small">Início ${start.elevation.toFixed(2)} m</text>
@@ -741,7 +757,8 @@ function renderProfile(){
     <span class="profile-stat">Descida acumulada<strong>${descent.toFixed(1)} m</strong></span>
     <span class="profile-stat">Pontos / intervalo<strong>${data.length} / ${actualSpacing.toFixed(0)} m</strong></span>
     ${validHydraulic.length>=2?`<span class="profile-stat">HGL inicial<strong>${Number(validHydraulic[0].hgl_m).toFixed(2)} m</strong></span><span class="profile-stat">HGL final<strong>${Number(validHydraulic[validHydraulic.length-1].hgl_m).toFixed(2)} m</strong></span>`:''}
-    <span class="profile-note">Terreno: modelo digital, não levantamento. Eixo: profundidade assumida. ${validHydraulic.length>=2?'HGL/EGL recebidas do modelo hidráulico.':'HGL/EGL aguardam cálculo hidráulico e condição de fronteira.'}${state.hydraulicProfileError?` ${esc(state.hydraulicProfileError)}`:''}${zeroElevationCount?` ${zeroElevationCount} cota(s) chegaram como 0 m; confirme se são reais.`:''}</span>
+    ${pressureValues.length?`<span class="profile-stat">Pressão mínima<strong>${minPressure.toFixed(2)} m.c.a.</strong></span><span class="profile-stat">Pressão máxima<strong>${maxPressure.toFixed(2)} m.c.a.</strong></span>`:''}
+    <span class="profile-note">Terreno: modelo digital, não levantamento. Eixo: profundidade definida até ao eixo da tubagem. ${validHydraulic.length>=2?'HGL/EGL recebidas do modelo hidráulico.':'HGL/EGL aguardam cálculo hidráulico e condição de fronteira.'}${state.hydraulicProfileError?` ${esc(state.hydraulicProfileError)}`:''}${zeroElevationCount?` ${zeroElevationCount} cota(s) chegaram como 0 m; confirme se são reais.`:''}</span>
   `;
 }
 
@@ -843,6 +860,7 @@ async function updateRoute(layer){
     // Mantém o contrato legado: o cálculo existente recebe o módulo do desnível.
     sendHeight(Math.abs(last-first));
     renderProfile();
+    publishAccessories();
     setStatus(`Perfil actualizado · ${(route.totalLength/1000).toFixed(2)} km · ${elevations.length} cotas`);
   }catch(err){
     if(requestId!==state.profileRequestId)return;
@@ -883,7 +901,7 @@ function initMap(){
     else{
       state.profileRequestId++;
       state.profile=[];state.profileLengthM=0;state.profileReady=false;state.profileError=null;
-      sendLength(0);sendHeight(0);renderProfile();
+      sendLength(0);sendHeight(0);renderProfile();publishAccessories();
     }
   });
   state.map.on('locationerror',()=>setStatus('Localização indisponível; pode navegar manualmente no mapa'));
