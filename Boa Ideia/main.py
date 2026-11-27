@@ -24,8 +24,7 @@ from PySide6.QtWebEngineCore import QWebEnginePage, QWebEngineProfile
 from PySide6.QtNetwork import QNetworkAccessManager, QNetworkRequest
 
 # ================== Bibliotecas Externas ==================
-from qframelesswindow import FramelessWindow
-import fluids.piping as piping
+from qframelesswindow import FramelessMainWindow as FramelessWindow
 from matplotlib import pyplot as plt
 import numpy as np
 import CoolProp.CoolProp as CP
@@ -68,8 +67,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 # ================== WebEngine Configurations ==================
-os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = ("--ignore-gpu-blocklist --enable-gpu-rasterization --enable-zero-copy")
-os.environ["QTWEBENGINE_CHROMIUM_FLAGS"] = ("--disable-gpu-vsync --disable-frame-rate-limit")
+os.environ.setdefault("QTWEBENGINE_CHROMIUM_FLAGS", "--disable-gpu-vsync --disable-frame-rate-limit")
 
 
 # ==========================================================
@@ -83,7 +81,13 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     def __init__(self, parent=None):
         """Inicializa a janela principal e todos os seus componentes."""
         super().__init__(parent)
-        self.setupUi(self)
+        # Ui_AquaPump foi gerada para QWidget, não para QMainWindow.
+        # O conteúdo deve ficar no centralWidget do FramelessWindow.
+        self._ui_container = QWidget(self)
+        self.setupUi(self._ui_container)
+        self.setCentralWidget(self._ui_container)
+        self.exportar_csv.setText("Exportar Excel")
+        self._historico_path = None
         self.modelo_hidraulico_dados = None
         self.modelo_hidraulico_resultado = None
         self.modelo_hidraulico_erro = None
@@ -93,7 +97,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         
         # ---------- Configurações da Janela ----------
         self.setWindowTitle("AquaPump")
-        self.setWindowIcon(QIcon(u":/img/logo_principal.png"))
+        # O ícone é definido na QApplication para contornar o crash no QtFrameless.setWindowIcon.
         self.ex_3 = chr(0x00B3)   # Expoente para m³
 
         # ---------- Atributos de Cálculo do Sistema ----------
@@ -107,11 +111,12 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.altura_manometrica = 0.0
         self.potencia_requerida = 0.0
 
-        self.modelo.setText(f"Grundfos CM 15-2 - Centrifuga")
-        self.vazao_label.setText("Caudal nominal: 17 m³/h")
-        self.altura_3.setText("Altura manométrica nominal: 29.7 m  ")
-        self.potencia_3.setText("Potência nominal: 1.9 kW ")
-        self.label_10.setPixmap(QPixmap(r"H:\O meu disco\Base de Dados\Grunfos\CM 15-3").scaled(250, 250, Qt.KeepAspectRatio))
+        # Estado inicial neutro: não apresentar dados de uma bomba fictícia.
+        self.modelo.setText("Nenhuma bomba seleccionada")
+        self.vazao_label.setText("Caudal nominal: —")
+        self.altura_3.setText("Altura manométrica nominal: —")
+        self.potencia_3.setText("Potência nominal: —")
+        self.label_10.clear()
 
         # ---------- Inicialização de Classes Auxiliares ----------
         self._inicializar_classes_auxiliares()
@@ -133,7 +138,8 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         # ---------- Inicialização de Gráficos e Associações ----------
         self._inicializar_graficos()
         self._inicializar_gestor_bombas()
-        self.atualizar_graficos_curvas()
+        # Os parâmetros só podem ser recalculados depois de os gráficos existirem.
+        self.atualizar_parametros_entrada()
         self.mudanca_dinamica_perdas_carga()
 
         # ---------- Inicialização de pequenos sinais ------
@@ -159,10 +165,11 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             self.gestor_db = GestorDatabase(db_caminho)
             logger.info('Base de dados Carregada com sucesso')
         except Exception as e:
+            self.gestor_db = None
             logger.warning(f"Erro ao carregar base de dados devido a {e}")
 
-        # Atualizar parâmetros iniciais
-        self.atualizar_parametros_entrada()
+        # Os parâmetros iniciais são calculados no __init__, depois de
+        # _inicializar_graficos(), para evitar chamadas prematuras aos gráficos.
         
     def pequeno_sinal(self):
         self.bomba_encontrada.connect(self.iniciar_consulta)
@@ -175,10 +182,26 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.Vazao.setValidator(validator)
 
     def _configurar_combobox(self):
-        """Configura os combobox com valores iniciais."""
-        self.hazen_will.addItems(Perdas.get_lista_materiais_hazen())
+        """Preenche listas vazias e evita duplicar opções já definidas no Designer."""
+        unidades = {
+            "icone_2": ["m³/h", "m³/s", "L/s", "L/min", "L/h", "gal/min", "ft³/s"],
+            "caudal_box": ["m³/h", "m³/s", "L/s", "L/min", "L/h"],
+            "diametro_box": ["m", "cm", "mm", "in", "ft"],
+            "comprimento_box": ["m", "cm", "mm", "km", "ft", "in"],
+            "altura_box": ["m", "cm", "mm", "ft"],
+            "potencia_box": ["kilowatt", "watt", "megawatt", "horsepower", "cv"],
+        }
+        for nome, opcoes in unidades.items():
+            combo = getattr(self, nome, None)
+            if combo is not None and combo.count() == 0:
+                combo.addItems(opcoes)
+                combo.setCurrentIndex(0)
+
+        if self.hazen_will.count() == 0:
+            self.hazen_will.addItems(Perdas.get_lista_materiais_hazen())
         self.hazen_will.setHidden(True)
-        self.darcy.addItems(Perdas.get_lista_materiais_darcy())
+        if self.darcy.count() == 0:
+            self.darcy.addItems(Perdas.get_lista_materiais_darcy())
 
     def _configurar_placeholders(self):
         """Configura textos de placeholder para campos de entrada."""
@@ -584,9 +607,11 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         Returns:
             str: Caminho absoluto do arquivo
         """
-        if hasattr(sys, '_MEIPASS'):
-            return os.path.join(sys._MEIPASS, caminho_relactivo)
-        return os.path.join(os.path.abspath("."), caminho_relactivo)
+        if hasattr(sys, "_MEIPASS"):
+            base = sys._MEIPASS
+        else:
+            base = os.path.dirname(os.path.abspath(__file__))
+        return os.path.join(base, caminho_relactivo)
 
     # ================== MÉTODOS DE CÁLCULO DO SISTEMA ==================
 
@@ -875,6 +900,11 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         """
         Atualiza TODOS os gráficos de SIMULAÇÃO com proteção contra erros numéricos.
         """
+        # Pode ser chamado por um recálculo durante a inicialização. Nesse
+        # momento, ignoramos a atualização até que os gráficos sejam criados.
+        if not hasattr(self, "grafico_altura"):
+            logger.debug("Gráficos ainda não inicializados; atualização adiada.")
+            return
         try:
             # ==============================
             # 1. PARÂMETROS DE ENTRADA SEGUROS
@@ -1049,8 +1079,10 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
     def pesquisa_mapa(self):
         """Executa pesquisa no mapa via JS."""
-        texto = self.pesquisa_line.text()
-        pesquisa = f"pesquisar_lugar('{texto}')"
+        texto = self.pesquisa_line.text().strip()
+        # JSON encoding prevents quotes or special characters breaking JavaScript.
+        argumento = json.dumps(texto, ensure_ascii=False)
+        pesquisa = f"pesquisar_lugar({argumento})"
         self.view.page().runJavaScript(pesquisa)
 
     # ================== MÉTODOS DE EXPORTAÇÃO ==================
@@ -1090,6 +1122,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
     def gerar_csv(self):
         """Gera relatório em formato CSV com os dados atuais."""
         try:
+            self.exibir_dados_calculados()
             material = self.darcy.currentText() if self.radioButton_10.isChecked() else self.hazen_will.currentText()
             
             dados_relatorio = {
@@ -1118,68 +1151,114 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             csv_exporter.adicionar_secao("GRÁFICOS DE CURVAS DA BOMBA - SIMULAÇÃO")
             
             # Gerar CSV
-            sucesso = csv_exporter.exportar("relatorio_bombeamento.csv")        
+            sucesso = csv_exporter.exportar(parent=self)
             if sucesso:
-                QMessageBox.information(self, "Sucesso", "Relatório .xlsv gerado com sucesso!")
+                QMessageBox.information(self, "Sucesso", "Relatório Excel (.xlsx) gerado com sucesso!")
             else:
-                QMessageBox.warning(self, "Aviso", "Não foi possível gerar o relatório .xlsv.")
+                QMessageBox.warning(self, "Aviso", "A exportação para Excel foi cancelada ou falhou.")
                 
             return sucesso
             
         except Exception as e:
-            QMessageBox.critical(self, "Erro", f"Ocorreu um erro ao gerar o .xlsv: {str(e)}")
+            QMessageBox.critical(self, "Erro", f"Ocorreu um erro ao gerar o relatório Excel: {str(e)}")
             return False
         
     # ================== MÉTODOS DE HISTÓRICO ==================
 
-    def salvar_historico(self):
-        """Salva o estado atual do cálculo no histórico."""
+    def salvar_historico(self, caminho=None, como=False):
+        """Guarda o estado actual em JSON; reutiliza o último caminho quando possível."""
+        destino = None if como else (caminho or self._historico_path)
         dados_calculo = {
-            "Vazao_total": self.vazao,
-            "Diametro": self.diametro_tubulacao,
-            "Perdas_de_Carga": self.perdas_totais,
-            "Altura_Manometrica": self.altura_manometrica,
-            "Tempo": self.tempo,
+            # A vazão guardada é sempre SI. A unidade visual é guardada separadamente.
+            "Vazao_total": float(self.vazao),
+            "Vazao_total_m3s": float(self.vazao),
+            "Unidade_vazao": self.icone_2.currentText(),
+            "Diametro": float(self.diametro_tubulacao),
+            "Perdas_de_Carga": float(self.perdas_totais),
+            "Altura_Manometrica": float(self.altura_manometrica),
+            "Altura_Geometrica": float(self.altura_geometrica_val),
+            "Comprimento_Tubulacao": float(self.comprimento_tubulacao_val),
+            "Tempo": float(self.tempo),
             "Material_Tubulacao": self.darcy.currentText() if self.radioButton_10.isChecked() else self.hazen_will.currentText(),
-            "Formula_Utilizada": "Darcy-Weisbach" if self.radioButton_10.isChecked() else "Hazen-Williams"
+            "Formula_Utilizada": "Darcy-Weisbach" if self.radioButton_10.isChecked() else "Hazen-Williams",
         }
-        
-        if self.historico_manager.salvar_historico(dados_calculo):
-            QMessageBox.information(self, "Sucesso", "Histórico salvo com sucesso!")
+        if self.historico_manager.salvar_historico(dados_calculo, caminho=destino):
+            # HistoricoManager devolve True por compatibilidade; o destino é mantido
+            # pelo atributo quando foi escolhido pelo diálogo.
+            caminho_final = getattr(self.historico_manager, "ultimo_caminho", None)
+            if caminho_final:
+                self._historico_path = caminho_final
+                self.config.adicionar_projeto_recente(caminho_final)
+                self.menu.atualizar_menu_recentes()
+            QMessageBox.information(self, "Sucesso", "Projecto guardado com sucesso!")
+            return True
+        return False
 
-    def carregar_historico(self):
-        """Carrega um estado anterior de cálculo do histórico."""
-        dados = self.historico_manager.carregar_historico()
-        if dados:
-            # Atualiza os valores na interface
-            self.vazao = dados.get("Vazao_total", 0.0)
-            self.diametro_tubulacao = dados.get("Diametro", 0.0)
-            self.perdas_totais = dados.get("Perdas_de_Carga", 0.0)
-            self.altura_manometrica = dados.get("Altura_Manometrica", 0.0)
-            self.tempo = dados.get("Tempo", 0.0)
-            
-            # Atualiza a UI
-            self.Vazao_2.setText(f"{self.vazao:.4f}")
-            self.Vazao.setText(f"{self.tempo:.2f}")
-            
-            # Atualiza material e fórmula se disponível nos dados
+    def carregar_historico(self, caminho=None):
+        """Carrega um JSON e converte a vazão SI para a unidade actualmente escolhida."""
+        dados = self.historico_manager.carregar_historico(caminho=caminho)
+        if not isinstance(dados, dict):
+            return False
+
+        controlos = (
+            self.Vazao_2, self.Vazao, self.icone_2,
+            self.radioButton_10, self.radioButton_9, self.darcy, self.hazen_will,
+        )
+        estados_sinais = [(widget, widget.blockSignals(True)) for widget in controlos]
+        try:
+            unidade = str(dados.get("Unidade_vazao", self.icone_2.currentText()))
+            indice = self.icone_2.findText(unidade)
+            if indice >= 0:
+                self.icone_2.setCurrentIndex(indice)
+
+            vazao_si = float(dados.get("Vazao_total_m3s", dados.get("Vazao_total", 0.0)))
+            vazao_display = self.conversor.converter_vazao(
+                vazao_si, "m³/s", self.icone_2.currentText()
+            )
+            tempo = float(dados.get("Tempo", 0.0))
+            self.Vazao_2.setText(f"{vazao_display:.8g}")
+            self.Vazao.setText(f"{tempo:.8g}")
+
+            formula = dados.get("Formula_Utilizada", "Darcy-Weisbach")
             material = dados.get("Material_Tubulacao", "")
-            formula = dados.get("Formula_Utilizada", "")
-            
             if formula == "Darcy-Weisbach":
                 self.radioButton_10.setChecked(True)
-                index = self.darcy.findText(material)
-                if index >= 0:
-                    self.darcy.setCurrentIndex(index)
+                indice_material = self.darcy.findText(material)
+                if indice_material >= 0:
+                    self.darcy.setCurrentIndex(indice_material)
             else:
                 self.radioButton_9.setChecked(True)
-                index = self.hazen_will.findText(material)
-                if index >= 0:
-                    self.hazen_will.setCurrentIndex(index)
+                indice_material = self.hazen_will.findText(material)
+                if indice_material >= 0:
+                    self.hazen_will.setCurrentIndex(indice_material)
 
-            self.recalcular_sistema_completo()
-            
-            QMessageBox.information(self, "Sucesso", "Histórico carregado com sucesso!")
+            self.altura_geometrica_val = float(
+                dados.get("Altura_Geometrica", self.altura_geometrica_val)
+            )
+            self.comprimento_tubulacao_val = float(
+                dados.get("Comprimento_Tubulacao", self.comprimento_tubulacao_val)
+            )
+            self._historico_path = (
+                getattr(self.historico_manager, "ultimo_caminho", None) or caminho
+            )
+        except (TypeError, ValueError, KeyError) as exc:
+            logger.exception("Histórico inválido: %s", exc)
+            QMessageBox.warning(
+                self, "Histórico inválido",
+                f"Não foi possível carregar o projecto: {exc}",
+            )
+            return False
+        finally:
+            for widget, estado_anterior in estados_sinais:
+                widget.blockSignals(estado_anterior)
+
+        if self._historico_path:
+            self.config.adicionar_projeto_recente(self._historico_path)
+            self.menu.atualizar_menu_recentes()
+
+        self.atualizar_parametros_entrada()
+        QMessageBox.information(self, "Sucesso", "Projecto carregado com sucesso!")
+        return True
 
     # ================== MÉTODOS DE SELEÇÃO DE BOMBA ==================
 
@@ -1301,7 +1380,6 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
             return
         
         self.textEdit.setHtml(self.formatar_texto(conteudo))
-        self.textEdit.setText(conteudo)
 
     # ================== MÉTODOS DE INTERFACE ==================
 
@@ -1325,6 +1403,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         
         try:
             # ---------- Reset dos campos de entrada ----------
+            self._historico_path = None
             self.Vazao_2.clear()
             self.Vazao.clear()
             self.pesquisa_line.clear()
@@ -1366,7 +1445,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.config.salvar_estado_splitter(self.splitter_2, "splitter_principal")
         self.config.salvar_estado_splitter(self.splitter, "splitter_mapa_perfil")
         self.config.salvar_indice_combobox(self.icone_2, "vazao_unidade_indice")
-        self.config.restaurar_indice_combobox(self.caudal_box, "vazao_unidade_indice")
+        self.config.salvar_indice_combobox(self.caudal_box, "caudal_unidade_indice")
         self.config.salvar_texto_combobox(self.darcy, "darcy_material_texto")
         self.config.salvar_texto_combobox(self.hazen_will, "hazen_material_texto")
 
@@ -1376,7 +1455,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
         self.config.restaurar_estado_splitter(self.splitter_2, "splitter_principal")
         self.config.restaurar_estado_splitter(self.splitter, "splitter_mapa_perfil")
         self.config.restaurar_indice_combobox(self.icone_2, "vazao_unidade_indice")
-        self.config.restaurar_indice_combobox(self.caudal_box, "vazao_unidade_indice")
+        self.config.restaurar_indice_combobox(self.caudal_box, "caudal_unidade_indice")
         self.config.restaurar_texto_combobox(self.darcy, "darcy_material_texto")
         self.config.restaurar_texto_combobox(self.hazen_will, "hazen_material_texto")
 
@@ -1391,6 +1470,7 @@ class MainWindow(FramelessWindow, Ui_AquaPump):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
+    app.setWindowIcon(QIcon(u":/img/logo_principal.png"))
     window = MainWindow()
     #app.setStyleSheet(qdarkstyle.load_stylesheet())
     window.show()

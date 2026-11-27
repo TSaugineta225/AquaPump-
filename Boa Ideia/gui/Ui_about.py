@@ -1,264 +1,304 @@
 # -*- coding: utf-8 -*-
+"""
+Janela "Sobre" do AquaPump.
+Interface redesenhada em PySide6.
 
-################################################################################
-## Form generated from reading UI file 'aboutIFgrSf.ui'
-##
-## Created by: Qt User Interface Compiler version 6.9.1
-##
-## WARNING! All changes made in this file will be lost when recompiling UI file!
-################################################################################
+Os contactos e links externos estão definidos na secção CONTACT_INFO.
+"""
 
-from PySide6.QtCore import (QCoreApplication, QDate, QDateTime, QLocale,
-    QMetaObject, QObject, QPoint, QRect,
-    QSize, QTime, QUrl, Qt)
-from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
-    QFont, QFontDatabase, QGradient, QIcon,
-    QImage, QKeySequence, QLinearGradient, QPainter,
-    QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QAbstractButton, QApplication, QDialog, QDialogButtonBox,
-    QFrame, QHBoxLayout, QLabel, QSizePolicy,
-    QVBoxLayout, QWidget)
-import img.img_rc
+from PySide6.QtCore import Qt, QUrl
+from PySide6.QtGui import QDesktopServices
+from PySide6.QtWidgets import (
+    QFrame,
+    QHBoxLayout,
+    QLabel,
+    QPushButton,
+    QSizePolicy,
+    QVBoxLayout,
+)
+
+
+APP_INFO = {
+    "name": "AquaPump",
+    "subtitle": "Dimensionamento de sistemas de bombagem de água",
+    "version": "2.0.0",
+    "release": "Setembro de 2025",
+    "description": (
+        "Ferramenta desenvolvida para apoiar o dimensionamento de sistemas "
+        "de bombagem, reunindo cálculos hidráulicos e informação técnica "
+        "numa interface simples e organizada."
+    ),
+    "developer": "Tenerife da Saugineta",
+    "copyright": "© 2025 Tenerife da Saugineta. Todos os direitos reservados.",
+}
+
+# Contactos e recursos do desenvolvedor.
+CONTACT_INFO = {
+    "email": "tenerifenhalicale@gmail.com",
+    "website": "https://www.yane.co.mz",
+    "portfolio": "https://tsaugineta225.github.io/",
+    "github": "https://github.com/TSaugineta225",
+    "linkedin": "https://www.linkedin.com/in/tenerife-saugineta/",
+}
+
 
 class Ui_Dialog(object):
     def setupUi(self, Dialog):
-        if not Dialog.objectName():
-            Dialog.setObjectName(u"Dialog")
-        Dialog.resize(400, 300)
-        sizePolicy = QSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
-        sizePolicy.setHorizontalStretch(0)
-        sizePolicy.setVerticalStretch(0)
-        sizePolicy.setHeightForWidth(Dialog.sizePolicy().hasHeightForWidth())
-        Dialog.setSizePolicy(sizePolicy)
-        Dialog.setStyleSheet(u"QWidget {\n"
-"    background-color: #ffffff;\n"
-"    font-family: \"Segoe UI\", Roboto, sans-serif;\n"
-"    color: #333333;\n"
-"}\n"
-"\n"
-"QPushButton {\n"
-"    background-color: #f5f5f5;\n"
-"    color: #000000;\n"
-"    border: 1px solid #c2c2c2;\n"
-"    border-radius: 3px;\n"
-"    font-size: 14px;\n"
-"width:50px;\n"
-"height: 25px;\n"
-"}\n"
-"\n"
-"QPushButton:hover {\n"
-"    background-color: #e0e0e0;\n"
-"    border: 1px solid #e0e0e0;\n"
-"}\n"
-"\n"
-"QPushButton:pressed {\n"
-"    background-color: #d0d0d0;\n"
-"    border: 1px solid #888888;\n"
-"}\n"
-"")
-        self.verticalLayout = QVBoxLayout(Dialog)
-        self.verticalLayout.setObjectName(u"verticalLayout")
-        self.frame = QFrame(Dialog)
-        self.frame.setObjectName(u"frame")
-        self.frame.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame.setFrameShadow(QFrame.Shadow.Raised)
-        self.verticalLayout_4 = QVBoxLayout(self.frame)
-        self.verticalLayout_4.setObjectName(u"verticalLayout_4")
-        self.verticalLayout_4.setContentsMargins(-1, 0, -1, 0)
-        self.horizontalLayout = QHBoxLayout()
-        self.horizontalLayout.setObjectName(u"horizontalLayout")
-        self.frame_2 = QFrame(self.frame)
-        self.frame_2.setObjectName(u"frame_2")
-        self.frame_2.setMaximumSize(QSize(70, 16777215))
-        self.frame_2.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_2.setFrameShadow(QFrame.Shadow.Raised)
-        self.verticalLayout_2 = QVBoxLayout(self.frame_2)
-        self.verticalLayout_2.setSpacing(0)
-        self.verticalLayout_2.setObjectName(u"verticalLayout_2")
-        self.verticalLayout_2.setContentsMargins(0, 0, 0, 0)
-        self.label = QLabel(self.frame_2)
-        self.label.setObjectName(u"label")
-        self.label.setMaximumSize(QSize(16777215, 40))
-        self.label.setPixmap(QPixmap(u":/img/TS.jpg"))
-        self.label.setScaledContents(True)
+        Dialog.setObjectName("AboutAquaPump")
+        Dialog.setWindowTitle("Sobre o AquaPump")
+        Dialog.setMinimumSize(520, 590)
+        Dialog.resize(560, 650)
+        Dialog.setSizeGripEnabled(True)
 
-        self.verticalLayout_2.addWidget(self.label)
+        Dialog.setStyleSheet("""
+            QDialog {
+                background: #f3f6fa;
+                color: #172b4d;
+                font-family: "Segoe UI", "Roboto", sans-serif;
+            }
+            QFrame#mainCard {
+                background: #ffffff;
+                border: 1px solid #e2e8f0;
+                border-radius: 16px;
+            }
+            QFrame#hero {
+                background: #102a43;
+                border: none;
+                border-radius: 13px;
+            }
+            QLabel#appName {
+                color: #ffffff;
+                font-size: 27px;
+                font-weight: 700;
+            }
+            QLabel#appSubtitle {
+                color: #d7e5f3;
+                font-size: 12px;
+            }
+            QLabel#versionPill {
+                color: #d9f2e6;
+                background: #1d604c;
+                border-radius: 9px;
+                padding: 5px 10px;
+                font-size: 11px;
+                font-weight: 600;
+            }
+            QLabel#sectionTitle {
+                color: #102a43;
+                font-size: 13px;
+                font-weight: 700;
+            }
+            QLabel#bodyText {
+                color: #526579;
+                font-size: 12px;
+                line-height: 1.5;
+            }
+            QLabel#fieldLabel {
+                color: #7b8da1;
+                font-size: 10px;
+                font-weight: 700;
+            }
+            QLabel#fieldValue {
+                color: #243b53;
+                font-size: 12px;
+                font-weight: 600;
+            }
+            QFrame#infoPanel {
+                background: #f7f9fc;
+                border: 1px solid #e8eef5;
+                border-radius: 10px;
+            }
+            QFrame#contactPanel {
+                background: #fbfcfe;
+                border: 1px solid #e8eef5;
+                border-radius: 10px;
+            }
+            QLabel#contactName {
+                color: #243b53;
+                font-size: 12px;
+                font-weight: 600;
+            }
+            QLabel#contactValue {
+                color: #1670b8;
+                font-size: 11px;
+            }
+            QLabel#mutedValue {
+                color: #8796a8;
+                font-size: 11px;
+            }
+            QPushButton#closeButton {
+                background: #1261a0;
+                color: white;
+                border: none;
+                border-radius: 8px;
+                padding: 9px 24px;
+                font-size: 12px;
+                font-weight: 600;
+            }
+            QPushButton#closeButton:hover {
+                background: #0e4f83;
+            }
+            QPushButton#closeButton:pressed {
+                background: #0a3e68;
+            }
+        """)
 
+        root = QVBoxLayout(Dialog)
+        root.setContentsMargins(20, 20, 20, 20)
+        root.setSpacing(0)
 
-        self.horizontalLayout.addWidget(self.frame_2)
+        card = QFrame()
+        card.setObjectName("mainCard")
+        card_layout = QVBoxLayout(card)
+        card_layout.setContentsMargins(18, 18, 18, 18)
+        card_layout.setSpacing(15)
 
-        self.frame_3 = QFrame(self.frame)
-        self.frame_3.setObjectName(u"frame_3")
-        self.frame_3.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_3.setFrameShadow(QFrame.Shadow.Raised)
-        self.verticalLayout_5 = QVBoxLayout(self.frame_3)
-        self.verticalLayout_5.setObjectName(u"verticalLayout_5")
-        self.label_2 = QLabel(self.frame_3)
-        self.label_2.setObjectName(u"label_2")
-        self.label_2.setStyleSheet(u"QLabel {\n"
-"color: #000000;\n"
-"    font-family: Roboto;\n"
-"    font-size: 14px;\n"
-"}")
+        # Cabeçalho
+        hero = QFrame()
+        hero.setObjectName("hero")
+        hero_layout = QHBoxLayout(hero)
+        hero_layout.setContentsMargins(20, 19, 20, 19)
+        hero_layout.setSpacing(14)
 
-        self.verticalLayout_5.addWidget(self.label_2)
+        logo = QLabel("AP")
+        logo.setFixedSize(58, 58)
+        logo.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        logo.setStyleSheet("""
+            background: #ffffff;
+            color: #102a43;
+            border-radius: 14px;
+            font-size: 21px;
+            font-weight: 800;
+        """)
+        hero_layout.addWidget(logo, 0, Qt.AlignmentFlag.AlignVCenter)
 
-        self.label_3 = QLabel(self.frame_3)
-        self.label_3.setObjectName(u"label_3")
-        self.label_3.setStyleSheet(u"QLabel {\n"
-"    font-family: Roboto;\n"
-"    font-size: 11px;\n"
-"}")
+        title_col = QVBoxLayout()
+        title_col.setSpacing(4)
+        app_name = QLabel(APP_INFO["name"])
+        app_name.setObjectName("appName")
+        subtitle = QLabel(APP_INFO["subtitle"])
+        subtitle.setObjectName("appSubtitle")
+        subtitle.setWordWrap(True)
+        title_col.addWidget(app_name)
+        title_col.addWidget(subtitle)
+        hero_layout.addLayout(title_col, 1)
 
-        self.verticalLayout_5.addWidget(self.label_3)
+        version = QLabel(f'VERSÃO {APP_INFO["version"]}')
+        version.setObjectName("versionPill")
+        version.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        version.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Fixed)
+        hero_layout.addWidget(version, 0, Qt.AlignmentFlag.AlignTop)
 
+        card_layout.addWidget(hero)
 
-        self.horizontalLayout.addWidget(self.frame_3)
+        # Descrição
+        about_title = QLabel("Sobre a aplicação")
+        about_title.setObjectName("sectionTitle")
+        card_layout.addWidget(about_title)
 
+        description = QLabel(APP_INFO["description"])
+        description.setObjectName("bodyText")
+        description.setWordWrap(True)
+        card_layout.addWidget(description)
 
-        self.verticalLayout_4.addLayout(self.horizontalLayout)
+        # Informação da versão e autoria
+        info_panel = QFrame()
+        info_panel.setObjectName("infoPanel")
+        info_layout = QHBoxLayout(info_panel)
+        info_layout.setContentsMargins(13, 11, 13, 11)
+        info_layout.setSpacing(20)
 
-        self.frame_4 = QFrame(self.frame)
-        self.frame_4.setObjectName(u"frame_4")
-        self.frame_4.setFrameShape(QFrame.Shape.StyledPanel)
-        self.frame_4.setFrameShadow(QFrame.Shadow.Raised)
-        self.verticalLayout_3 = QVBoxLayout(self.frame_4)
-        self.verticalLayout_3.setObjectName(u"verticalLayout_3")
-        self.label_4 = QLabel(self.frame_4)
-        self.label_4.setObjectName(u"label_4")
-        self.label_4.setStyleSheet(u"QLabel {\n"
-"    font-family: Roboto;\n"
-"    font-size: 11px;\n"
-"}")
+        self._add_info_field(info_layout, "DESENVOLVIDO POR", APP_INFO["developer"])
+        self._add_info_field(info_layout, "LANÇAMENTO", APP_INFO["release"])
+        card_layout.addWidget(info_panel)
 
-        self.verticalLayout_3.addWidget(self.label_4)
+        # Contactos
+        contact_title = QLabel("Contacto e recursos")
+        contact_title.setObjectName("sectionTitle")
+        card_layout.addWidget(contact_title)
 
-        self.label_5 = QLabel(self.frame_4)
-        self.label_5.setObjectName(u"label_5")
-        font = QFont()
-        font.setFamilies([u"Roboto"])
-        self.label_5.setFont(font)
-        self.label_5.setStyleSheet(u"QLabel {\n"
-"    font-family: Roboto;\n"
-"    font-size: 9px;\n"
-"}")
+        contact_intro = QLabel(
+            "Utilize os canais abaixo para obter informações, consultar o "
+            "código-fonte ou comunicar sugestões e problemas."
+        )
+        contact_intro.setObjectName("bodyText")
+        contact_intro.setWordWrap(True)
+        card_layout.addWidget(contact_intro)
 
-        self.verticalLayout_3.addWidget(self.label_5)
+        contact_panel = QFrame()
+        contact_panel.setObjectName("contactPanel")
+        contact_layout = QVBoxLayout(contact_panel)
+        contact_layout.setContentsMargins(13, 7, 13, 7)
+        contact_layout.setSpacing(0)
 
-        self.horizontalLayout_2 = QHBoxLayout()
-        self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
-        self.label_6 = QLabel(self.frame_4)
-        self.label_6.setObjectName(u"label_6")
-        self.label_6.setMaximumSize(QSize(15, 15))
-        self.label_6.setPixmap(QPixmap(u":/img/giti.png"))
-        self.label_6.setScaledContents(True)
+        contact_rows = [
+            ("Email", CONTACT_INFO["email"], "mailto:" + CONTACT_INFO["email"]),
+            ("Website", "www.yane.co.mz", CONTACT_INFO["website"]),
+            ("Portfólio pessoal", "tsaugineta225.github.io", CONTACT_INFO["portfolio"]),
+            ("GitHub", "github.com/TSaugineta225", CONTACT_INFO["github"]),
+            ("LinkedIn", "linkedin.com/in/tenerife-saugineta", CONTACT_INFO["linkedin"]),
+        ]
 
-        self.horizontalLayout_2.addWidget(self.label_6)
+        for index, (label, display_text, target_url) in enumerate(contact_rows):
+            if index:
+                line = QFrame()
+                line.setFixedHeight(1)
+                line.setStyleSheet("background: #e8eef5; border: none;")
+                contact_layout.addWidget(line)
+            self._add_contact_row(contact_layout, label, display_text, target_url)
 
-        self.git = QLabel(self.frame_4)
-        self.git.setObjectName(u"git")
-        self.git.setStyleSheet(u"QLabel {\n"
-"    font-family: Roboto;\n"
-"    font-size: 12px;\n"
-"}")
-        self.git.setOpenExternalLinks(True)
+        card_layout.addWidget(contact_panel)
 
-        self.horizontalLayout_2.addWidget(self.git)
+        card_layout.addStretch(1)
 
+        footer = QLabel(APP_INFO["copyright"])
+        footer.setObjectName("mutedValue")
+        footer.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        card_layout.addWidget(footer)
 
-        self.verticalLayout_3.addLayout(self.horizontalLayout_2)
+        root.addWidget(card, 1)
 
-        self.horizontalLayout_3 = QHBoxLayout()
-        self.horizontalLayout_3.setObjectName(u"horizontalLayout_3")
-        self.label_7 = QLabel(self.frame_4)
-        self.label_7.setObjectName(u"label_7")
-        self.label_7.setMaximumSize(QSize(15, 15))
-        self.label_7.setPixmap(QPixmap(u":/img/linkedin.png"))
-        self.label_7.setScaledContents(True)
+        button_row = QHBoxLayout()
+        button_row.setContentsMargins(0, 14, 0, 0)
+        button_row.addStretch(1)
+        close_button = QPushButton("Fechar")
+        close_button.setObjectName("closeButton")
+        close_button.setCursor(Qt.CursorShape.PointingHandCursor)
+        close_button.clicked.connect(Dialog.accept)
+        button_row.addWidget(close_button)
+        root.addLayout(button_row)
 
-        self.horizontalLayout_3.addWidget(self.label_7)
+    def _add_info_field(self, layout, label_text, value_text):
+        field = QVBoxLayout()
+        field.setSpacing(4)
+        label = QLabel(label_text)
+        label.setObjectName("fieldLabel")
+        value = QLabel(value_text)
+        value.setObjectName("fieldValue")
+        value.setWordWrap(True)
+        field.addWidget(label)
+        field.addWidget(value)
+        layout.addLayout(field, 1)
 
-        self.link = QLabel(self.frame_4)
-        self.link.setObjectName(u"link")
-        self.link.setStyleSheet(u"QLabel {\n"
-"    font-family: Roboto;\n"
-"    font-size: 12px;\n"
-"}")
-        self.link.setOpenExternalLinks(True)
+    def _add_contact_row(self, layout, label_text, display_text, target_url=""):
+        row = QHBoxLayout()
+        row.setContentsMargins(0, 8, 0, 8)
+        row.setSpacing(12)
 
-        self.horizontalLayout_3.addWidget(self.link)
+        label = QLabel(label_text)
+        label.setObjectName("contactName")
+        label.setMinimumWidth(105)
+        row.addWidget(label)
 
-
-        self.verticalLayout_3.addLayout(self.horizontalLayout_3)
-
-        self.horizontalLayout_4 = QHBoxLayout()
-        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
-        self.label_8 = QLabel(self.frame_4)
-        self.label_8.setObjectName(u"label_8")
-        self.label_8.setMaximumSize(QSize(15, 15))
-        self.label_8.setPixmap(QPixmap(u":/img/social.png"))
-        self.label_8.setScaledContents(True)
-
-        self.horizontalLayout_4.addWidget(self.label_8)
-
-        self.redit = QLabel(self.frame_4)
-        self.redit.setObjectName(u"redit")
-        self.redit.setStyleSheet(u"QLabel {\n"
-"    font-family: Roboto;\n"
-"    font-size: 12px;\n"
-"}")
-        self.redit.setOpenExternalLinks(True)
-
-        self.horizontalLayout_4.addWidget(self.redit)
-
-
-        self.verticalLayout_3.addLayout(self.horizontalLayout_4)
-
-        self.label_12 = QLabel(self.frame_4)
-        self.label_12.setObjectName(u"label_12")
-        self.label_12.setFont(font)
-        self.label_12.setStyleSheet(u"QLabel {\n"
-"    font-family: Roboto;\n"
-"    font-size: 9px;\n"
-"}")
-
-        self.verticalLayout_3.addWidget(self.label_12, 0, Qt.AlignmentFlag.AlignHCenter|Qt.AlignmentFlag.AlignVCenter)
-
-
-        self.verticalLayout_4.addWidget(self.frame_4)
-
-
-        self.verticalLayout.addWidget(self.frame)
-
-        self.buttonBox = QDialogButtonBox(Dialog)
-        self.buttonBox.setObjectName(u"buttonBox")
-        self.buttonBox.setMinimumSize(QSize(29, 0))
-        self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
-        self.buttonBox.setStandardButtons(QDialogButtonBox.StandardButton.Ok)
-
-        self.verticalLayout.addWidget(self.buttonBox)
-
-
-        self.retranslateUi(Dialog)
-        self.buttonBox.accepted.connect(Dialog.accept)
-        self.buttonBox.rejected.connect(Dialog.reject)
-
-        QMetaObject.connectSlotsByName(Dialog)
-    # setupUi
-
-    def retranslateUi(self, Dialog):
-        Dialog.setWindowTitle(QCoreApplication.translate("Dialog", u"Dialog", None))
-        self.label.setText("")
-        self.label_2.setText(QCoreApplication.translate("Dialog", u"AquaPump", None))
-        self.label_3.setText(QCoreApplication.translate("Dialog", u"Vers\u00e3o 1.0.0 (Lan\u00e7amento de Setembro 2025)", None))
-        self.label_4.setText(QCoreApplication.translate("Dialog", u"<html><head/><body><p>Desenvolvido por: <span style=\" font-weight:700;\">Tenerife da Saugineta</span></p></body></html>", None))
-        self.label_5.setText(QCoreApplication.translate("Dialog", u"Para mais informa\u00e7\u00f5es visite:", None))
-        self.label_6.setText("")
-        self.git.setText(QCoreApplication.translate("Dialog", u"GitHub", None))
-        self.label_7.setText("")
-        self.link.setText(QCoreApplication.translate("Dialog", u"LinkeIn", None))
-        self.label_8.setText("")
-        self.redit.setText(QCoreApplication.translate("Dialog", u"Redit", None))
-        self.label_12.setText(QCoreApplication.translate("Dialog", u"\u00a9 2025 Tenerife da Saugineta. Todos os direitos reservados.", None))
-    # retranslateUi
-
+        display = QLabel(display_text if display_text else "Não configurado")
+        display.setObjectName("contactValue" if target_url else "mutedValue")
+        display.setTextInteractionFlags(Qt.TextInteractionFlag.TextSelectableByMouse)
+        display.setWordWrap(True)
+        if target_url:
+            display.setCursor(Qt.CursorShape.PointingHandCursor)
+            display.setToolTip("Abrir " + label_text)
+            display.mousePressEvent = (
+                lambda event, target=target_url: QDesktopServices.openUrl(QUrl(target))
+            )
+        row.addWidget(display, 1)
+        layout.addLayout(row)
